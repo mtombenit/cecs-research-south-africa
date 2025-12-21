@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import SavePaperButton from "@/components/collections/SavePaperButton";
 import { FileText, MapPin, Calendar, ExternalLink, Users, Beaker } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -87,6 +88,7 @@ export default function PaperCard({ paper }) {
           </div>
           
           <div className="flex items-center gap-2">
+            <SavePaperButton paperId={paper.id} />
             {paper.doi && (
               <a 
                 href={`https://doi.org/${paper.doi}`} 
