@@ -51,6 +51,11 @@ export default function ChatMessage({ message }) {
             </div>
           )}
         </div>
+        {!isUser && (
+          <div className="mt-1 flex justify-start">
+            <TextToSpeech text={message.content} />
+          </div>
+        )}
       </div>
     </div>
   );
