@@ -129,12 +129,12 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
 
   return (
     <div className="space-y-4">
-      {/* Search bar */}
+      {/* Global Search bar */}
       <div className="flex gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           <Input
-            placeholder="Search papers by title, author, keywords..."
+            placeholder="Search across all fields: title, author, keywords, abstract, findings, location, journal..."
             value={filters.search || ""}
             onChange={(e) => onFilterChange('search', e.target.value)}
             className="pl-12 h-12 bg-white border-slate-200 focus:border-teal-500 focus:ring-teal-500/20 text-base"
@@ -164,14 +164,22 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
         </Sheet>
       </div>
 
-      {/* Desktop filters */}
-      <div className="hidden lg:grid lg:grid-cols-5 gap-4">
+      {/* Desktop Advanced Filters */}
+      <div className="hidden lg:block">
+        <div className="flex items-center gap-2 mb-3">
+          <Filter className="w-4 h-4 text-slate-600" />
+          <span className="text-sm font-semibold text-slate-700">Advanced Filters</span>
+          {activeFilterCount > 0 && (
+            <Badge className="bg-teal-600 text-white">{activeFilterCount} active</Badge>
+          )}
+        </div>
+        <div className="grid lg:grid-cols-4 xl:grid-cols-5 gap-4">
         <Select 
           value={filters.province || ""} 
           onValueChange={(value) => onFilterChange('province', value)}
         >
-          <SelectTrigger className="bg-white">
-            <SelectValue placeholder="Province" />
+          <SelectTrigger className="bg-white h-10">
+            <SelectValue placeholder="Filter by Province" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={null}>All provinces</SelectItem>
@@ -185,8 +193,8 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
           value={filters.researchType || ""} 
           onValueChange={(value) => onFilterChange('researchType', value)}
         >
-          <SelectTrigger className="bg-white">
-            <SelectValue placeholder="Research Type" />
+          <SelectTrigger className="bg-white h-10">
+            <SelectValue placeholder="Filter by Research Type" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={null}>All types</SelectItem>
@@ -200,8 +208,8 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
           value={filters.compound || ""} 
           onValueChange={(value) => onFilterChange('compound', value)}
         >
-          <SelectTrigger className="bg-white">
-            <SelectValue placeholder="PFAS Compound" />
+          <SelectTrigger className="bg-white h-10">
+            <SelectValue placeholder="Filter by PFAS Compound" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={null}>All compounds</SelectItem>
@@ -211,33 +219,38 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
           </SelectContent>
         </Select>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 col-span-1">
           <Input
             type="number"
             placeholder="Year from"
             value={filters.yearFrom || ""}
             onChange={(e) => onFilterChange('yearFrom', e.target.value)}
-            className="bg-white"
+            className="bg-white h-10"
+            min="1990"
+            max="2030"
           />
           <Input
             type="number"
             placeholder="Year to"
             value={filters.yearTo || ""}
             onChange={(e) => onFilterChange('yearTo', e.target.value)}
-            className="bg-white"
+            className="bg-white h-10"
+            min="1990"
+            max="2030"
           />
         </div>
 
         {activeFilterCount > 0 && (
           <Button 
-            variant="ghost" 
+            variant="outline" 
             onClick={onClear}
-            className="text-slate-500 hover:text-slate-700"
+            className="text-slate-600 hover:text-slate-900 h-10"
           >
             <X className="w-4 h-4 mr-1" />
-            Clear
+            Clear All
           </Button>
         )}
+        </div>
       </div>
 
       {/* Active filters display */}
@@ -271,6 +284,14 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
             <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100">
               {filters.compound}
               <button onClick={() => onFilterChange('compound', '')} className="ml-1.5">
+                <X className="w-3 h-3" />
+              </button>
+            </Badge>
+          )}
+          {(filters.yearFrom || filters.yearTo) && (
+            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100">
+              {filters.yearFrom || '...'} - {filters.yearTo || '...'}
+              <button onClick={() => { onFilterChange('yearFrom', ''); onFilterChange('yearTo', ''); }} className="ml-1.5">
                 <X className="w-3 h-3" />
               </button>
             </Badge>
