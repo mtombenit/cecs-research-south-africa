@@ -1,5 +1,6 @@
 import { Bot, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import TextToSpeech from "@/components/voice/TextToSpeech";
 
 export default function ChatMessage({ message }) {
   const isUser = message.role === 'user';

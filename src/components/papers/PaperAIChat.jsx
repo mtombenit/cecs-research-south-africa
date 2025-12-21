@@ -5,6 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Send, Loader2, Bot, User } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import ReactMarkdown from "react-markdown";
+import VoiceInput from "@/components/voice/VoiceInput";
+import TextToSpeech from "@/components/voice/TextToSpeech";
 
 const QUICK_PROMPTS = [
   { label: "Summarize Key Findings", prompt: "Please provide a comprehensive summary of the key findings from this research paper." },
@@ -147,17 +149,24 @@ Please provide a detailed, helpful response based on this specific research pape
                       <Bot className="w-4 h-4 text-white" />
                     </div>
                   )}
-                  <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${
-                    message.role === 'user' 
-                      ? 'bg-slate-800 text-white' 
-                      : 'bg-white border border-slate-200'
-                  }`}>
-                    {message.role === 'user' ? (
-                      <p className="text-sm leading-relaxed">{message.content}</p>
-                    ) : (
-                      <ReactMarkdown className="text-sm prose prose-sm prose-slate max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                        {message.content}
-                      </ReactMarkdown>
+                  <div className="max-w-[80%]">
+                    <div className={`rounded-2xl px-4 py-2.5 ${
+                      message.role === 'user' 
+                        ? 'bg-slate-800 text-white' 
+                        : 'bg-white border border-slate-200'
+                    }`}>
+                      {message.role === 'user' ? (
+                        <p className="text-sm leading-relaxed">{message.content}</p>
+                      ) : (
+                        <ReactMarkdown className="text-sm prose prose-sm prose-slate max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                          {message.content}
+                        </ReactMarkdown>
+                      )}
+                    </div>
+                    {message.role === 'assistant' && (
+                      <div className="mt-1 flex justify-start">
+                        <TextToSpeech text={message.content} />
+                      </div>
                     )}
                   </div>
                   {message.role === 'user' && (
@@ -199,17 +208,23 @@ Please provide a detailed, helpful response based on this specific research pape
               }}
               disabled={isLoading}
             />
-            <Button 
-              onClick={handleSend} 
-              disabled={!input.trim() || isLoading}
-              className="bg-teal-600 hover:bg-teal-700 h-auto"
-            >
-              {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Send className="w-4 h-4" />
-              )}
-            </Button>
+            <div className="flex flex-col gap-2">
+              <VoiceInput 
+                onTranscript={(text) => setInput(prev => prev + (prev ? ' ' : '') + text)}
+                disabled={isLoading}
+              />
+              <Button 
+                onClick={handleSend} 
+                disabled={!input.trim() || isLoading}
+                className="bg-teal-600 hover:bg-teal-700"
+              >
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>
