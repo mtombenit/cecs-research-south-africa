@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, ArrowRight, MapPin, Calendar } from "lucide-react";
+import { FileText, ArrowRight, MapPin, Calendar, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -54,16 +54,29 @@ export default function RecentPapers({ papers, isLoading }) {
                     {paper.authors?.slice(0, 2).join(", ")}{paper.authors?.length > 2 ? " et al." : ""}
                   </p>
                   <div className="flex items-center gap-3 mt-2">
-                    <span className="flex items-center text-xs text-slate-400">
-                      <Calendar className="w-3 h-3 mr-1" />
-                      {paper.publication_year}
-                    </span>
-                    {paper.province && (
-                      <span className="flex items-center text-xs text-slate-400">
-                        <MapPin className="w-3 h-3 mr-1" />
-                        {paper.province}
-                      </span>
-                    )}
+                   <span className="flex items-center text-xs text-slate-400">
+                     <Calendar className="w-3 h-3 mr-1" />
+                     {paper.publication_year}
+                   </span>
+                   {paper.province && (
+                     <span className="flex items-center text-xs text-slate-400">
+                       <MapPin className="w-3 h-3 mr-1" />
+                       {paper.province}
+                     </span>
+                   )}
+                   {paper.pdf_url && (
+                     <a 
+                       href={paper.pdf_url} 
+                       download
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       onClick={(e) => e.stopPropagation()}
+                       className="flex items-center text-xs text-teal-600 hover:text-teal-700"
+                     >
+                       <Download className="w-3 h-3 mr-1" />
+                       PDF
+                     </a>
+                   )}
                   </div>
                 </div>
               </div>

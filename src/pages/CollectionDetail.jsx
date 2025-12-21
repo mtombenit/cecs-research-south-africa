@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowLeft, Loader2, FileText, Trash2, Edit2, Save, X, Calendar, MapPin
+  ArrowLeft, Loader2, FileText, Trash2, Edit2, Save, X, Calendar, MapPin, Download
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -184,6 +184,18 @@ export default function CollectionDetail() {
                           <MapPin className="w-3 h-3 mr-1" />
                           {paper.province}
                         </span>
+                      )}
+                      {paper.pdf_url && (
+                        <a 
+                          href={paper.pdf_url} 
+                          download
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-xs text-teal-600 hover:text-teal-700 flex items-center"
+                        >
+                          <Download className="w-3 h-3 mr-1" />
+                          Download PDF
+                        </a>
                       )}
                     </div>
 
