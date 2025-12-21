@@ -98,7 +98,7 @@ export default function PaperDetail() {
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
@@ -180,16 +180,18 @@ export default function PaperDetail() {
                 )}
 
                 {paper.pdf_url && (
-                  <a 
-                    href={paper.pdf_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button className="w-full bg-teal-600 hover:bg-teal-700 mt-4">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download PDF
-                    </Button>
-                  </a>
+                  <div className="space-y-2 mt-4">
+                    <a 
+                      href={paper.pdf_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button className="w-full bg-teal-600 hover:bg-teal-700">
+                        <Download className="w-4 h-4 mr-2" />
+                        Download PDF
+                      </Button>
+                    </a>
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -254,9 +256,35 @@ export default function PaperDetail() {
                 </CardContent>
               </Card>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+            </div>
+
+            {/* PDF Viewer */}
+            {paper.pdf_url && (
+            <div className="lg:col-span-3 mt-8 lg:mt-0">
+              <Card className="border-0 shadow-sm">
+                <CardContent className="p-0">
+                  <div className="bg-slate-100 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                    <h3 className="font-semibold text-slate-900">PDF Preview</h3>
+                    <a 
+                      href={paper.pdf_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-teal-600 hover:text-teal-700"
+                    >
+                      Open in new tab
+                    </a>
+                  </div>
+                  <iframe
+                    src={paper.pdf_url}
+                    className="w-full h-[800px]"
+                    title="PDF Viewer"
+                  />
+                </CardContent>
+              </Card>
+            </div>
+            )}
+            </div>
+            </div>
+            </div>
+            );
+            }
