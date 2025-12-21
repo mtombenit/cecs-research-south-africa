@@ -29,7 +29,7 @@ export default function YearRangePicker({ yearFrom, yearTo, onYearFromChange, on
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-full justify-start text-left font-normal h-10">
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {yearFrom || "From year"}
+            {fromDate ? fromDate.getFullYear() : "From year"}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
@@ -50,7 +50,7 @@ export default function YearRangePicker({ yearFrom, yearTo, onYearFromChange, on
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-full justify-start text-left font-normal h-10">
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {yearTo || "To year"}
+            {toDate ? toDate.getFullYear() : "To year"}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
