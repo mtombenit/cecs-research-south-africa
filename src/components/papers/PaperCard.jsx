@@ -89,10 +89,9 @@ export default function PaperCard({ paper }) {
           
           <div className="flex items-center gap-2">
             <SavePaperButton paperId={paper.id} />
-            {paper.pdf_url && (
+            {(paper.pdf_url || paper.doi) && (
               <a 
-                href={paper.pdf_url} 
-                download
+                href={paper.pdf_url || `https://sci-hub.se/${paper.doi}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
