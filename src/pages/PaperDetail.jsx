@@ -258,30 +258,35 @@ export default function PaperDetail() {
             )}
             </div>
 
+            {/* AI Chat About This Paper */}
+            <div className="lg:col-span-2 space-y-8">
+              <PaperAIChat paper={paper} />
+            </div>
+
             {/* PDF Viewer */}
             {paper.pdf_url && (
-            <div className="lg:col-span-3 mt-8 lg:mt-0">
-              <Card className="border-0 shadow-sm">
-                <CardContent className="p-0">
-                  <div className="bg-slate-100 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-                    <h3 className="font-semibold text-slate-900">PDF Preview</h3>
-                    <a 
-                      href={paper.pdf_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-teal-600 hover:text-teal-700"
-                    >
-                      Open in new tab
-                    </a>
-                  </div>
-                  <iframe
-                    src={paper.pdf_url}
-                    className="w-full h-[800px]"
-                    title="PDF Viewer"
-                  />
-                </CardContent>
-              </Card>
-            </div>
+              <div className="lg:col-span-3 mt-8 lg:mt-0">
+                <Card className="border-0 shadow-sm">
+                  <CardContent className="p-0">
+                    <div className="bg-slate-100 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                      <h3 className="font-semibold text-slate-900">PDF Preview</h3>
+                      <a 
+                        href={paper.pdf_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-teal-600 hover:text-teal-700"
+                      >
+                        Open in new tab
+                      </a>
+                    </div>
+                    <iframe
+                      src={paper.pdf_url}
+                      className="w-full h-[800px]"
+                      title="PDF Viewer"
+                    />
+                  </CardContent>
+                </Card>
+              </div>
             )}
             </div>
             </div>

@@ -2,9 +2,9 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, BarChart3, Calendar } from "lucide-react";
+import YearRangePicker from "@/components/papers/YearRangePicker";
 import ProvinceDistribution from "@/components/visualizations/ProvinceDistribution";
 import ResearchTypeDistribution from "@/components/visualizations/ResearchTypeDistribution";
 import YearTimeline from "@/components/visualizations/YearTimeline";
@@ -62,26 +62,12 @@ export default function Visualizations() {
                   <Calendar className="w-4 h-4" />
                   Filter by Publication Year Range
                 </Label>
-                <div className="flex gap-3">
-                  <Input
-                    type="number"
-                    placeholder="From year"
-                    value={yearFrom}
-                    onChange={(e) => setYearFrom(e.target.value)}
-                    className="bg-white"
-                    min="1990"
-                    max="2030"
-                  />
-                  <Input
-                    type="number"
-                    placeholder="To year"
-                    value={yearTo}
-                    onChange={(e) => setYearTo(e.target.value)}
-                    className="bg-white"
-                    min="1990"
-                    max="2030"
-                  />
-                </div>
+                <YearRangePicker
+                  yearFrom={yearFrom}
+                  yearTo={yearTo}
+                  onYearFromChange={setYearFrom}
+                  onYearToChange={setYearTo}
+                />
               </div>
               <div className="text-sm text-slate-600">
                 Showing <span className="font-semibold text-teal-600">{filteredPapers.length}</span> of {papers.length} publications

@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, X, SlidersHorizontal } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import YearRangePicker from "./YearRangePicker";
 
 const provinces = [
   "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", 
@@ -91,28 +92,13 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
 
       <div>
         <label className="text-sm font-medium text-slate-700 mb-2 block">Publication Year</label>
-        <div className="flex gap-2">
-          <Input
-            type="number"
-            placeholder="From"
-            value={filters.yearFrom || ""}
-            onChange={(e) => onFilterChange('yearFrom', e.target.value)}
-            className="bg-white"
-            min="1990"
-            max="2030"
-          />
-          <Input
-            type="number"
-            placeholder="To"
-            value={filters.yearTo || ""}
-            onChange={(e) => onFilterChange('yearTo', e.target.value)}
-            className="bg-white"
-            min="1990"
-            max="2030"
-          />
-        </div>
-        </div>
-        )}
+        <YearRangePicker
+          yearFrom={filters.yearFrom}
+          yearTo={filters.yearTo}
+          onYearFromChange={(year) => onFilterChange('yearFrom', year)}
+          onYearToChange={(year) => onFilterChange('yearTo', year)}
+        />
+      </div>
 
       {activeFilterCount > 0 && (
         <Button 
@@ -219,24 +205,12 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
           </SelectContent>
         </Select>
 
-        <div className="flex gap-2 col-span-1">
-          <Input
-            type="number"
-            placeholder="Year from"
-            value={filters.yearFrom || ""}
-            onChange={(e) => onFilterChange('yearFrom', e.target.value)}
-            className="bg-white h-10"
-            min="1990"
-            max="2030"
-          />
-          <Input
-            type="number"
-            placeholder="Year to"
-            value={filters.yearTo || ""}
-            onChange={(e) => onFilterChange('yearTo', e.target.value)}
-            className="bg-white h-10"
-            min="1990"
-            max="2030"
+        <div className="col-span-1">
+          <YearRangePicker
+            yearFrom={filters.yearFrom}
+            yearTo={filters.yearTo}
+            onYearFromChange={(year) => onFilterChange('yearFrom', year)}
+            onYearToChange={(year) => onFilterChange('yearTo', year)}
           />
         </div>
 
