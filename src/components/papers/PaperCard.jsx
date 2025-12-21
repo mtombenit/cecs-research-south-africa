@@ -86,40 +86,48 @@ export default function PaperCard({ paper }) {
             )}
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
             <SavePaperButton paperId={paper.id} />
             {paper.pdf_url && (
-              <a 
-                href={paper.pdf_url} 
-                download
-                target="_blank" 
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-slate-500 hover:text-teal-600"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.open(paper.pdf_url, '_blank');
+                }}
               >
-                <Button variant="ghost" size="sm" className="text-slate-500 hover:text-teal-600">
-                  <Download className="w-4 h-4 mr-1" />
-                  PDF
-                </Button>
-              </a>
+                <Download className="w-4 h-4 mr-1" />
+                PDF
+              </Button>
             )}
             {paper.doi && (
-              <a 
-                href={`https://doi.org/${paper.doi}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-slate-500 hover:text-teal-600"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.open(`https://doi.org/${paper.doi}`, '_blank');
+                }}
               >
-                <Button variant="ghost" size="sm" className="text-slate-500 hover:text-teal-600">
-                  <ExternalLink className="w-4 h-4 mr-1" />
-                  DOI
-                </Button>
-              </a>
-            )}
-            <Link to={createPageUrl(`PaperDetail?id=${paper.id}`)}>
-              <Button size="sm" className="bg-teal-600 hover:bg-teal-700 text-white">
-                View Details
+                <ExternalLink className="w-4 h-4 mr-1" />
+                DOI
               </Button>
-            </Link>
+            )}
+            <Button 
+              size="sm" 
+              className="bg-teal-600 hover:bg-teal-700 text-white"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              View Details
+            </Button>
           </div>
           </div>
           </div>
