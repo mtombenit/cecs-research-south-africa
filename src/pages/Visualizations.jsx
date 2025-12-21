@@ -43,9 +43,16 @@ export default function Visualizations() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-3 mb-2">
-            <BarChart3 className="w-8 h-8 text-teal-600" />
-            <h1 className="text-3xl font-bold text-slate-900">Research Visualizations</h1>
+          <div className="flex items-start justify-between gap-4 mb-2">
+            <div className="flex items-center gap-3">
+              <BarChart3 className="w-8 h-8 text-teal-600" />
+              <h1 className="text-3xl font-bold text-slate-900">Research Visualizations</h1>
+            </div>
+            <ExportButton 
+              data={filteredPapers} 
+              filename="pfas-research-data"
+              disabled={isLoading}
+            />
           </div>
           <p className="text-slate-600">
             Interactive charts and maps showing the distribution of PFAS research across South Africa
