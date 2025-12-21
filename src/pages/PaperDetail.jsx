@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import PaperAIChat from "@/components/papers/PaperAIChat";
+import SavePaperButton from "@/components/collections/SavePaperButton";
 import { 
   ArrowLeft, Calendar, MapPin, Users, FileText, ExternalLink, 
   Beaker, BookOpen, Building2, Download, Loader2 
@@ -85,9 +86,12 @@ export default function PaperDetail() {
             )}
           </div>
 
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 leading-tight mb-4">
-            {paper.title}
-          </h1>
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 leading-tight flex-1">
+              {paper.title}
+            </h1>
+            <SavePaperButton paperId={paper.id} variant="default" size="default" />
+          </div>
 
           <div className="flex items-center gap-2 text-slate-600">
             <Users className="w-4 h-4 text-slate-400" />

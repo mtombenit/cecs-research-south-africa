@@ -4,6 +4,8 @@ import PaperDetail from './pages/PaperDetail';
 import AskAI from './pages/AskAI';
 import AddPaper from './pages/AddPaper';
 import Visualizations from './pages/Visualizations';
+import Collections from './pages/Collections';
+import CollectionDetail from './pages/CollectionDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -14,6 +16,8 @@ export const PAGES = {
     "AskAI": AskAI,
     "AddPaper": AddPaper,
     "Visualizations": Visualizations,
+    "Collections": Collections,
+    "CollectionDetail": CollectionDetail,
 }
 
 export const pagesConfig = {

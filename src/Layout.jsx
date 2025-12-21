@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
   FlaskConical, Home, Database, Sparkles, Plus, Menu, 
-  LogOut, User, TrendingUp 
+  LogOut, User, TrendingUp, Bookmark 
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
@@ -20,6 +20,7 @@ const navItems = [
   { name: "Home", icon: Home, page: "Home" },
   { name: "Database", icon: Database, page: "Database" },
   { name: "Visualizations", icon: TrendingUp, page: "Visualizations" },
+  { name: "Collections", icon: Bookmark, page: "Collections" },
   { name: "Ask AI", icon: Sparkles, page: "AskAI" },
 ];
 
