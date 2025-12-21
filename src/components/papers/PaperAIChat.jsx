@@ -6,6 +6,14 @@ import { Sparkles, Send, Loader2, Bot, User } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import ReactMarkdown from "react-markdown";
 
+const QUICK_PROMPTS = [
+  { label: "Summarize Key Findings", prompt: "Please provide a comprehensive summary of the key findings from this research paper." },
+  { label: "Methodology Overview", prompt: "Explain the research methodology used in this study in detail." },
+  { label: "Research Gaps", prompt: "Based on this paper's content and findings, what are the potential research gaps and future research directions in PFAS research for South Africa?" },
+  { label: "PFAS Compounds Analysis", prompt: "Provide detailed information about the PFAS compounds studied in this paper and their significance." },
+  { label: "Environmental Impact", prompt: "What are the environmental and health implications of the findings from this research?" },
+];
+
 export default function PaperAIChat({ paper }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -21,7 +29,7 @@ export default function PaperAIChat({ paper }) {
   }, [messages]);
 
   const buildPaperContext = () => {
-    return `You are an AI research assistant helping users understand a specific PFAS research paper.
+    return `You are an AI research assistant specialized in PFAS research, helping users understand a specific research paper.
 
 Paper Details:
 Title: ${paper.title}
@@ -45,19 +53,28 @@ Concentrations Reported:
 ${paper.concentrations_reported || "Not available"}
 
 Institution: ${paper.institution || "Not specified"}
+Keywords: ${paper.keywords?.join(", ") || "Not specified"}
+
+Your Capabilities:
+1. Summarize the paper's key findings and methodology
+2. Explain the significance of PFAS compounds studied
+3. Identify potential research gaps and future research directions
+4. Analyze environmental and health implications
+5. Compare methodologies with standard PFAS research practices
+6. Provide context about South African PFAS research landscape
 
 Guidelines:
-- Answer questions specifically about THIS research paper
 - Provide detailed, scientific explanations based on the paper's content
+- When identifying research gaps, consider what's missing or what follow-up studies could explore
+- For methodology questions, explain sampling, analysis techniques, and study design
 - If information is not available in the paper details, clearly state that
-- Help users understand the methodology, findings, and implications
-- Be helpful and educational`;
+- Be analytical and educational, helping researchers understand the broader context`;
   };
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (message = input) => {
+    if (!message.trim() || isLoading) return;
 
-    const userMessage = { role: 'user', content: input };
+    const userMessage = { role: 'user', content: message };
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
@@ -66,9 +83,9 @@ Guidelines:
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: `${buildPaperContext()}
 
-User Question: ${input}
+User Question: ${message}
 
-Please provide a detailed, helpful response based on this specific research paper.`,
+Please provide a detailed, helpful response based on this specific research paper. Be comprehensive and analytical.`,
       });
 
       setMessages(prev => [...prev, { role: 'assistant', content: response }]);
@@ -80,6 +97,11 @@ Please provide a detailed, helpful response based on this specific research pape
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleQuickPrompt = (prompt) => {
+    setInput(prompt);
+    handleSend(prompt);
   };
 
   return (
@@ -97,14 +119,24 @@ Please provide a detailed, helpful response based on this specific research pape
         {/* Messages */}
         <div className="h-[400px] overflow-y-auto p-4 space-y-4 bg-slate-50/50">
           {messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center px-4">
+            <div className="h-full flex flex-col items-center justify-center px-4">
               <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-200 rounded-xl flex items-center justify-center mb-3">
                 <Bot className="w-6 h-6 text-teal-600" />
               </div>
-              <p className="text-sm text-slate-600 max-w-md">
-                Ask me anything about this paper's methodology, findings, PFAS compounds studied, 
-                or implications for South African research.
+              <p className="text-sm text-slate-600 max-w-md text-center mb-4">
+                I can help you analyze this paper. Try these quick actions:
               </p>
+              <div className="grid grid-cols-1 gap-2 w-full max-w-md">
+                {QUICK_PROMPTS.map((item, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleQuickPrompt(item.prompt)}
+                    className="text-left px-4 py-2.5 bg-white border border-slate-200 rounded-lg hover:border-teal-500 hover:bg-teal-50/50 transition-all text-sm text-slate-700 font-medium"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
             <>
