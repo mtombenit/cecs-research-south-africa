@@ -39,6 +39,9 @@ export default function YearRangePicker({ yearFrom, yearTo, onYearFromChange, on
             onSelect={handleFromSelect}
             defaultMonth={fromDate || new Date(2000, 0)}
             disabled={(date) => date > new Date() || date < new Date(1990, 0, 1)}
+            captionLayout="dropdown-buttons"
+            fromYear={1990}
+            toYear={new Date().getFullYear()}
           />
         </PopoverContent>
       </Popover>
@@ -57,6 +60,9 @@ export default function YearRangePicker({ yearFrom, yearTo, onYearFromChange, on
             onSelect={handleToSelect}
             defaultMonth={toDate || new Date()}
             disabled={(date) => date > new Date() || date < new Date(1990, 0, 1)}
+            captionLayout="dropdown-buttons"
+            fromYear={1990}
+            toYear={new Date().getFullYear()}
           />
         </PopoverContent>
       </Popover>
