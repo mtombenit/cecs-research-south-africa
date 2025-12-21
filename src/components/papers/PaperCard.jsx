@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import SavePaperButton from "@/components/collections/SavePaperButton";
-import { FileText, MapPin, Calendar, ExternalLink, Users, Beaker } from "lucide-react";
+import { FileText, MapPin, Calendar, ExternalLink, Users, Beaker, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -89,6 +89,20 @@ export default function PaperCard({ paper }) {
           
           <div className="flex items-center gap-2">
             <SavePaperButton paperId={paper.id} />
+            {paper.pdf_url && (
+              <a 
+                href={paper.pdf_url} 
+                download
+                target="_blank" 
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Button variant="ghost" size="sm" className="text-slate-500 hover:text-teal-600">
+                  <Download className="w-4 h-4 mr-1" />
+                  PDF
+                </Button>
+              </a>
+            )}
             {paper.doi && (
               <a 
                 href={`https://doi.org/${paper.doi}`} 
