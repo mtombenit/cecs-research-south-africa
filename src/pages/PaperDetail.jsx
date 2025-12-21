@@ -5,6 +5,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import PaperAIChat from "@/components/papers/PaperAIChat";
 import { 
   ArrowLeft, Calendar, MapPin, Users, FileText, ExternalLink, 
   Beaker, BookOpen, Building2, Download, Loader2 
