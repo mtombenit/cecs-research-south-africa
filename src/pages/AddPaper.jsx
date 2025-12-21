@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Plus, X, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Plus, X, Save, Loader2, Upload, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 const provinces = [
   "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal",
@@ -54,6 +55,8 @@ export default function AddPaper() {
   const [newAuthor, setNewAuthor] = useState("");
   const [newKeyword, setNewKeyword] = useState("");
   const [newSample, setNewSample] = useState("");
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.ResearchPaper.create(data),
@@ -96,6 +99,68 @@ export default function AddPaper() {
     }
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsExtracting(true);
+    setUploadedFile(file);
+
+    try {
+      // Upload file
+      toast.info("Uploading file...");
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      
+      // Extract data from file
+      toast.info("Extracting data from paper...");
+      const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
+        file_url,
+        json_schema: {
+          type: "object",
+          properties: {
+            title: { type: "string" },
+            authors: { type: "array", items: { type: "string" } },
+            abstract: { type: "string" },
+            publication_year: { type: "number" },
+            journal: { type: "string" },
+            doi: { type: "string" },
+            pfas_compounds: { type: "array", items: { type: "string" } },
+            study_location: { type: "string" },
+            province: { type: "string" },
+            research_type: { type: "string" },
+            sample_matrix: { type: "array", items: { type: "string" } },
+            key_findings: { type: "string" },
+            concentrations_reported: { type: "string" },
+            keywords: { type: "array", items: { type: "string" } },
+            institution: { type: "string" }
+          }
+        }
+      });
+
+      if (result.status === "success" && result.output) {
+        // Merge extracted data with form data
+        setFormData(prev => ({
+          ...prev,
+          ...result.output,
+          pdf_url: file_url,
+          // Keep existing arrays if extracted data doesn't have them
+          authors: result.output.authors || prev.authors,
+          pfas_compounds: result.output.pfas_compounds || prev.pfas_compounds,
+          sample_matrix: result.output.sample_matrix || prev.sample_matrix,
+          keywords: result.output.keywords || prev.keywords,
+          publication_year: result.output.publication_year || prev.publication_year
+        }));
+        toast.success("Data extracted successfully! Please review and edit as needed.");
+      } else {
+        toast.error("Failed to extract data: " + (result.details || "Unknown error"));
+      }
+    } catch (error) {
+      toast.error("Error processing file: " + error.message);
+    } finally {
+      setIsExtracting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30">
       {/* Header */}
@@ -114,6 +179,55 @@ export default function AddPaper() {
 
       <form onSubmit={handleSubmit} className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
+          {/* File Upload */}
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-teal-50 to-white">
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center justify-center">
+                <div className="w-16 h-16 bg-teal-100 rounded-2xl flex items-center justify-center mb-4">
+                  <Upload className="w-8 h-8 text-teal-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Upload Paper File</h3>
+                <p className="text-sm text-slate-600 text-center mb-4 max-w-md">
+                  Upload a PDF or document file and we'll automatically extract the paper details for you
+                </p>
+                
+                <label htmlFor="file-upload" className="cursor-pointer">
+                  <Button
+                    type="button"
+                    className="bg-teal-600 hover:bg-teal-700"
+                    disabled={isExtracting}
+                    onClick={() => document.getElementById('file-upload').click()}
+                  >
+                    {isExtracting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Extracting Data...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="w-4 h-4 mr-2" />
+                        Choose File
+                      </>
+                    )}
+                  </Button>
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                
+                {uploadedFile && (
+                  <p className="text-sm text-slate-500 mt-3">
+                    Uploaded: {uploadedFile.name}
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Basic Info */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
