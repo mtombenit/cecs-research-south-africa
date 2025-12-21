@@ -19,8 +19,9 @@ export default function PaperCard({ paper }) {
   };
 
   return (
-    <Card className="group border-0 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden bg-white">
-      <div className="p-6">
+    <Card className="group border-0 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden bg-white cursor-pointer">
+      <Link to={createPageUrl(`PaperDetail?id=${paper.id}`)} className="block">
+        <div className="p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-3">
@@ -35,11 +36,9 @@ export default function PaperCard({ paper }) {
               </span>
             </div>
             
-            <Link to={createPageUrl(`PaperDetail?id=${paper.id}`)}>
-              <h3 className="text-lg font-semibold text-slate-900 group-hover:text-teal-700 transition-colors line-clamp-2 mb-2">
-                {paper.title}
-              </h3>
-            </Link>
+            <h3 className="text-lg font-semibold text-slate-900 group-hover:text-teal-700 transition-colors line-clamp-2 mb-2">
+              {paper.title}
+            </h3>
             
             <p className="text-sm text-slate-500 flex items-center mb-3">
               <Users className="w-4 h-4 mr-1.5 text-slate-400" />
@@ -89,9 +88,10 @@ export default function PaperCard({ paper }) {
           
           <div className="flex items-center gap-2">
             <SavePaperButton paperId={paper.id} />
-            {(paper.pdf_url || paper.doi) && (
+            {paper.pdf_url && (
               <a 
-                href={paper.pdf_url || `https://sci-hub.se/${paper.doi}`} 
+                href={paper.pdf_url} 
+                download
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
@@ -121,8 +121,9 @@ export default function PaperCard({ paper }) {
               </Button>
             </Link>
           </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
+          </div>
+          </div>
+          </Link>
+          </Card>
+          );
+          }
