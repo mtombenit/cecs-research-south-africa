@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { FileText, Loader2 } from "lucide-react";
 import SearchFilters from "@/components/papers/SearchFilters";
 import PaperCard from "@/components/papers/PaperCard";
+import ExportButton from "@/components/export/ExportButton";
 
 export default function Database() {
   const [filters, setFilters] = useState({
@@ -86,10 +87,19 @@ export default function Database() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Research Database</h1>
-          <p className="text-slate-600">
-            Browse and search PFAS research publications from South Africa
-          </p>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">Research Database</h1>
+              <p className="text-slate-600">
+                Browse and search PFAS research publications from South Africa
+              </p>
+            </div>
+            <ExportButton 
+              data={filteredPapers} 
+              filename="pfas-research-papers"
+              disabled={isLoading}
+            />
+          </div>
         </div>
       </div>
 

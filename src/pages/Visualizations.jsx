@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Loader2, BarChart3, Calendar } from "lucide-react";
 import YearRangePicker from "@/components/papers/YearRangePicker";
+import ExportButton from "@/components/export/ExportButton";
 import ProvinceDistribution from "@/components/visualizations/ProvinceDistribution";
 import ResearchTypeDistribution from "@/components/visualizations/ResearchTypeDistribution";
 import YearTimeline from "@/components/visualizations/YearTimeline";
