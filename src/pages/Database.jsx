@@ -37,7 +37,7 @@ export default function Database() {
 
   const filteredPapers = useMemo(() => {
     return papers.filter(paper => {
-      // Search filter
+      // Global search filter - searches across all fields
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         const matchesSearch = 
@@ -45,7 +45,12 @@ export default function Database() {
           paper.authors?.some(a => a.toLowerCase().includes(searchLower)) ||
           paper.abstract?.toLowerCase().includes(searchLower) ||
           paper.keywords?.some(k => k.toLowerCase().includes(searchLower)) ||
-          paper.key_findings?.toLowerCase().includes(searchLower);
+          paper.key_findings?.toLowerCase().includes(searchLower) ||
+          paper.journal?.toLowerCase().includes(searchLower) ||
+          paper.institution?.toLowerCase().includes(searchLower) ||
+          paper.study_location?.toLowerCase().includes(searchLower) ||
+          paper.doi?.toLowerCase().includes(searchLower) ||
+          paper.concentrations_reported?.toLowerCase().includes(searchLower);
         if (!matchesSearch) return false;
       }
 

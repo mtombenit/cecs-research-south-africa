@@ -111,7 +111,8 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
             max="2030"
           />
         </div>
-      </div>
+        </div>
+        )}
 
       {activeFilterCount > 0 && (
         <Button 
