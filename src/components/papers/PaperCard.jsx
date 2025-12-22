@@ -88,21 +88,19 @@ export default function PaperCard({ paper }) {
           
           <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
             <SavePaperButton paperId={paper.id} />
-            {paper.pdf_url && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-slate-500 hover:text-teal-600"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  window.open(paper.pdf_url, '_blank');
-                }}
-              >
-                <Download className="w-4 h-4 mr-1" />
-                PDF
-              </Button>
-            )}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-slate-500 hover:text-teal-600"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.open(paper.pdf_url || `https://sci-hub.se/${paper.doi}`, '_blank');
+              }}
+            >
+              <Download className="w-4 h-4 mr-1" />
+              PDF
+            </Button>
             {paper.doi && (
               <Button 
                 variant="ghost" 

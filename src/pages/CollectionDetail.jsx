@@ -185,17 +185,15 @@ export default function CollectionDetail() {
                           {paper.province}
                         </span>
                       )}
-                      {(paper.pdf_url || paper.doi) && (
-                        <a 
-                          href={paper.pdf_url || `https://sci-hub.se/${paper.doi}`}
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-xs text-teal-600 hover:text-teal-700 flex items-center"
-                        >
-                          <Download className="w-3 h-3 mr-1" />
-                          Download PDF
-                        </a>
-                      )}
+                      <a 
+                        href={paper.pdf_url || `https://sci-hub.se/${paper.doi}`}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-xs text-teal-600 hover:text-teal-700 flex items-center"
+                      >
+                        <Download className="w-3 h-3 mr-1" />
+                        Download PDF
+                      </a>
                     </div>
 
                     {paper.abstract && (

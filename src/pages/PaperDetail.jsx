@@ -184,20 +184,18 @@ export default function PaperDetail() {
                   </div>
                 )}
 
-                {paper.pdf_url && (
-                  <div className="space-y-2 mt-4">
-                    <a 
-                      href={paper.pdf_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Button className="w-full bg-teal-600 hover:bg-teal-700">
-                        <Download className="w-4 h-4 mr-2" />
-                        Download PDF
-                      </Button>
-                    </a>
-                  </div>
-                )}
+                <div className="space-y-2 mt-4">
+                  <a 
+                    href={paper.pdf_url || `https://sci-hub.se/${paper.doi}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button className="w-full bg-teal-600 hover:bg-teal-700">
+                      <Download className="w-4 h-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  </a>
+                </div>
               </CardContent>
             </Card>
 
