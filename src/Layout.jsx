@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
   FlaskConical, Home, Database, Sparkles, Plus, Menu, 
-  LogOut, User, TrendingUp, Bookmark 
+  LogOut, User, TrendingUp, Bookmark, Activity
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
@@ -104,6 +104,14 @@ export default function Layout({ children, currentPageName }) {
                       <p className="text-xs text-slate-500 truncate">{user.email}</p>
                     </div>
                     <DropdownMenuSeparator />
+                    {user.role === 'admin' && (
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AgentActivity")}>
+                          <Activity className="w-4 h-4 mr-2" />
+                          Agent Activity
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={() => base44.auth.logout()}>
                       <LogOut className="w-4 h-4 mr-2" />
                       Sign out
@@ -144,6 +152,17 @@ export default function Layout({ children, currentPageName }) {
                           <p className="text-xs text-slate-500 truncate">{user.email}</p>
                         </div>
                       </div>
+                      {user.role === 'admin' && (
+                        <Link to={createPageUrl("AgentActivity")} onClick={() => setMobileOpen(false)}>
+                          <Button 
+                            variant="ghost" 
+                            className="w-full justify-start text-slate-600"
+                          >
+                            <Activity className="w-4 h-4 mr-2" />
+                            Agent Activity
+                          </Button>
+                        </Link>
+                      )}
                       <Button 
                         variant="ghost" 
                         className="w-full justify-start text-slate-600"
@@ -152,14 +171,14 @@ export default function Layout({ children, currentPageName }) {
                         <LogOut className="w-4 h-4 mr-2" />
                         Sign out
                       </Button>
-                    </div>
-                  )}
-                </SheetContent>
-              </Sheet>
-            </div>
-          </div>
-        </div>
-      </header>
+                      </div>
+                      )}
+                      </SheetContent>
+                      </Sheet>
+                      </div>
+                      </div>
+                      </div>
+                      </header>
 
       {/* Main Content */}
       <main>
