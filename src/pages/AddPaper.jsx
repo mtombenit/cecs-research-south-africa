@@ -56,19 +56,25 @@ export default function AddPaper() {
   const [newKeyword, setNewKeyword] = useState("");
   const [newSample, setNewSample] = useState("");
   const [isExtracting, setIsExtracting] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [extractedPapers, setExtractedPapers] = useState([]);
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.ResearchPaper.create(data),
+    mutationFn: (papers) => base44.entities.ResearchPaper.bulkCreate(papers),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['papers'] });
       navigate(createPageUrl("Database"));
+      toast.success(`${extractedPapers.length} papers added successfully`);
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createMutation.mutate(formData);
+    if (extractedPapers.length > 0) {
+      createMutation.mutate(extractedPapers);
+    } else {
+      createMutation.mutate([formData]);
+    }
   };
 
   const addToArray = (field, value, setter) => {
@@ -100,62 +106,70 @@ export default function AddPaper() {
   };
 
   const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
     setIsExtracting(true);
-    setUploadedFile(file);
+    setUploadedFiles(files);
+    const papers = [];
 
     try {
-      // Upload file
-      toast.info("Uploading file...");
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      toast.info(`Processing ${files.length} file(s)...`);
       
-      // Extract data from file
-      toast.info("Extracting data from paper...");
-      const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
-        file_url,
-        json_schema: {
-          type: "object",
-          properties: {
-            title: { type: "string" },
-            authors: { type: "array", items: { type: "string" } },
-            abstract: { type: "string" },
-            publication_year: { type: "number" },
-            journal: { type: "string" },
-            doi: { type: "string" },
-            pfas_compounds: { type: "array", items: { type: "string" } },
-            study_location: { type: "string" },
-            province: { type: "string" },
-            research_type: { type: "string" },
-            sample_matrix: { type: "array", items: { type: "string" } },
-            key_findings: { type: "string" },
-            concentrations_reported: { type: "string" },
-            keywords: { type: "array", items: { type: "string" } },
-            institution: { type: "string" }
-          }
-        }
-      });
+      for (const file of files) {
+        try {
+          // Upload file
+          const { file_url } = await base44.integrations.Core.UploadFile({ file });
+          
+          // Extract data from file
+          const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
+            file_url,
+            json_schema: {
+              type: "object",
+              properties: {
+                title: { type: "string" },
+                authors: { type: "array", items: { type: "string" } },
+                abstract: { type: "string" },
+                publication_year: { type: "number" },
+                journal: { type: "string" },
+                doi: { type: "string" },
+                pfas_compounds: { type: "array", items: { type: "string" } },
+                study_location: { type: "string" },
+                province: { type: "string" },
+                research_type: { type: "string" },
+                sample_matrix: { type: "array", items: { type: "string" } },
+                key_findings: { type: "string" },
+                concentrations_reported: { type: "string" },
+                keywords: { type: "array", items: { type: "string" } },
+                institution: { type: "string" }
+              }
+            }
+          });
 
-      if (result.status === "success" && result.output) {
-        // Merge extracted data with form data
-        setFormData(prev => ({
-          ...prev,
-          ...result.output,
-          pdf_url: file_url,
-          // Keep existing arrays if extracted data doesn't have them
-          authors: result.output.authors || prev.authors,
-          pfas_compounds: result.output.pfas_compounds || prev.pfas_compounds,
-          sample_matrix: result.output.sample_matrix || prev.sample_matrix,
-          keywords: result.output.keywords || prev.keywords,
-          publication_year: result.output.publication_year || prev.publication_year
-        }));
-        toast.success("Data extracted successfully! Please review and edit as needed.");
+          if (result.status === "success" && result.output) {
+            papers.push({
+              ...result.output,
+              pdf_url: file_url,
+              authors: result.output.authors || [],
+              pfas_compounds: result.output.pfas_compounds || [],
+              sample_matrix: result.output.sample_matrix || [],
+              keywords: result.output.keywords || [],
+              publication_year: result.output.publication_year || new Date().getFullYear()
+            });
+          }
+        } catch (error) {
+          toast.error(`Error processing ${file.name}: ${error.message}`);
+        }
+      }
+
+      if (papers.length > 0) {
+        setExtractedPapers(papers);
+        toast.success(`Successfully extracted data from ${papers.length} paper(s)!`);
       } else {
-        toast.error("Failed to extract data: " + (result.details || "Unknown error"));
+        toast.error("No papers could be extracted");
       }
     } catch (error) {
-      toast.error("Error processing file: " + error.message);
+      toast.error("Error processing files: " + error.message);
     } finally {
       setIsExtracting(false);
     }
@@ -186,9 +200,9 @@ export default function AddPaper() {
                 <div className="w-16 h-16 bg-teal-100 rounded-2xl flex items-center justify-center mb-4">
                   <Upload className="w-8 h-8 text-teal-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">Upload Paper File</h3>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Upload Paper Files</h3>
                 <p className="text-sm text-slate-600 text-center mb-4 max-w-md">
-                  Upload a PDF or document file and we'll automatically extract the paper details for you
+                  Upload one or multiple PDF files and we'll automatically extract the paper details for you
                 </p>
                 
                 <label htmlFor="file-upload" className="cursor-pointer">
@@ -206,7 +220,7 @@ export default function AddPaper() {
                     ) : (
                       <>
                         <FileText className="w-4 h-4 mr-2" />
-                        Choose File
+                        Choose Files
                       </>
                     )}
                   </Button>
@@ -217,12 +231,18 @@ export default function AddPaper() {
                   accept=".pdf,.doc,.docx"
                   onChange={handleFileUpload}
                   className="hidden"
+                  multiple
                 />
                 
-                {uploadedFile && (
-                  <p className="text-sm text-slate-500 mt-3">
-                    Uploaded: {uploadedFile.name}
-                  </p>
+                {uploadedFiles.length > 0 && (
+                  <div className="text-sm text-slate-500 mt-3 text-center">
+                    <p className="font-medium">Uploaded {uploadedFiles.length} file(s)</p>
+                    {extractedPapers.length > 0 && (
+                      <p className="text-teal-600 font-medium mt-1">
+                        ✓ {extractedPapers.length} paper(s) ready to add
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             </CardContent>
@@ -540,7 +560,7 @@ export default function AddPaper() {
               ) : (
                 <>
                   <Save className="w-4 h-4 mr-2" />
-                  Save Paper
+                  {extractedPapers.length > 0 ? `Save ${extractedPapers.length} Paper(s)` : 'Save Paper'}
                 </>
               )}
             </Button>
