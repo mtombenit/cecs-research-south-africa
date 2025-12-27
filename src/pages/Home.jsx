@@ -35,14 +35,14 @@ export default function Home() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-teal-100 text-sm mb-6">
               <FlaskConical className="w-4 h-4" />
-              South African PFAS Research Database
+              South African CECs Research Database
             </div>
             <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight mb-6">
-              Interactive PFAS Research Portal
+              SA CECs Intelligent Portal
             </h1>
             <p className="text-xl text-teal-100/90 leading-relaxed mb-8">
-              Explore published research on Per- and Polyfluoroalkyl Substances (PFAS) 
-              conducted in South Africa. Search, analyze, and interact with research data 
+              Explore published research on Contaminants of Emerging Concern (CECs) including 
+              PFAS conducted in South Africa. Search, analyze, and interact with research data 
               using AI-powered tools.
             </p>
             <div className="flex flex-wrap gap-4">
@@ -73,7 +73,7 @@ export default function Home() {
             trend="South African studies"
           />
           <StatCard
-            title="PFAS Compounds"
+            title="Compounds"
             value={uniqueCompounds.size}
             icon={FlaskConical}
             trend="Unique compounds studied"
@@ -109,15 +109,14 @@ export default function Home() {
       {/* About PFAS Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 lg:p-12 text-white">
-          <h2 className="text-2xl font-bold mb-4">About PFAS</h2>
+          <h2 className="text-2xl font-bold mb-4">About CECs & PFAS</h2>
           <p className="text-slate-300 leading-relaxed mb-6">
-            Per- and Polyfluoroalkyl Substances (PFAS) are a group of synthetic chemicals 
-            that have been manufactured and used in various industries since the 1940s. 
-            Known as "forever chemicals" due to their persistence in the environment, 
-            PFAS are found in water, soil, and wildlife across the globe.
+            Contaminants of Emerging Concern (CECs) including Per- and Polyfluoroalkyl Substances (PFAS) 
+            are synthetic chemicals of growing environmental and health concern. PFAS, known as "forever chemicals," 
+            have been manufactured since the 1940s and are found in water, soil, and wildlife across the globe.
           </p>
           <p className="text-slate-300 leading-relaxed">
-            This database focuses exclusively on PFAS research conducted in South Africa, 
+            This intelligent portal focuses on CECs research conducted in South Africa, 
             providing researchers, policymakers, and the public with access to scientific 
             findings specific to the South African context.
           </p>

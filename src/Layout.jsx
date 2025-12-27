@@ -198,7 +198,7 @@ export default function Layout({ children, currentPageName }) {
               </span>
             </div>
             <p className="text-sm text-slate-500">
-              © {new Date().getFullYear()} • Focused on South African PFAS Research
+              © {new Date().getFullYear()} • Focused on South African CECs Research
             </p>
           </div>
         </div>
