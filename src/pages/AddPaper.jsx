@@ -171,16 +171,20 @@ export default function AddPaper() {
     setUploadedFiles(files);
     const papers = [];
     let duplicatesFound = 0;
+    let extractionErrors = 0;
 
     try {
       toast.info(`Processing ${files.length} file(s)...`);
 
       for (const file of files) {
         try {
+          console.log(`Uploading ${file.name}...`);
           // Upload file
           const { file_url } = await base44.integrations.Core.UploadFile({ file });
+          console.log(`File uploaded: ${file_url}`);
 
           // Extract data from file
+          console.log(`Extracting data from ${file.name}...`);
           const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
             file_url,
             json_schema: {
@@ -205,6 +209,8 @@ export default function AddPaper() {
             }
           });
 
+          console.log(`Extraction result for ${file.name}:`, result);
+
           if (result.status === "success" && result.output) {
             const extractedPaper = {
               ...result.output,
@@ -216,45 +222,63 @@ export default function AddPaper() {
               publication_year: result.output.publication_year || new Date().getFullYear()
             };
 
+            console.log(`Checking for duplicates: ${extractedPaper.title}`);
             // Check for duplicates
             const duplicateCheck = await checkDuplicate(extractedPaper);
             if (duplicateCheck.isDuplicate) {
-              toast.error(`Document already uploaded: "${duplicateCheck.title}"`);
+              console.log(`Duplicate found: ${duplicateCheck.title}`);
+              toast.error(`Duplicate: "${duplicateCheck.title}"`);
               duplicatesFound++;
             } else {
+              console.log(`New paper: ${extractedPaper.title}`);
               papers.push(extractedPaper);
             }
+          } else {
+            console.error(`Extraction failed for ${file.name}:`, result);
+            toast.error(`Could not extract data from ${file.name}${result.details ? ': ' + result.details : ''}`);
+            extractionErrors++;
           }
         } catch (error) {
+          console.error(`Error processing ${file.name}:`, error);
           toast.error(`Error processing ${file.name}: ${error.message}`);
+          extractionErrors++;
         }
       }
 
+      console.log(`Processing complete. Papers: ${papers.length}, Duplicates: ${duplicatesFound}, Errors: ${extractionErrors}`);
+
       if (papers.length > 0) {
         setExtractedPapers(papers);
-        toast.success(`Successfully extracted data from ${papers.length} paper(s)!`);
+        toast.success(`Successfully extracted ${papers.length} paper(s)!`);
         if (duplicatesFound > 0) {
           toast.info(`${duplicatesFound} duplicate(s) skipped`);
         }
 
         // Automatically save the papers
         try {
+          console.log('Saving papers to database...');
           await base44.entities.ResearchPaper.bulkCreate(papers);
           queryClient.invalidateQueries({ queryKey: ['papers'] });
           toast.success(`${papers.length} paper(s) added to database!`);
           navigate(createPageUrl("Database"));
         } catch (error) {
+          console.error('Failed to save papers:', error);
           toast.error(`Failed to save papers: ${error.message}`);
         }
       } else if (duplicatesFound > 0) {
-        toast.error("All documents were duplicates");
+        toast.error(`All ${duplicatesFound} document(s) were duplicates`);
+      } else if (extractionErrors > 0) {
+        toast.error(`Failed to extract data from ${extractionErrors} file(s)`);
       } else {
-        toast.error("No papers could be extracted");
+        toast.error("No papers could be extracted from the uploaded files");
       }
     } catch (error) {
+      console.error('Error processing files:', error);
       toast.error("Error processing files: " + error.message);
     } finally {
       setIsExtracting(false);
+      // Reset file input
+      e.target.value = '';
     }
   };
 
