@@ -165,6 +165,16 @@ export default function AddPaper() {
       if (papers.length > 0) {
         setExtractedPapers(papers);
         toast.success(`Successfully extracted data from ${papers.length} paper(s)!`);
+        
+        // Automatically save the papers
+        try {
+          await base44.entities.ResearchPaper.bulkCreate(papers);
+          queryClient.invalidateQueries({ queryKey: ['papers'] });
+          toast.success(`${papers.length} paper(s) added to database!`);
+          navigate(createPageUrl("Database"));
+        } catch (error) {
+          toast.error(`Failed to save papers: ${error.message}`);
+        }
       } else {
         toast.error("No papers could be extracted");
       }
