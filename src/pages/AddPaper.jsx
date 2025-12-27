@@ -105,6 +105,59 @@ export default function AddPaper() {
     }
   };
 
+  const checkDuplicate = async (newPaper) => {
+    if (!newPaper.title || !newPaper.abstract) return { isDuplicate: false };
+
+    for (const existing of existingPapers) {
+      if (!existing.title || !existing.abstract) continue;
+
+      // Quick check: exact title match
+      if (existing.title.toLowerCase() === newPaper.title.toLowerCase()) {
+        return { isDuplicate: true, title: existing.title };
+      }
+
+      // Quick check: same DOI
+      if (existing.doi && newPaper.doi && existing.doi === newPaper.doi) {
+        return { isDuplicate: true, title: existing.title };
+      }
+
+      // AI similarity check for close matches
+      try {
+        const prompt = `Compare these two research papers and determine if they are the same paper or duplicates. Return a similarity percentage (0-100).
+
+  Paper 1:
+  Title: ${existing.title}
+  Authors: ${existing.authors?.join(', ')}
+  Abstract: ${existing.abstract?.substring(0, 300)}
+
+  Paper 2:
+  Title: ${newPaper.title}
+  Authors: ${newPaper.authors?.join(', ')}
+  Abstract: ${newPaper.abstract?.substring(0, 300)}
+
+  Return only the similarity percentage as a number between 0 and 100.`;
+
+        const result = await base44.integrations.Core.InvokeLLM({
+          prompt,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              similarity_percentage: { type: "number" }
+            }
+          }
+        });
+
+        if (result.similarity_percentage > 90) {
+          return { isDuplicate: true, title: existing.title };
+        }
+      } catch (error) {
+        console.error('Error checking similarity:', error);
+      }
+    }
+
+    return { isDuplicate: false };
+  };
+
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -112,15 +165,16 @@ export default function AddPaper() {
     setIsExtracting(true);
     setUploadedFiles(files);
     const papers = [];
+    let duplicatesFound = 0;
 
     try {
       toast.info(`Processing ${files.length} file(s)...`);
-      
+
       for (const file of files) {
         try {
           // Upload file
           const { file_url } = await base44.integrations.Core.UploadFile({ file });
-          
+
           // Extract data from file
           const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
             file_url,
@@ -147,7 +201,7 @@ export default function AddPaper() {
           });
 
           if (result.status === "success" && result.output) {
-            papers.push({
+            const extractedPaper = {
               ...result.output,
               pdf_url: file_url,
               authors: result.output.authors || [],
@@ -155,7 +209,16 @@ export default function AddPaper() {
               sample_matrix: result.output.sample_matrix || [],
               keywords: result.output.keywords || [],
               publication_year: result.output.publication_year || new Date().getFullYear()
-            });
+            };
+
+            // Check for duplicates
+            const duplicateCheck = await checkDuplicate(extractedPaper);
+            if (duplicateCheck.isDuplicate) {
+              toast.error(`Document already uploaded: "${duplicateCheck.title}"`);
+              duplicatesFound++;
+            } else {
+              papers.push(extractedPaper);
+            }
           }
         } catch (error) {
           toast.error(`Error processing ${file.name}: ${error.message}`);
@@ -165,7 +228,10 @@ export default function AddPaper() {
       if (papers.length > 0) {
         setExtractedPapers(papers);
         toast.success(`Successfully extracted data from ${papers.length} paper(s)!`);
-        
+        if (duplicatesFound > 0) {
+          toast.info(`${duplicatesFound} duplicate(s) skipped`);
+        }
+
         // Automatically save the papers
         try {
           await base44.entities.ResearchPaper.bulkCreate(papers);
@@ -175,6 +241,8 @@ export default function AddPaper() {
         } catch (error) {
           toast.error(`Failed to save papers: ${error.message}`);
         }
+      } else if (duplicatesFound > 0) {
+        toast.error("All documents were duplicates");
       } else {
         toast.error("No papers could be extracted");
       }
