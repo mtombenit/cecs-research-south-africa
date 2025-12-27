@@ -9,6 +9,7 @@ import ExportButton from "@/components/export/ExportButton";
 import ProvinceDistribution from "@/components/visualizations/ProvinceDistribution";
 import ResearchTypeDistribution from "@/components/visualizations/ResearchTypeDistribution";
 import YearTimeline from "@/components/visualizations/YearTimeline";
+import CompoundChart from "@/components/dashboard/CompoundChart";
 
 export default function Visualizations() {
   const [yearFrom, setYearFrom] = useState("");
@@ -93,6 +94,8 @@ export default function Visualizations() {
           <ProvinceDistribution papers={filteredPapers} />
           <ResearchTypeDistribution papers={filteredPapers} />
         </div>
+
+        <CompoundChart papers={filteredPapers} />
       </div>
     </div>
   );
