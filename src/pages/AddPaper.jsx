@@ -210,9 +210,9 @@ export default function AddPaper() {
                 <div className="w-16 h-16 bg-teal-100 rounded-2xl flex items-center justify-center mb-4">
                   <Upload className="w-8 h-8 text-teal-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">Upload Paper Files</h3>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Upload Raw Data Files</h3>
                 <p className="text-sm text-slate-600 text-center mb-4 max-w-md">
-                  Upload one or multiple PDF files and we'll automatically extract the paper details for you
+                  Upload PDF, Excel, CSV, images (JPEG, PNG), or other data files and we'll automatically extract the paper details for you
                 </p>
                 
                 <label htmlFor="file-upload" className="cursor-pointer">
@@ -238,7 +238,7 @@ export default function AddPaper() {
                 <input
                   id="file-upload"
                   type="file"
-                  accept=".pdf,.doc,.docx"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.jpg,.jpeg,.png,.gif,.bmp"
                   onChange={handleFileUpload}
                   className="hidden"
                   multiple
