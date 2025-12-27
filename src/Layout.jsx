@@ -20,6 +20,7 @@ const navItems = [
   { name: "Home", icon: Home, page: "Home" },
   { name: "Database", icon: Database, page: "Database" },
   { name: "Visualizations", icon: TrendingUp, page: "Visualizations" },
+  { name: "AI Insights", icon: Sparkles, page: "AIInsights" },
   { name: "Collections", icon: Bookmark, page: "Collections" },
   { name: "Ask AI", icon: Sparkles, page: "AskAI" },
 ];
