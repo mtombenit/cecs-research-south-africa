@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import StatCard from "@/components/dashboard/StatCard";
 import RecentPapers from "@/components/dashboard/RecentPapers";
 import CompoundChart from "@/components/dashboard/CompoundChart";
-import ProvinceMap from "@/components/dashboard/ProvinceMap";
+
 
 export default function Home() {
   const { data: papers = [], isLoading } = useQuery({
@@ -95,14 +95,9 @@ export default function Home() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <RecentPapers papers={papers} isLoading={isLoading} />
-            <CompoundChart papers={papers} />
-          </div>
-          <div>
-            <ProvinceMap papers={papers} />
-          </div>
+        <div className="space-y-8">
+          <RecentPapers papers={papers} isLoading={isLoading} />
+          <CompoundChart papers={papers} />
         </div>
       </div>
 
