@@ -119,10 +119,6 @@ export default function PaperCard({ paper }) {
             <Button 
               size="sm" 
               className="bg-teal-600 hover:bg-teal-700 text-white"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
             >
               View Details
             </Button>
