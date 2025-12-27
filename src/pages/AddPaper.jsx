@@ -197,7 +197,7 @@ export default function AddPaper() {
             </Button>
           </Link>
           <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Add Research Paper</h1>
-          <p className="text-slate-600 mt-1">Add a new PFAS research publication to the database</p>
+          <p className="text-slate-600 mt-1">Add a new CECs research publication to the database</p>
         </div>
       </div>
 
