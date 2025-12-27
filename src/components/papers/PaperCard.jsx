@@ -86,35 +86,39 @@ export default function PaperCard({ paper }) {
             )}
           </div>
           
-          <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
-            <SavePaperButton paperId={paper.id} />
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-slate-500 hover:text-teal-600"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                window.open(paper.pdf_url || `https://sci-hub.se/${paper.doi}`, '_blank');
-              }}
-            >
-              <Download className="w-4 h-4 mr-1" />
-              PDF
-            </Button>
-            {paper.doi && (
+          <div className="flex items-center gap-2">
+            <div onClick={(e) => e.stopPropagation()}>
+              <SavePaperButton paperId={paper.id} />
+            </div>
+            <div onClick={(e) => e.stopPropagation()}>
               <Button 
                 variant="ghost" 
                 size="sm" 
                 className="text-slate-500 hover:text-teal-600"
                 onClick={(e) => {
                   e.preventDefault();
-                  e.stopPropagation();
-                  window.open(`https://doi.org/${paper.doi}`, '_blank');
+                  window.open(paper.pdf_url || `https://sci-hub.se/${paper.doi}`, '_blank');
                 }}
               >
-                <ExternalLink className="w-4 h-4 mr-1" />
-                DOI
+                <Download className="w-4 h-4 mr-1" />
+                PDF
               </Button>
+            </div>
+            {paper.doi && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-slate-500 hover:text-teal-600"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.open(`https://doi.org/${paper.doi}`, '_blank');
+                  }}
+                >
+                  <ExternalLink className="w-4 h-4 mr-1" />
+                  DOI
+                </Button>
+              </div>
             )}
             <Button 
               size="sm" 
