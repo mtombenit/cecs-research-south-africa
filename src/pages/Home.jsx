@@ -41,8 +41,7 @@ export default function Home() {
               SA CECs Intelligent Portal
             </h1>
             <p className="text-xl text-teal-100/90 leading-relaxed mb-8">
-              Explore published research on Contaminants of Emerging Concern (CECs) including 
-              PFAS conducted in South Africa. Search, analyze, and interact with research data 
+              Explore published research on Contaminants of Emerging Concern (CECs) conducted in South Africa. Search, analyze, and interact with research data 
               using AI-powered tools.
             </p>
             <div className="flex flex-wrap gap-4">
