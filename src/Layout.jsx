@@ -80,7 +80,7 @@ export default function Layout({ children, currentPageName }) {
                 <FlaskConical className="w-5 h-5 text-white" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="font-bold text-slate-900 text-lg leading-tight">SA PFAS Database</h1>
+                <h1 className="font-bold text-slate-900 text-lg leading-tight">SA CECs Intelligent Portal</h1>
                 <p className="text-xs text-slate-500">Research Portal</p>
               </div>
             </Link>
@@ -135,7 +135,7 @@ export default function Layout({ children, currentPageName }) {
                       <FlaskConical className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h2 className="font-bold text-slate-900">SA PFAS Database</h2>
+                      <h2 className="font-bold text-slate-900">SA CECs Intelligent Portal</h2>
                       <p className="text-xs text-slate-500">Research Portal</p>
                     </div>
                   </div>
@@ -194,7 +194,7 @@ export default function Layout({ children, currentPageName }) {
                 <FlaskConical className="w-4 h-4 text-white" />
               </div>
               <span className="text-sm text-slate-600">
-                South African PFAS Research Database
+                South African CECs Research Database
               </span>
             </div>
             <p className="text-sm text-slate-500">
