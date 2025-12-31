@@ -24,12 +24,22 @@ const SUGGESTED_QUESTIONS = [
   "What treatment technologies have been studied for PFAS removal?",
 ];
 
+const STORAGE_KEY = 'askAI_messages';
+
 export default function AskAI() {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPapers, setSelectedPapers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const messagesEndRef = useRef(null);
+
+  // Persist messages to localStorage
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  }, [messages]);
 
   const { data: papers = [] } = useQuery({
     queryKey: ['papers'],
@@ -94,6 +104,12 @@ Guidelines:
 
   const clearChat = () => {
     setMessages([]);
+    localStorage.removeItem(STORAGE_KEY);
+  };
+
+  const deleteMessagePair = (index) => {
+    // Delete the AI message and the user message before it
+    setMessages(prev => prev.filter((_, i) => i !== index && i !== index - 1));
   };
 
   const filteredPapers = papers.filter(paper => 
@@ -276,7 +292,11 @@ Please provide a helpful, accurate response based on the South African PFAS rese
               ) : (
                 <>
                   {messages.map((message, idx) => (
-                    <ChatMessage key={idx} message={message} />
+                    <ChatMessage 
+                      key={idx} 
+                      message={message}
+                      onDelete={message.role === 'assistant' ? () => deleteMessagePair(idx) : null}
+                    />
                   ))}
                   {isLoading && (
                     <div className="flex gap-4">

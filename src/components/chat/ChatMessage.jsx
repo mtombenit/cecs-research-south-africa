@@ -1,8 +1,9 @@
-import { Bot, User } from "lucide-react";
+import { Bot, User, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import TextToSpeech from "@/components/voice/TextToSpeech";
+import { Button } from "@/components/ui/button";
 
-export default function ChatMessage({ message }) {
+export default function ChatMessage({ message, onDelete }) {
   const isUser = message.role === 'user';
 
   return (
@@ -52,8 +53,19 @@ export default function ChatMessage({ message }) {
           )}
         </div>
         {!isUser && (
-          <div className="mt-1 flex justify-start">
+          <div className="mt-1 flex justify-start items-center gap-2">
             <TextToSpeech text={message.content} />
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onDelete}
+                className="h-7 text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <Trash2 className="w-3.5 h-3.5 mr-1" />
+                Clear
+              </Button>
+            )}
           </div>
         )}
       </div>
