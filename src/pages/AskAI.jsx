@@ -17,11 +17,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const SUGGESTED_QUESTIONS = [
-  "What PFAS compounds have been found in South African water sources?",
-  "Which provinces have the most PFAS research?",
-  "What are the main health concerns related to PFAS in South Africa?",
-  "Summarize the key findings on PFAS in drinking water",
-  "What treatment technologies have been studied for PFAS removal?",
+  "What CEC compounds have been found in South African water sources?",
+  "Which provinces have the most CECs research?",
+  "What are the main health concerns related to CECs in South Africa?",
+  "Summarize the key findings on CECs in drinking water",
+  "What treatment technologies have been studied for CECs removal?",
 ];
 
 const STORAGE_KEY = 'askAI_messages';
@@ -127,7 +127,7 @@ Guidelines:
 
 User Question: ${content}
 
-Please provide a helpful, accurate response based on the South African PFAS research database.`,
+Please provide a helpful, accurate response based on the South African CECs research database.`,
     });
 
     setMessages(prev => [...prev, { role: 'assistant', content: response }]);
@@ -150,7 +150,7 @@ Please provide a helpful, accurate response based on the South African PFAS rese
             <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">AI Research Assistant</h1>
           </div>
           <p className="text-slate-600">
-            Ask questions about PFAS research in South Africa and get AI-powered answers based on our database
+            Ask questions about CECs research in South Africa and get AI-powered answers based on our database
           </p>
         </div>
       </div>
@@ -266,7 +266,7 @@ Please provide a helpful, accurate response based on the South African PFAS rese
                     How can I help you today?
                   </h3>
                   <p className="text-slate-500 text-sm mb-6 max-w-md">
-                    I can answer questions about PFAS research conducted in South Africa, 
+                    I can answer questions about CECs research conducted in South Africa, 
                     including compounds studied, locations, findings, and more.
                   </p>
                   
@@ -321,7 +321,7 @@ Please provide a helpful, accurate response based on the South African PFAS rese
               <ChatInput 
                 onSend={handleSendMessage} 
                 isLoading={isLoading}
-                placeholder="Ask about PFAS research in South Africa..."
+                placeholder="Ask about CECs research in South Africa..."
               />
               <p className="text-xs text-slate-400 text-center mt-3">
                 {selectedPapers.length > 0 

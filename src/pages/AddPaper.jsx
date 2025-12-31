@@ -521,7 +521,7 @@ export default function AddPaper() {
               </div>
 
               <div>
-                <Label>PFAS Compounds Studied</Label>
+                <Label>CEC Compounds Studied</Label>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {commonCompounds.map(compound => (
                     <button
@@ -598,7 +598,7 @@ export default function AddPaper() {
                   id="concentrations"
                   value={formData.concentrations_reported}
                   onChange={(e) => setFormData(prev => ({ ...prev, concentrations_reported: e.target.value }))}
-                  placeholder="PFAS concentration ranges found"
+                  placeholder="CEC concentration ranges found"
                   className="mt-1.5"
                 />
               </div>

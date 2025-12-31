@@ -105,9 +105,9 @@ export default function Home() {
         <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 lg:p-12 text-white">
           <h2 className="text-2xl font-bold mb-4">About CECs & PFAS</h2>
           <p className="text-slate-300 leading-relaxed mb-6">
-            Contaminants of Emerging Concern (CECs) are synthetic chemicals of growing environmental and health concern. PFAS, known as "forever chemicals," 
-            have been manufactured since the 1940s and are found in water, soil, and wildlife across the globe.
-          </p>
+                  Contaminants of Emerging Concern (CECs) are synthetic chemicals of growing environmental and health concern, including PFAS known as "forever chemicals," 
+                  which have been manufactured since the 1940s and are found in water, soil, and wildlife across the globe.
+                </p>
           <p className="text-slate-300 leading-relaxed">
             This intelligent portal focuses on CECs research conducted in South Africa, 
             providing researchers, policymakers, and the public with access to scientific 
