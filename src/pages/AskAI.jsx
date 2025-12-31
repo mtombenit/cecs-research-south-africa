@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Bot, Lightbulb, Loader2, FileText, X, ChevronDown } from "lucide-react";
+import { Sparkles, Bot, Lightbulb, Loader2, FileText, X, ChevronDown, Trash2 } from "lucide-react";
 import ChatMessage from "@/components/chat/ChatMessage";
 import ChatInput from "@/components/chat/ChatInput";
 import { Badge } from "@/components/ui/badge";
@@ -92,6 +92,10 @@ Guidelines:
     setSelectedPapers([]);
   };
 
+  const clearChat = () => {
+    setMessages([]);
+  };
+
   const filteredPapers = papers.filter(paper => 
     paper.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     paper.authors?.some(a => a.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -137,8 +141,9 @@ Please provide a helpful, accurate response based on the South African PFAS rese
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Document Selection */}
-        <div className="mb-4 flex items-center gap-3 flex-wrap">
-          <Popover>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 flex-wrap flex-1">
+            <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="gap-2">
                 <FileText className="w-4 h-4" />
@@ -215,6 +220,19 @@ Please provide a helpful, accurate response based on the South African PFAS rese
                 </Badge>
               )}
             </div>
+          )}
+          </div>
+
+          {messages.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearChat}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear Chat
+            </Button>
           )}
         </div>
 
