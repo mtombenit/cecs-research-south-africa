@@ -3,9 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Bot, Lightbulb, Loader2 } from "lucide-react";
+import { Sparkles, Bot, Lightbulb, Loader2, FileText, X, ChevronDown } from "lucide-react";
 import ChatMessage from "@/components/chat/ChatMessage";
 import ChatInput from "@/components/chat/ChatInput";
+import { Badge } from "@/components/ui/badge";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const SUGGESTED_QUESTIONS = [
   "What PFAS compounds have been found in South African water sources?",
@@ -18,11 +27,13 @@ const SUGGESTED_QUESTIONS = [
 export default function AskAI() {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedPapers, setSelectedPapers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const messagesEndRef = useRef(null);
 
   const { data: papers = [] } = useQuery({
     queryKey: ['papers'],
-    queryFn: () => base44.entities.ResearchPaper.list('-publication_year', 100),
+    queryFn: () => base44.entities.ResearchPaper.list('-publication_year', 500),
   });
 
   const scrollToBottom = () => {
@@ -34,23 +45,30 @@ export default function AskAI() {
   }, [messages]);
 
   const buildContext = () => {
-    // Build a summary of the research database
-    const summaries = papers.slice(0, 30).map(p => 
+    // If specific papers are selected, use only those
+    const papersToUse = selectedPapers.length > 0 
+      ? papers.filter(p => selectedPapers.includes(p.id))
+      : papers.slice(0, 30);
+
+    const summaries = papersToUse.map(p => 
       `Title: ${p.title}
 Authors: ${p.authors?.join(", ")}
 Year: ${p.publication_year}
 Province: ${p.province || "Not specified"}
 Compounds: ${p.pfas_compounds?.join(", ") || "Not specified"}
 Research Type: ${p.research_type || "Not specified"}
-Key Findings: ${p.key_findings || p.abstract || "Not available"}
+Abstract: ${p.abstract || "Not available"}
+Key Findings: ${p.key_findings || "Not available"}
 ---`
     ).join("\n");
 
-    return `You are a research assistant specialized in PFAS (Per- and Polyfluoroalkyl Substances) research in South Africa.
+    const contextPrefix = selectedPapers.length > 0
+      ? `You are a research assistant. The user has selected ${selectedPapers.length} specific research paper(s) to analyze.`
+      : `You are a research assistant specialized in PFAS (Per- and Polyfluoroalkyl Substances) research in South Africa. You have access to a database of ${papers.length} research papers.`;
 
-You have access to a database of ${papers.length} research papers on PFAS conducted in South Africa.
+    return `${contextPrefix}
 
-Here is a summary of the research database:
+Here ${selectedPapers.length > 0 ? 'are the selected papers' : 'is a summary of the research database'}:
 ${summaries}
 
 Guidelines:
@@ -61,6 +79,23 @@ Guidelines:
 - Focus on South African context
 - Be helpful and informative`;
   };
+
+  const togglePaperSelection = (paperId) => {
+    setSelectedPapers(prev => 
+      prev.includes(paperId) 
+        ? prev.filter(id => id !== paperId)
+        : [...prev, paperId]
+    );
+  };
+
+  const clearSelection = () => {
+    setSelectedPapers([]);
+  };
+
+  const filteredPapers = papers.filter(paper => 
+    paper.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    paper.authors?.some(a => a.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   const handleSendMessage = async (content) => {
     const userMessage = { role: 'user', content };
@@ -101,6 +136,88 @@ Please provide a helpful, accurate response based on the South African PFAS rese
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Document Selection */}
+        <div className="mb-4 flex items-center gap-3 flex-wrap">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <FileText className="w-4 h-4" />
+                {selectedPapers.length > 0 
+                  ? `${selectedPapers.length} paper(s) selected` 
+                  : 'Select papers to analyze'}
+                <ChevronDown className="w-4 h-4 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[400px] p-0" align="start">
+              <div className="p-3 border-b">
+                <Input
+                  placeholder="Search papers..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="h-9"
+                />
+              </div>
+              <ScrollArea className="h-[400px]">
+                <div className="p-2 space-y-1">
+                  {filteredPapers.map(paper => (
+                    <div
+                      key={paper.id}
+                      className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer"
+                      onClick={() => togglePaperSelection(paper.id)}
+                    >
+                      <Checkbox
+                        checked={selectedPapers.includes(paper.id)}
+                        onCheckedChange={() => togglePaperSelection(paper.id)}
+                        className="mt-1"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900 line-clamp-2">
+                          {paper.title}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {paper.authors?.[0]} {paper.authors?.length > 1 && `+${paper.authors.length - 1} more`} • {paper.publication_year}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+              {selectedPapers.length > 0 && (
+                <div className="p-3 border-t bg-slate-50 flex justify-between items-center">
+                  <span className="text-sm text-slate-600">{selectedPapers.length} selected</span>
+                  <Button variant="ghost" size="sm" onClick={clearSelection}>
+                    Clear all
+                  </Button>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
+
+          {selectedPapers.length > 0 && (
+            <div className="flex items-center gap-2 flex-1 flex-wrap">
+              {selectedPapers.slice(0, 2).map(paperId => {
+                const paper = papers.find(p => p.id === paperId);
+                return paper ? (
+                  <Badge key={paperId} variant="secondary" className="max-w-[300px]">
+                    <span className="truncate">{paper.title}</span>
+                    <button
+                      onClick={() => togglePaperSelection(paperId)}
+                      className="ml-1 hover:text-red-500"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ) : null;
+              })}
+              {selectedPapers.length > 2 && (
+                <Badge variant="secondary">
+                  +{selectedPapers.length - 2} more
+                </Badge>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Chat Container */}
         <Card className="border-0 shadow-sm overflow-hidden">
           <CardContent className="p-0">
@@ -169,7 +286,9 @@ Please provide a helpful, accurate response based on the South African PFAS rese
                 placeholder="Ask about PFAS research in South Africa..."
               />
               <p className="text-xs text-slate-400 text-center mt-3">
-                Responses are based on {papers.length} research papers in our database
+                {selectedPapers.length > 0 
+                  ? `Analyzing ${selectedPapers.length} selected paper(s)`
+                  : `Responses are based on ${papers.length} research papers in our database`}
               </p>
             </div>
           </CardContent>

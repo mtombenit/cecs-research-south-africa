@@ -1,4 +1,6 @@
+import AIInsights from './pages/AIInsights';
 import AddPaper from './pages/AddPaper';
+import AgentActivity from './pages/AgentActivity';
 import AskAI from './pages/AskAI';
 import CollectionDetail from './pages/CollectionDetail';
 import Collections from './pages/Collections';
@@ -6,13 +8,13 @@ import Database from './pages/Database';
 import Home from './pages/Home';
 import PaperDetail from './pages/PaperDetail';
 import Visualizations from './pages/Visualizations';
-import AgentActivity from './pages/AgentActivity';
-import AIInsights from './pages/AIInsights';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AIInsights": AIInsights,
     "AddPaper": AddPaper,
+    "AgentActivity": AgentActivity,
     "AskAI": AskAI,
     "CollectionDetail": CollectionDetail,
     "Collections": Collections,
@@ -20,8 +22,6 @@ export const PAGES = {
     "Home": Home,
     "PaperDetail": PaperDetail,
     "Visualizations": Visualizations,
-    "AgentActivity": AgentActivity,
-    "AIInsights": AIInsights,
 }
 
 export const pagesConfig = {
