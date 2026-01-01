@@ -79,8 +79,7 @@ export default function Home() {
           />
           <StatCard
             title="Provinces"
-            value={uniqueProvinces.size}
-            subtitle="of 9 total"
+            value={`${uniqueProvinces.size} of 9`}
             icon={MapPin}
           />
           <StatCard
