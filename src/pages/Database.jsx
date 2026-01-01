@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { FileText, Loader2 } from "lucide-react";
@@ -7,10 +7,13 @@ import PaperCard from "@/components/papers/PaperCard";
 import ExportButton from "@/components/export/ExportButton";
 
 export default function Database() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialResearchType = urlParams.get('researchType') || '';
+  
   const [filters, setFilters] = useState({
     search: '',
     province: '',
-    researchType: '',
+    researchType: initialResearchType,
     compound: '',
     yearFrom: '',
     yearTo: ''

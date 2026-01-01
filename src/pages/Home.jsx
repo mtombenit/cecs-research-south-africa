@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { FileText, FlaskConical, TrendingUp, Sparkles, BookOpen } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import StatCard from "@/components/dashboard/StatCard";
@@ -10,6 +10,8 @@ import CompoundChart from "@/components/dashboard/CompoundChart";
 
 
 export default function Home() {
+  const navigate = useNavigate();
+  
   const { data: papers = [], isLoading } = useQuery({
     queryKey: ['papers'],
     queryFn: () => base44.entities.ResearchPaper.list('-publication_year', 100),
@@ -22,6 +24,10 @@ export default function Home() {
     paper.pfas_compounds?.forEach(c => uniqueCompounds.add(c));
     if (paper.research_type) uniqueResearchTypes.add(paper.research_type);
   });
+
+  const handleResearchTypeClick = (researchType) => {
+    navigate(createPageUrl('Database') + `?researchType=${encodeURIComponent(researchType)}`);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30">
@@ -83,10 +89,17 @@ export default function Home() {
               value={uniqueResearchTypes.size}
               icon={BookOpen}
             />
-            <div className="absolute bottom-3 left-4 right-4">
-              <p className="text-xs text-slate-500 line-clamp-2">
-                {Array.from(uniqueResearchTypes).join(', ')}
-              </p>
+            <div className="absolute bottom-3 left-4 right-4 space-y-1">
+              {Array.from(uniqueResearchTypes).map((type) => (
+                <button
+                  key={type}
+                  onDoubleClick={() => handleResearchTypeClick(type)}
+                  className="block text-xs text-slate-600 hover:text-teal-600 hover:underline cursor-pointer text-left truncate w-full"
+                  title={`Double-click to view ${type} papers`}
+                >
+                  • {type}
+                </button>
+              ))}
             </div>
           </div>
           <StatCard
