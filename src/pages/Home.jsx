@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { FileText, FlaskConical, MapPin, TrendingUp, Sparkles } from "lucide-react";
+import { FileText, FlaskConical, TrendingUp, Sparkles, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -17,10 +17,10 @@ export default function Home() {
 
   // Calculate stats
   const uniqueCompounds = new Set();
-  const uniqueProvinces = new Set();
+  const uniqueResearchTypes = new Set();
   papers.forEach(paper => {
     paper.pfas_compounds?.forEach(c => uniqueCompounds.add(c));
-    if (paper.province) uniqueProvinces.add(paper.province);
+    if (paper.research_type) uniqueResearchTypes.add(paper.research_type);
   });
 
   return (
@@ -78,9 +78,10 @@ export default function Home() {
             trend="Unique compounds studied"
           />
           <StatCard
-            title="Provinces"
-            value={`${uniqueProvinces.size} of 9`}
-            icon={MapPin}
+            title="Research Types"
+            value={uniqueResearchTypes.size}
+            icon={BookOpen}
+            trend="Unique research categories"
           />
           <StatCard
             title="Latest Year"
