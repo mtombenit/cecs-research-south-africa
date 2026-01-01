@@ -77,12 +77,18 @@ export default function Home() {
             icon={FlaskConical}
             trend="Unique compounds studied"
           />
-          <StatCard
-            title="Research Types"
-            value={uniqueResearchTypes.size}
-            icon={BookOpen}
-            trend="Unique research categories"
-          />
+          <div className="relative">
+            <StatCard
+              title="Research Types"
+              value={uniqueResearchTypes.size}
+              icon={BookOpen}
+            />
+            <div className="absolute bottom-3 left-4 right-4">
+              <p className="text-xs text-slate-500 line-clamp-2">
+                {Array.from(uniqueResearchTypes).join(', ')}
+              </p>
+            </div>
+          </div>
           <StatCard
             title="Latest Year"
             value={papers[0]?.publication_year || "—"}
