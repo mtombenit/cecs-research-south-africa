@@ -57,6 +57,20 @@ export default function Database() {
     });
   };
 
+  // Identify duplicates by title
+  const duplicateTitles = useMemo(() => {
+    const titleCount = {};
+    papers.forEach(paper => {
+      const title = paper.title?.toLowerCase().trim();
+      if (title) {
+        titleCount[title] = (titleCount[title] || 0) + 1;
+      }
+    });
+    return new Set(
+      Object.keys(titleCount).filter(title => titleCount[title] > 1)
+    );
+  }, [papers]);
+
   const filteredPapers = useMemo(() => {
     return papers.filter(paper => {
       // Global search filter - searches across all fields
@@ -158,9 +172,12 @@ export default function Database() {
               Showing {filteredPapers.length} of {papers.length} publications
             </p>
             <div className="grid gap-6">
-              {filteredPapers.map(paper => (
-                <PaperCard key={paper.id} paper={paper} />
-              ))}
+              {filteredPapers.map(paper => {
+                const isDuplicate = duplicateTitles.has(paper.title?.toLowerCase().trim());
+                return (
+                  <PaperCard key={paper.id} paper={paper} isDuplicate={isDuplicate} />
+                );
+              })}
             </div>
           </>
         ) : (

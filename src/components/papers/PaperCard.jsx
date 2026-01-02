@@ -2,11 +2,12 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import SavePaperButton from "@/components/collections/SavePaperButton";
+import DeleteDuplicateButton from "@/components/papers/DeleteDuplicateButton";
 import { FileText, MapPin, Calendar, ExternalLink, Users, Beaker, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
-export default function PaperCard({ paper }) {
+export default function PaperCard({ paper, isDuplicate = false }) {
   const researchTypeColors = {
     "Environmental Monitoring": "bg-emerald-100 text-emerald-700",
     "Human Health": "bg-rose-100 text-rose-700",
@@ -87,6 +88,11 @@ export default function PaperCard({ paper }) {
           </div>
           
           <div className="flex items-center gap-2">
+            {isDuplicate && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <DeleteDuplicateButton paperId={paper.id} paperTitle={paper.title} />
+              </div>
+            )}
             <div onClick={(e) => e.stopPropagation()}>
               <SavePaperButton paperId={paper.id} />
             </div>
