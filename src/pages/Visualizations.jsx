@@ -87,18 +87,12 @@ export default function Visualizations() {
       </div>
 
       {/* Visualizations */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 space-y-8">
-        <YearTimeline papers={filteredPapers} />
-        
-        <div className="grid lg:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <YearTimeline papers={filteredPapers} />
           <ProvinceDistribution papers={filteredPapers} />
           <ResearchTypeDistribution papers={filteredPapers} />
-        </div>
-
-        <div className="mt-12">
-          <div className="max-w-4xl">
-            <CompoundChart papers={filteredPapers} />
-          </div>
+          <CompoundChart papers={filteredPapers} />
         </div>
       </div>
     </div>
