@@ -91,7 +91,7 @@ export default function Database() {
             <div>
               <h1 className="text-3xl font-bold text-slate-900 mb-2">Research Database</h1>
               <p className="text-slate-600">
-                Browse and search PFAS research publications from South Africa
+                Browse and search CECs research publications from South Africa
               </p>
             </div>
             <ExportButton 
