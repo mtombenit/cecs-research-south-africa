@@ -95,7 +95,7 @@ export default function Visualizations() {
           <ResearchTypeDistribution papers={filteredPapers} />
         </div>
 
-        <div className="mt-32">
+        <div className="mt-12">
           <div className="max-w-4xl">
             <CompoundChart papers={filteredPapers} />
           </div>
