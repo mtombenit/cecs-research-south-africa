@@ -4,6 +4,7 @@ import { FileText, FlaskConical, TrendingUp, Sparkles, BookOpen } from "lucide-r
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import StatCard from "@/components/dashboard/StatCard";
 import RecentPapers from "@/components/dashboard/RecentPapers";
 import CompoundChart from "@/components/dashboard/CompoundChart";
@@ -77,18 +78,25 @@ export default function Home() {
             icon={FlaskConical}
             trend="Unique compounds studied"
           />
-          <div className="relative">
-            <StatCard
-              title="Research Types"
-              value={uniqueResearchTypes.size}
-              icon={BookOpen}
-            />
-            <div className="absolute bottom-3 left-4 right-4">
-              <p className="text-xs text-slate-500 line-clamp-2">
-                {Array.from(uniqueResearchTypes).join(', ')}
-              </p>
+          <Card className="relative overflow-hidden p-6 bg-white border-0 shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="flex items-start justify-between mb-4">
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-slate-500 tracking-wide uppercase">
+                  Research Types
+                </p>
+                <p className="text-3xl font-bold text-slate-900 tracking-tight">
+                  {uniqueResearchTypes.size}
+                </p>
+              </div>
+              <div className="p-3 bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl">
+                <BookOpen className="w-6 h-6 text-teal-600" />
+              </div>
             </div>
-          </div>
+            <p className="text-xs text-slate-500 line-clamp-2">
+              {Array.from(uniqueResearchTypes).join(', ')}
+            </p>
+            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-gradient-to-br from-teal-500/5 to-teal-500/10 rounded-full" />
+          </Card>
           <StatCard
             title="Latest Year"
             value={papers[0]?.publication_year || "—"}
