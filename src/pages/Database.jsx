@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { FileText, Loader2 } from "lucide-react";
@@ -12,9 +12,28 @@ export default function Database() {
     province: '',
     researchType: '',
     compound: '',
+    waterSource: '',
+    cecClass: '',
     yearFrom: '',
     yearTo: ''
   });
+
+  // Read URL parameters and apply them to filters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const province = urlParams.get('province');
+    const waterSource = urlParams.get('waterSource');
+    const cecClass = urlParams.get('cecClass');
+    
+    if (province || waterSource || cecClass) {
+      setFilters(prev => ({
+        ...prev,
+        ...(province && { province }),
+        ...(waterSource && { waterSource }),
+        ...(cecClass && { cecClass })
+      }));
+    }
+  }, []);
 
   const { data: papers = [], isLoading } = useQuery({
     queryKey: ['papers'],
@@ -31,6 +50,8 @@ export default function Database() {
       province: '',
       researchType: '',
       compound: '',
+      waterSource: '',
+      cecClass: '',
       yearFrom: '',
       yearTo: ''
     });
@@ -67,6 +88,18 @@ export default function Database() {
 
       // Compound filter
       if (filters.compound && !paper.pfas_compounds?.includes(filters.compound)) {
+        return false;
+      }
+
+      // Water source filter (matches against sample_matrix)
+      if (filters.waterSource && !paper.sample_matrix?.some(m => 
+        m.toLowerCase().includes(filters.waterSource.toLowerCase().replace(' water', ''))
+      )) {
+        return false;
+      }
+
+      // CEC class filter (for now, all data is PFAS)
+      if (filters.cecClass && filters.cecClass !== 'PFAS') {
         return false;
       }
 
