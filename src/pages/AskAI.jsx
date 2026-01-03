@@ -127,7 +127,7 @@ Guidelines:
 
 User Question: ${content}
 
-Please provide a helpful, accurate response based on the South African PFAS research database.`,
+Please provide a helpful, accurate response based on the South African CECs research database.`,
     });
 
     setMessages(prev => [...prev, { role: 'assistant', content: response }]);
