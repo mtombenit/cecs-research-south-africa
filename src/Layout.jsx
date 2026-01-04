@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
   FlaskConical, Home, Database, Sparkles, Plus, Menu, 
-  LogOut, User, TrendingUp, Bookmark, Activity, FileText
+  LogOut, User, TrendingUp, Bookmark, Activity
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
@@ -58,12 +58,12 @@ export default function Layout({ children, currentPageName }) {
         );
       })}
       <Link 
-        to={createPageUrl("SubmitPaper")} 
+        to={createPageUrl("AddPaper")} 
         onClick={() => mobile && setMobileOpen(false)}
       >
         <Button className={`bg-teal-600 hover:bg-teal-700 ${mobile ? 'w-full mt-4' : 'ml-2'}`}>
           <Plus className="w-4 h-4 mr-2" />
-          Submit Paper
+          Add Paper
         </Button>
       </Link>
     </div>
@@ -106,20 +106,12 @@ export default function Layout({ children, currentPageName }) {
                     </div>
                     <DropdownMenuSeparator />
                     {user.role === 'admin' && (
-                      <>
-                        <DropdownMenuItem asChild>
-                          <Link to={createPageUrl("ReviewSubmissions")}>
-                            <FileText className="w-4 h-4 mr-2" />
-                            Review Submissions
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={createPageUrl("AgentActivity")}>
-                            <Activity className="w-4 h-4 mr-2" />
-                            Agent Activity
-                          </Link>
-                        </DropdownMenuItem>
-                      </>
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AgentActivity")}>
+                          <Activity className="w-4 h-4 mr-2" />
+                          Agent Activity
+                        </Link>
+                      </DropdownMenuItem>
                     )}
                     <DropdownMenuItem onClick={() => base44.auth.logout()}>
                       <LogOut className="w-4 h-4 mr-2" />
@@ -162,26 +154,15 @@ export default function Layout({ children, currentPageName }) {
                         </div>
                       </div>
                       {user.role === 'admin' && (
-                        <>
-                          <Link to={createPageUrl("ReviewSubmissions")} onClick={() => setMobileOpen(false)}>
-                            <Button 
-                              variant="ghost" 
-                              className="w-full justify-start text-slate-600"
-                            >
-                              <FileText className="w-4 h-4 mr-2" />
-                              Review Submissions
-                            </Button>
-                          </Link>
-                          <Link to={createPageUrl("AgentActivity")} onClick={() => setMobileOpen(false)}>
-                            <Button 
-                              variant="ghost" 
-                              className="w-full justify-start text-slate-600"
-                            >
-                              <Activity className="w-4 h-4 mr-2" />
-                              Agent Activity
-                            </Button>
-                          </Link>
-                        </>
+                        <Link to={createPageUrl("AgentActivity")} onClick={() => setMobileOpen(false)}>
+                          <Button 
+                            variant="ghost" 
+                            className="w-full justify-start text-slate-600"
+                          >
+                            <Activity className="w-4 h-4 mr-2" />
+                            Agent Activity
+                          </Button>
+                        </Link>
                       )}
                       <Button 
                         variant="ghost" 

@@ -8,8 +8,6 @@ import Database from './pages/Database';
 import Home from './pages/Home';
 import PaperDetail from './pages/PaperDetail';
 import Visualizations from './pages/Visualizations';
-import SubmitPaper from './pages/SubmitPaper';
-import ReviewSubmissions from './pages/ReviewSubmissions';
 import __Layout from './Layout.jsx';
 
 
@@ -24,8 +22,6 @@ export const PAGES = {
     "Home": Home,
     "PaperDetail": PaperDetail,
     "Visualizations": Visualizations,
-    "SubmitPaper": SubmitPaper,
-    "ReviewSubmissions": ReviewSubmissions,
 }
 
 export const pagesConfig = {
