@@ -5,6 +5,11 @@ import { FileText, Loader2 } from "lucide-react";
 import SearchFilters from "@/components/papers/SearchFilters";
 import PaperCard from "@/components/papers/PaperCard";
 import ExportButton from "@/components/export/ExportButton";
+import ProvinceMapViz from "@/components/database-viz/ProvinceMapViz";
+import FilteredTimeline from "@/components/database-viz/FilteredTimeline";
+import AuthorNetwork from "@/components/database-viz/AuthorNetwork";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function Database() {
   const [filters, setFilters] = useState({
@@ -17,6 +22,8 @@ export default function Database() {
     yearFrom: '',
     yearTo: ''
   });
+  
+  const [showVisualizations, setShowVisualizations] = useState(true);
 
   // Read URL parameters and apply them to filters
   useEffect(() => {
@@ -135,17 +142,36 @@ export default function Database() {
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-start justify-between gap-4">
-            <div>
+            <div className="flex-1">
               <h1 className="text-3xl font-bold text-slate-900 mb-2">Research Database</h1>
               <p className="text-slate-600">
                 Browse and search CECs research publications from South Africa
               </p>
             </div>
-            <ExportButton 
-              data={filteredPapers} 
-              filename="pfas-research-papers"
-              disabled={isLoading}
-            />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowVisualizations(!showVisualizations)}
+                className="gap-2"
+              >
+                {showVisualizations ? (
+                  <>
+                    <ChevronUp className="w-4 h-4" />
+                    Hide Insights
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-4 h-4" />
+                    Show Insights
+                  </>
+                )}
+              </Button>
+              <ExportButton 
+                data={filteredPapers} 
+                filename="pfas-research-papers"
+                disabled={isLoading}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -158,6 +184,19 @@ export default function Database() {
           onClear={clearFilters}
         />
       </div>
+
+      {/* Visualizations */}
+      {showVisualizations && filteredPapers.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+          <div className="grid gap-6 mb-6">
+            <div className="grid lg:grid-cols-2 gap-6">
+              <ProvinceMapViz papers={filteredPapers} />
+              <FilteredTimeline papers={filteredPapers} />
+            </div>
+            <AuthorNetwork papers={filteredPapers} />
+          </div>
+        </div>
+      )}
 
       {/* Results */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
