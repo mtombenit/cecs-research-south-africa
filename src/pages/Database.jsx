@@ -97,8 +97,8 @@ export default function Database() {
         if (!matchesSearch) return false;
       }
 
-      // Province filter
-      if (filters.province && paper.province !== filters.province) {
+      // Province filter - "National" shows all provinces
+      if (filters.province && filters.province !== 'National' && paper.province !== filters.province) {
         return false;
       }
 
@@ -130,12 +130,13 @@ export default function Database() {
           matchesCecClass = 
             paper.keywords?.some(k => k.toLowerCase().includes(cecClassLower)) ||
             paper.title?.toLowerCase().includes(cecClassLower) ||
-            paper.abstract?.toLowerCase().includes(cecClassLower);
+            paper.abstract?.toLowerCase().includes(cecClassLower) ||
+            paper.research_type?.toLowerCase().includes(cecClassLower);
         }
         if (!matchesCecClass) return false;
       }
 
-      // Year filters
+      // Year filters - only apply if values are set
       if (filters.yearFrom && paper.publication_year < parseInt(filters.yearFrom)) {
         return false;
       }

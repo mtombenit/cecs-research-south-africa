@@ -8,8 +8,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import YearRangePicker from "./YearRangePicker";
 
 const provinces = [
-  "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", 
-  "Limpopo", "Mpumalanga", "Northern Cape", "North West", "Western Cape"
+  "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", "Limpopo",
+  "Mpumalanga", "Northern Cape", "North West", "Western Cape", "National"
 ];
 
 const researchTypes = [

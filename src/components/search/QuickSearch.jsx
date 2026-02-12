@@ -7,8 +7,8 @@ import { Search, MapPin, Droplet, FlaskConical } from "lucide-react";
 import { createPageUrl } from "@/utils";
 
 const PROVINCES = [
-  "Western Cape", "Mpumalanga", "Northern Cape", "KwaZulu-Natal", 
-  "Gauteng", "Eastern Cape", "North West", "Free State", "Limpopo"
+  "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", "Limpopo",
+  "Mpumalanga", "Northern Cape", "North West", "Western Cape", "National"
 ];
 
 const WATER_SOURCES = [
