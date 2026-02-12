@@ -128,10 +128,10 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           <Input
-            placeholder="Search across all fields: title, author, keywords, abstract, findings, location, journal..."
+            placeholder="Search: title, author, keywords..."
             value={filters.search || ""}
             onChange={(e) => onFilterChange('search', e.target.value)}
-            className="pl-12 h-12 bg-white border-slate-200 focus:border-teal-500 focus:ring-teal-500/20 text-base"
+            className="pl-12 h-12 bg-white border-slate-200 focus:border-teal-500 focus:ring-teal-500/20 text-sm sm:text-base"
           />
         </div>
         
@@ -237,43 +237,43 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
 
       {/* Active filters display */}
       {activeFilterCount > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 overflow-x-auto pb-1">
           {filters.search && (
-            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100">
-              Search: "{filters.search}"
-              <button onClick={() => onFilterChange('search', '')} className="ml-1.5">
+            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100 text-xs sm:text-sm whitespace-nowrap">
+              Search: "{filters.search.length > 20 ? filters.search.substring(0, 20) + '...' : filters.search}"
+              <button onClick={() => onFilterChange('search', '')} className="ml-1.5 shrink-0">
                 <X className="w-3 h-3" />
               </button>
             </Badge>
           )}
           {filters.province && (
-            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100">
+            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100 text-xs sm:text-sm whitespace-nowrap">
               {filters.province}
-              <button onClick={() => onFilterChange('province', '')} className="ml-1.5">
+              <button onClick={() => onFilterChange('province', '')} className="ml-1.5 shrink-0">
                 <X className="w-3 h-3" />
               </button>
             </Badge>
           )}
           {filters.waterType && (
-            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100">
+            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100 text-xs sm:text-sm whitespace-nowrap">
               {filters.waterType}
-              <button onClick={() => onFilterChange('waterType', '')} className="ml-1.5">
+              <button onClick={() => onFilterChange('waterType', '')} className="ml-1.5 shrink-0">
                 <X className="w-3 h-3" />
               </button>
             </Badge>
           )}
           {filters.cecCategory && (
-            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100">
+            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100 text-xs sm:text-sm whitespace-nowrap">
               {filters.cecCategory}
-              <button onClick={() => onFilterChange('cecCategory', '')} className="ml-1.5">
+              <button onClick={() => onFilterChange('cecCategory', '')} className="ml-1.5 shrink-0">
                 <X className="w-3 h-3" />
               </button>
             </Badge>
           )}
           {(filters.yearFrom || filters.yearTo) && (
-            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100">
+            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100 text-xs sm:text-sm whitespace-nowrap">
               {filters.yearFrom || '...'} - {filters.yearTo || '...'}
-              <button onClick={() => { onFilterChange('yearFrom', ''); onFilterChange('yearTo', ''); }} className="ml-1.5">
+              <button onClick={() => { onFilterChange('yearFrom', ''); onFilterChange('yearTo', ''); }} className="ml-1.5 shrink-0">
                 <X className="w-3 h-3" />
               </button>
             </Badge>

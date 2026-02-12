@@ -175,29 +175,32 @@ export default function Database() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30">
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-start justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Research Database</h1>
-              <p className="text-slate-600">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1 sm:mb-2">Research Database</h1>
+              <p className="text-sm sm:text-base text-slate-600">
                 Browse and search CECs research publications from South Africa
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <Button
                 variant="outline"
                 onClick={() => setShowVisualizations(!showVisualizations)}
-                className="gap-2"
+                className="gap-2 flex-1 sm:flex-initial text-sm"
+                size="sm"
               >
                 {showVisualizations ? (
                   <>
                     <ChevronUp className="w-4 h-4" />
-                    Hide Insights
+                    <span className="hidden sm:inline">Hide Insights</span>
+                    <span className="sm:hidden">Hide</span>
                   </>
                 ) : (
                   <>
                     <ChevronDown className="w-4 h-4" />
-                    Show Insights
+                    <span className="hidden sm:inline">Show Insights</span>
+                    <span className="sm:hidden">Show</span>
                   </>
                 )}
               </Button>
@@ -212,7 +215,7 @@ export default function Database() {
       </div>
 
       {/* Filters */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <SearchFilters 
           filters={filters} 
           onFilterChange={handleFilterChange}
@@ -222,9 +225,9 @@ export default function Database() {
 
       {/* Visualizations */}
       {showVisualizations && filteredPapers.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-          <div className="grid gap-6 mb-6">
-            <div className="grid lg:grid-cols-2 gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6">
+          <div className="grid gap-4 sm:gap-6 mb-4 sm:mb-6">
+            <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
               <ProvinceMapViz papers={filteredPapers} />
               <FilteredTimeline papers={filteredPapers} />
             </div>
@@ -242,10 +245,10 @@ export default function Database() {
           </div>
         ) : filteredPapers.length > 0 ? (
           <>
-            <p className="text-sm text-slate-500 mb-6">
+            <p className="text-xs sm:text-sm text-slate-500 mb-4 sm:mb-6">
               Showing {filteredPapers.length} of {papers.length} publications
             </p>
-            <div className="grid gap-6">
+            <div className="grid gap-4 sm:gap-6">
               {filteredPapers.map(paper => {
                 const isDuplicate = duplicateTitles.has(paper.title?.toLowerCase().trim());
                 return (
