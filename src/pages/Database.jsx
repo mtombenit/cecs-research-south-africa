@@ -15,10 +15,8 @@ export default function Database() {
   const [filters, setFilters] = useState({
     search: '',
     province: '',
-    researchType: '',
-    compound: '',
-    waterSource: '',
-    cecClass: '',
+    waterType: '',
+    cecCategory: '',
     yearFrom: '',
     yearTo: ''
   });
@@ -29,15 +27,15 @@ export default function Database() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const province = urlParams.get('province');
-    const waterSource = urlParams.get('waterSource');
-    const cecClass = urlParams.get('cecClass');
-    
-    if (province || waterSource || cecClass) {
+    const waterType = urlParams.get('waterType');
+    const cecCategory = urlParams.get('cecCategory');
+
+    if (province || waterType || cecCategory) {
       setFilters(prev => ({
         ...prev,
         ...(province && { province }),
-        ...(waterSource && { waterSource }),
-        ...(cecClass && { cecClass })
+        ...(waterType && { waterType }),
+        ...(cecCategory && { cecCategory })
       }));
     }
   }, []);
@@ -55,10 +53,8 @@ export default function Database() {
     setFilters({
       search: '',
       province: '',
-      researchType: '',
-      compound: '',
-      waterSource: '',
-      cecClass: '',
+      waterType: '',
+      cecCategory: '',
       yearFrom: '',
       yearTo: ''
     });
@@ -102,38 +98,65 @@ export default function Database() {
         return false;
       }
 
-      // Research type filter
-      if (filters.researchType && paper.research_type !== filters.researchType) {
-        return false;
+      // Water Type filter - strict matching against sample_matrix
+      if (filters.waterType) {
+        const waterTypeLower = filters.waterType.toLowerCase();
+        const hasWaterType = paper.sample_matrix?.some(m => {
+          const matrixLower = m.toLowerCase();
+          // Exact or partial match logic
+          if (waterTypeLower.includes('dam')) return matrixLower.includes('dam');
+          if (waterTypeLower.includes('drinking')) return matrixLower.includes('drinking') || matrixLower.includes('tap');
+          if (waterTypeLower.includes('groundwater')) return matrixLower.includes('groundwater') || matrixLower.includes('borehole');
+          if (waterTypeLower.includes('marine') || waterTypeLower.includes('coastal')) {
+            return matrixLower.includes('marine') || matrixLower.includes('coastal') || matrixLower.includes('ocean') || matrixLower.includes('sea');
+          }
+          if (waterTypeLower.includes('river')) return matrixLower.includes('river') || matrixLower.includes('stream');
+          if (waterTypeLower.includes('wastewater')) return matrixLower.includes('wastewater') || matrixLower.includes('sewage') || matrixLower.includes('effluent');
+          return matrixLower.includes(waterTypeLower);
+        });
+        if (!hasWaterType) return false;
       }
 
-      // Compound filter
-      if (filters.compound && !paper.pfas_compounds?.includes(filters.compound)) {
-        return false;
-      }
+      // CEC Category filter - strict matching
+      if (filters.cecCategory) {
+        const category = filters.cecCategory.toLowerCase();
+        let matchesCategory = false;
 
-      // Water source filter (matches against sample_matrix)
-      if (filters.waterSource && !paper.sample_matrix?.some(m => 
-        m.toLowerCase().includes(filters.waterSource.toLowerCase().replace(' water', ''))
-      )) {
-        return false;
-      }
-
-      // CEC class filter
-      if (filters.cecClass) {
-        const cecClassLower = filters.cecClass.toLowerCase();
-        let matchesCecClass = false;
-
-        if (cecClassLower === 'pfas') {
-          matchesCecClass = paper.pfas_compounds?.length > 0;
-        } else {
-          matchesCecClass = 
-            paper.keywords?.some(k => k.toLowerCase().includes(cecClassLower)) ||
-            paper.title?.toLowerCase().includes(cecClassLower) ||
-            paper.abstract?.toLowerCase().includes(cecClassLower) ||
-            paper.research_type?.toLowerCase().includes(cecClassLower);
+        if (category === 'pfas') {
+          matchesCategory = paper.pfas_compounds?.length > 0 ||
+            paper.keywords?.some(k => k.toLowerCase().includes('pfas') || k.toLowerCase().includes('pfos') || k.toLowerCase().includes('pfoa')) ||
+            paper.title?.toLowerCase().includes('pfas') ||
+            paper.abstract?.toLowerCase().includes('pfas');
+        } else if (category === 'microplastics') {
+          matchesCategory = 
+            paper.keywords?.some(k => k.toLowerCase().includes('microplastic') || k.toLowerCase().includes('plastic')) ||
+            paper.title?.toLowerCase().includes('microplastic') ||
+            paper.abstract?.toLowerCase().includes('microplastic');
+        } else if (category === 'pharmaceuticals') {
+          matchesCategory = 
+            paper.keywords?.some(k => k.toLowerCase().includes('pharmaceutical') || k.toLowerCase().includes('drug') || k.toLowerCase().includes('medicine')) ||
+            paper.title?.toLowerCase().includes('pharmaceutical') ||
+            paper.abstract?.toLowerCase().includes('pharmaceutical');
+        } else if (category.includes('pesticide') || category.includes('herbicide')) {
+          matchesCategory = 
+            paper.keywords?.some(k => k.toLowerCase().includes('pesticide') || k.toLowerCase().includes('herbicide') || k.toLowerCase().includes('agrochemical')) ||
+            paper.title?.toLowerCase().includes('pesticide') ||
+            paper.title?.toLowerCase().includes('herbicide') ||
+            paper.abstract?.toLowerCase().includes('pesticide') ||
+            paper.abstract?.toLowerCase().includes('herbicide');
+        } else if (category.includes('personal care')) {
+          matchesCategory = 
+            paper.keywords?.some(k => k.toLowerCase().includes('personal care') || k.toLowerCase().includes('cosmetic') || k.toLowerCase().includes('pcp')) ||
+            paper.title?.toLowerCase().includes('personal care') ||
+            paper.abstract?.toLowerCase().includes('personal care');
+        } else if (category === 'nanomaterials') {
+          matchesCategory = 
+            paper.keywords?.some(k => k.toLowerCase().includes('nano') || k.toLowerCase().includes('nanoparticle')) ||
+            paper.title?.toLowerCase().includes('nano') ||
+            paper.abstract?.toLowerCase().includes('nano');
         }
-        if (!matchesCecClass) return false;
+
+        if (!matchesCategory) return false;
       }
 
       // Year filters - only apply if values are set

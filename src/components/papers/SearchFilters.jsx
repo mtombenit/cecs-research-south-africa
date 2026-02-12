@@ -12,14 +12,22 @@ const provinces = [
   "Mpumalanga", "Northern Cape", "North West", "Western Cape", "National"
 ];
 
-const researchTypes = [
-  "Environmental Monitoring", "Human Health", "Water Quality", 
-  "Soil Contamination", "Wildlife", "Treatment Technology", "Risk Assessment", "Review"
+const waterTypes = [
+  "Dam Water",
+  "Drinking Water",
+  "Groundwater",
+  "Marine-Coastal",
+  "River Water",
+  "Wastewater"
 ];
 
-const commonCompounds = [
-  "PFOA", "PFOS", "PFHxS", "PFNA", "PFDA", "PFUnA", "PFDoA", 
-  "PFBS", "PFHxA", "PFHpA", "GenX", "PFBA"
+const cecCategories = [
+  "Microplastics",
+  "Nanomaterials",
+  "Personal Care Products",
+  "Pesticides & Herbicides",
+  "PFAS",
+  "Pharmaceuticals"
 ];
 
 export default function SearchFilters({ filters, onFilterChange, onClear }) {
@@ -28,8 +36,8 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
   const activeFilterCount = [
     filters.search,
     filters.province,
-    filters.researchType,
-    filters.compound,
+    filters.waterType,
+    filters.cecCategory,
     filters.yearFrom,
     filters.yearTo
   ].filter(Boolean).length;
@@ -55,17 +63,17 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-slate-700 mb-2 block">Research Type</label>
+        <label className="text-sm font-medium text-slate-700 mb-2 block">Water Type</label>
         <Select 
-          value={filters.researchType || ""} 
-          onValueChange={(value) => onFilterChange('researchType', value)}
+          value={filters.waterType || ""} 
+          onValueChange={(value) => onFilterChange('waterType', value)}
         >
           <SelectTrigger className="w-full bg-white">
-            <SelectValue placeholder="All types" />
+            <SelectValue placeholder="All water types" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={null}>All types</SelectItem>
-            {researchTypes.map(t => (
+            <SelectItem value={null}>All water types</SelectItem>
+            {waterTypes.map(t => (
               <SelectItem key={t} value={t}>{t}</SelectItem>
             ))}
           </SelectContent>
@@ -73,17 +81,17 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-slate-700 mb-2 block">PFAS Compound</label>
+        <label className="text-sm font-medium text-slate-700 mb-2 block">CEC Category</label>
         <Select 
-          value={filters.compound || ""} 
-          onValueChange={(value) => onFilterChange('compound', value)}
+          value={filters.cecCategory || ""} 
+          onValueChange={(value) => onFilterChange('cecCategory', value)}
         >
           <SelectTrigger className="w-full bg-white">
-            <SelectValue placeholder="All compounds" />
+            <SelectValue placeholder="All CEC categories" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={null}>All compounds</SelectItem>
-            {commonCompounds.map(c => (
+            <SelectItem value={null}>All CEC categories</SelectItem>
+            {cecCategories.map(c => (
               <SelectItem key={c} value={c}>{c}</SelectItem>
             ))}
           </SelectContent>
@@ -165,7 +173,7 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
           onValueChange={(value) => onFilterChange('province', value)}
         >
           <SelectTrigger className="bg-white h-10">
-            <SelectValue placeholder="Filter by Province" />
+            <SelectValue placeholder="Province" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={null}>All provinces</SelectItem>
@@ -176,30 +184,30 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
         </Select>
 
         <Select 
-          value={filters.researchType || ""} 
-          onValueChange={(value) => onFilterChange('researchType', value)}
+          value={filters.waterType || ""} 
+          onValueChange={(value) => onFilterChange('waterType', value)}
         >
           <SelectTrigger className="bg-white h-10">
-            <SelectValue placeholder="Filter by Research Type" />
+            <SelectValue placeholder="Water Type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={null}>All types</SelectItem>
-            {researchTypes.map(t => (
+            <SelectItem value={null}>All water types</SelectItem>
+            {waterTypes.map(t => (
               <SelectItem key={t} value={t}>{t}</SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         <Select 
-          value={filters.compound || ""} 
-          onValueChange={(value) => onFilterChange('compound', value)}
+          value={filters.cecCategory || ""} 
+          onValueChange={(value) => onFilterChange('cecCategory', value)}
         >
           <SelectTrigger className="bg-white h-10">
-            <SelectValue placeholder="Filter by PFAS Compound" />
+            <SelectValue placeholder="CEC Category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={null}>All compounds</SelectItem>
-            {commonCompounds.map(c => (
+            <SelectItem value={null}>All CEC categories</SelectItem>
+            {cecCategories.map(c => (
               <SelectItem key={c} value={c}>{c}</SelectItem>
             ))}
           </SelectContent>
@@ -246,18 +254,18 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
               </button>
             </Badge>
           )}
-          {filters.researchType && (
+          {filters.waterType && (
             <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100">
-              {filters.researchType}
-              <button onClick={() => onFilterChange('researchType', '')} className="ml-1.5">
+              {filters.waterType}
+              <button onClick={() => onFilterChange('waterType', '')} className="ml-1.5">
                 <X className="w-3 h-3" />
               </button>
             </Badge>
           )}
-          {filters.compound && (
+          {filters.cecCategory && (
             <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100">
-              {filters.compound}
-              <button onClick={() => onFilterChange('compound', '')} className="ml-1.5">
+              {filters.cecCategory}
+              <button onClick={() => onFilterChange('cecCategory', '')} className="ml-1.5">
                 <X className="w-3 h-3" />
               </button>
             </Badge>
