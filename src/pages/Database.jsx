@@ -228,10 +228,29 @@ export default function Database() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6">
           <div className="grid gap-4 sm:gap-6 mb-4 sm:mb-6">
             <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
-              <ProvinceMapViz papers={filteredPapers} />
-              <FilteredTimeline papers={filteredPapers} />
+              <ProvinceMapViz 
+                papers={filteredPapers} 
+                onProvinceClick={(province) => {
+                  handleFilterChange('province', province);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
+              <FilteredTimeline 
+                papers={filteredPapers} 
+                onYearClick={(year) => {
+                  handleFilterChange('yearFrom', year.toString());
+                  handleFilterChange('yearTo', year.toString());
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
             </div>
-            <AuthorNetwork papers={filteredPapers} />
+            <AuthorNetwork 
+              papers={filteredPapers} 
+              onAuthorClick={(author) => {
+                handleFilterChange('search', author);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
           </div>
         </div>
       )}

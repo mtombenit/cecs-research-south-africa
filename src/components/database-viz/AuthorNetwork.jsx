@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
 
-export default function AuthorNetwork({ papers }) {
+export default function AuthorNetwork({ papers, onAuthorClick }) {
   const [selectedAuthor, setSelectedAuthor] = useState(null);
   
   const { authorStats, collaborations } = useMemo(() => {
@@ -53,6 +53,12 @@ export default function AuthorNetwork({ papers }) {
     setSelectedAuthor(selectedAuthor?.author === authorData.author ? null : authorData);
   };
 
+  const handleFilterByAuthor = (authorName) => {
+    if (onAuthorClick) {
+      onAuthorClick(authorName);
+    }
+  };
+
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader>
@@ -88,9 +94,19 @@ export default function AuthorNetwork({ papers }) {
 
           {selectedAuthor && (
             <div className="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-              <h4 className="font-semibold text-slate-900 mb-3">
-                {selectedAuthor.author}'s Network
-              </h4>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-semibold text-slate-900">
+                  {selectedAuthor.author}'s Network
+                </h4>
+                {onAuthorClick && (
+                  <button
+                    onClick={() => handleFilterByAuthor(selectedAuthor.author)}
+                    className="text-xs font-medium text-teal-600 hover:text-teal-700"
+                  >
+                    Filter by this author →
+                  </button>
+                )}
+              </div>
               <div className="space-y-3">
                 <div>
                   <p className="text-xs font-medium text-slate-500 uppercase mb-2">Publications</p>

@@ -27,7 +27,7 @@ function MapUpdater({ center }) {
   return null;
 }
 
-export default function ProvinceMapViz({ papers }) {
+export default function ProvinceMapViz({ papers, onProvinceClick }) {
   const provinceData = useMemo(() => {
     const counts = {};
     papers.forEach(paper => {
@@ -74,11 +74,25 @@ export default function ProvinceMapViz({ papers }) {
                 fillOpacity={0.6}
                 color="#fff"
                 weight={2}
+                eventHandlers={{
+                  click: () => {
+                    if (onProvinceClick) {
+                      onProvinceClick(province);
+                    }
+                  }
+                }}
+                className="cursor-pointer hover:opacity-80"
               >
                 <Popup>
                   <div className="text-sm">
                     <p className="font-semibold">{province}</p>
                     <p className="text-slate-600">{count} publication{count !== 1 ? 's' : ''}</p>
+                    <button
+                      onClick={() => onProvinceClick && onProvinceClick(province)}
+                      className="mt-2 text-teal-600 hover:text-teal-700 text-xs font-medium"
+                    >
+                      Filter by {province} →
+                    </button>
                   </div>
                 </Popup>
               </CircleMarker>
