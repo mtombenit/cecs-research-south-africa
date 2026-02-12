@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { FileText, Loader2 } from "lucide-react";
+import { FileText, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import SearchFilters from "@/components/papers/SearchFilters";
 import PaperCard from "@/components/papers/PaperCard";
 import ExportButton from "@/components/export/ExportButton";
@@ -22,6 +22,8 @@ export default function Database() {
   });
   
   const [showVisualizations, setShowVisualizations] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   // Read URL parameters and apply them to filters
   useEffect(() => {
@@ -47,6 +49,7 @@ export default function Database() {
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+    setCurrentPage(1); // Reset to first page when filters change
   };
 
   const clearFilters = () => {
@@ -75,7 +78,7 @@ export default function Database() {
   }, [papers]);
 
   const filteredPapers = useMemo(() => {
-    return papers.filter(paper => {
+    const filtered = papers.filter(paper => {
       // Global search filter - searches across all fields
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
@@ -169,7 +172,18 @@ export default function Database() {
 
       return true;
     });
+    
+    return filtered;
   }, [papers, filters]);
+
+  // Paginate filtered papers
+  const paginatedPapers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredPapers.slice(startIndex, endIndex);
+  }, [filteredPapers, currentPage]);
+
+  const totalPages = Math.ceil(filteredPapers.length / itemsPerPage);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30">
@@ -266,16 +280,78 @@ export default function Database() {
         ) : filteredPapers.length > 0 ? (
           <>
             <p className="text-xs sm:text-sm text-slate-500 mb-4 sm:mb-6">
-              Showing {filteredPapers.length} of {papers.length} publications
+              Showing {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, filteredPapers.length)} of {filteredPapers.length} publications
+              {filteredPapers.length !== papers.length && ` (${papers.length} total)`}
             </p>
             <div className="grid gap-4 sm:gap-6">
-              {filteredPapers.map(paper => {
+              {paginatedPapers.map(paper => {
                 const isDuplicate = duplicateTitles.has(paper.title?.toLowerCase().trim());
                 return (
                   <PaperCard key={paper.id} paper={paper} isDuplicate={isDuplicate} />
                 );
               })}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Previous
+                </Button>
+                
+                <div className="flex items-center gap-1">
+                  {[...Array(totalPages)].map((_, idx) => {
+                    const pageNum = idx + 1;
+                    // Show first page, last page, current page, and pages around current
+                    const showPage = 
+                      pageNum === 1 || 
+                      pageNum === totalPages || 
+                      (pageNum >= currentPage - 1 && pageNum <= currentPage + 1);
+                    
+                    const showEllipsis = 
+                      (pageNum === 2 && currentPage > 3) ||
+                      (pageNum === totalPages - 1 && currentPage < totalPages - 2);
+
+                    if (showEllipsis) {
+                      return <span key={pageNum} className="px-2 text-slate-400">...</span>;
+                    }
+                    
+                    if (!showPage) return null;
+
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setCurrentPage(pageNum);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className={currentPage === pageNum ? "bg-teal-600 hover:bg-teal-700" : ""}
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            )}
           </>
         ) : (
           <div className="text-center py-20">
