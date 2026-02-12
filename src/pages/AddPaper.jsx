@@ -183,43 +183,66 @@ export default function AddPaper() {
           const { file_url } = await base44.integrations.Core.UploadFile({ file });
           console.log(`File uploaded: ${file_url}`);
 
-          // Extract data from file
+          // Enhanced AI extraction with detailed instructions
           console.log(`Extracting data from ${file.name}...`);
-          const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
-            file_url,
-            json_schema: {
+          const result = await base44.integrations.Core.InvokeLLM({
+            prompt: `Extract detailed metadata from this research paper. Pay special attention to:
+
+PUBLICATION YEAR: Look for publication date in header, footer, citations, or metadata. Extract the 4-digit year.
+
+JOURNAL: Find the journal/publication name - often at the top of the first page or in citations.
+
+DOI: Look for "DOI:", "doi.org/", or similar identifiers. Extract the full DOI (e.g., 10.1234/example).
+
+STUDY LOCATION: Identify specific cities, regions, provinces, or areas in South Africa where research was conducted.
+
+PROVINCE: Determine which South African province(s): Eastern Cape, Free State, Gauteng, KwaZulu-Natal, Limpopo, Mpumalanga, Northern Cape, North West, or Western Cape.
+
+INSTITUTION: Find the affiliated university or research institution.
+
+Extract all available information accurately. If a field is not found, leave it empty or null.`,
+            file_urls: [file_url],
+            response_json_schema: {
               type: "object",
               properties: {
-                title: { type: "string" },
-                authors: { type: "array", items: { type: "string" } },
-                abstract: { type: "string" },
-                publication_year: { type: "number" },
-                journal: { type: "string" },
-                doi: { type: "string" },
-                pfas_compounds: { type: "array", items: { type: "string" } },
-                study_location: { type: "string" },
-                province: { type: "string" },
-                research_type: { type: "string" },
-                sample_matrix: { type: "array", items: { type: "string" } },
-                key_findings: { type: "string" },
-                concentrations_reported: { type: "string" },
-                keywords: { type: "array", items: { type: "string" } },
-                institution: { type: "string" }
+                title: { type: "string", description: "Full paper title" },
+                authors: { type: "array", items: { type: "string" }, description: "List of all authors" },
+                abstract: { type: "string", description: "Complete abstract text" },
+                publication_year: { type: "number", description: "4-digit publication year" },
+                journal: { type: "string", description: "Journal or publication name" },
+                doi: { type: "string", description: "Digital Object Identifier (DOI)" },
+                pfas_compounds: { type: "array", items: { type: "string" }, description: "PFAS compounds studied (PFOA, PFOS, etc.)" },
+                study_location: { type: "string", description: "Specific location in South Africa" },
+                province: { type: "string", description: "South African province" },
+                research_type: { type: "string", description: "Type of research" },
+                sample_matrix: { type: "array", items: { type: "string" }, description: "Sample types (water, soil, etc.)" },
+                key_findings: { type: "string", description: "Summary of main findings" },
+                concentrations_reported: { type: "string", description: "Concentration ranges found" },
+                keywords: { type: "array", items: { type: "string" }, description: "Research keywords" },
+                institution: { type: "string", description: "Research institution or university" }
               }
             }
           });
 
-          console.log(`Extraction result for ${file.name}:`, result);
+          // Convert LLM response to extraction result format
+          const extractionResult = {
+            status: result ? "success" : "error",
+            output: result,
+            details: result ? null : "Failed to extract data"
+          };
+          const result2 = extractionResult;
 
-          if (result.status === "success" && result.output) {
+          console.log(`Extraction result for ${file.name}:`, result2);
+
+          if (result2.status === "success" && result2.output) {
             const extractedPaper = {
-              ...result.output,
+              ...result2.output,
               pdf_url: file_url,
-              authors: result.output.authors || [],
-              pfas_compounds: result.output.pfas_compounds || [],
-              sample_matrix: result.output.sample_matrix || [],
-              keywords: result.output.keywords || [],
-              publication_year: result.output.publication_year || new Date().getFullYear()
+              authors: result2.output.authors || [],
+              pfas_compounds: result2.output.pfas_compounds || [],
+              sample_matrix: result2.output.sample_matrix || [],
+              keywords: result2.output.keywords || [],
+              publication_year: result2.output.publication_year || new Date().getFullYear()
             };
 
             // AI validation: Check if research is South African
@@ -279,8 +302,8 @@ Return your analysis.`,
               papers.push(extractedPaper);
             }
           } else {
-            console.error(`Extraction failed for ${file.name}:`, result);
-            toast.error(`Could not extract data from ${file.name}${result.details ? ': ' + result.details : ''}`);
+            console.error(`Extraction failed for ${file.name}:`, result2);
+            toast.error(`Could not extract data from ${file.name}${result2.details ? ': ' + result2.details : ''}`);
             extractionErrors++;
           }
         } catch (error) {
