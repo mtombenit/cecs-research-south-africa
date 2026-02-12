@@ -222,6 +222,51 @@ export default function AddPaper() {
               publication_year: result.output.publication_year || new Date().getFullYear()
             };
 
+            // AI validation: Check if research is South African
+            console.log(`Validating South African research: ${extractedPaper.title}`);
+            try {
+              const validationResult = await base44.integrations.Core.InvokeLLM({
+                prompt: `Analyze this research paper and determine if it is specifically about South African research, locations, or studies conducted in South Africa.
+
+Research Paper:
+Title: ${extractedPaper.title || 'N/A'}
+Abstract: ${extractedPaper.abstract || 'N/A'}
+Keywords: ${extractedPaper.keywords?.join(', ') || 'N/A'}
+Study Location: ${extractedPaper.study_location || 'N/A'}
+Province: ${extractedPaper.province || 'N/A'}
+Institution: ${extractedPaper.institution || 'N/A'}
+Authors: ${extractedPaper.authors?.join(', ') || 'N/A'}
+
+Determine if this paper is about South African research. Look for:
+1. Study conducted in South Africa
+2. South African locations, provinces, cities
+3. South African institutions or authors
+4. Research specifically about South African water resources, environment, or populations
+
+Return your analysis.`,
+                response_json_schema: {
+                  type: "object",
+                  properties: {
+                    is_south_african: { type: "boolean" },
+                    confidence: { type: "number" },
+                    reason: { type: "string" }
+                  }
+                }
+              });
+
+              console.log(`Validation result for ${extractedPaper.title}:`, validationResult);
+
+              if (!validationResult.is_south_african) {
+                console.log(`Rejected non-South African paper: ${extractedPaper.title} - ${validationResult.reason}`);
+                toast.error(`Rejected: "${extractedPaper.title}" - Not South African research. ${validationResult.reason}`);
+                extractionErrors++;
+                continue;
+              }
+            } catch (error) {
+              console.error(`Error validating paper ${extractedPaper.title}:`, error);
+              toast.warning(`Could not validate South African status for "${extractedPaper.title}". Proceeding with caution.`);
+            }
+
             console.log(`Checking for duplicates: ${extractedPaper.title}`);
             // Check for duplicates
             const duplicateCheck = await checkDuplicate(extractedPaper);
