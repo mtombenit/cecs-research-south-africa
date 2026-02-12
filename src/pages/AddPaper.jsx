@@ -185,6 +185,7 @@ export default function AddPaper() {
 
           // Enhanced AI extraction with detailed instructions
           console.log(`Extracting data from ${file.name}...`);
+          setUploadStatus(`Extracting data from ${file.name}... (${fileNum}/${totalFiles})`);
           const result = await base44.integrations.Core.InvokeLLM({
             prompt: `Extract detailed metadata from this research paper. Pay special attention to:
 
