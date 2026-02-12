@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Filter, X, SlidersHorizontal } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import YearRangePicker from "./YearRangePicker";
+import AISearchBox from "@/components/search/AISearchBox";
 
 const provinces = [
   "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", "Limpopo",
@@ -30,8 +31,18 @@ const cecCategories = [
   "Pharmaceuticals"
 ];
 
-export default function SearchFilters({ filters, onFilterChange, onClear }) {
+export default function SearchFilters({ filters, onFilterChange, onClear, papers }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showAISearch, setShowAISearch] = useState(true);
+
+  const handleAIFiltersApply = (aiFilters) => {
+    // Apply all filters from AI search
+    Object.entries(aiFilters).forEach(([key, value]) => {
+      if (value) {
+        onFilterChange(key, value);
+      }
+    });
+  };
   
   const activeFilterCount = [
     filters.search,
@@ -123,7 +134,14 @@ export default function SearchFilters({ filters, onFilterChange, onClear }) {
 
   return (
     <div className="space-y-4">
-      {/* Global Search bar */}
+      {/* AI-Powered Search */}
+      {showAISearch && (
+        <div className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg p-4 border border-teal-100">
+          <AISearchBox onFiltersApply={handleAIFiltersApply} papers={papers} />
+        </div>
+      )}
+
+      {/* Traditional Search bar */}
       <div className="flex gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />

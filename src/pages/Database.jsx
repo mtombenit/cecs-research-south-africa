@@ -220,6 +220,7 @@ export default function Database() {
           filters={filters} 
           onFilterChange={handleFilterChange}
           onClear={clearFilters}
+          papers={papers}
         />
       </div>
 
