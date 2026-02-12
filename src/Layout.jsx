@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import FloatingAIAssistant from "@/components/ai/FloatingAIAssistant";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -185,6 +186,9 @@ export default function Layout({ children, currentPageName }) {
       <main>
         {children}
       </main>
+
+      {/* Floating AI Assistant */}
+      <FloatingAIAssistant />
 
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 mt-auto">
