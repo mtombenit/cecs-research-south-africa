@@ -12,12 +12,12 @@ const PROVINCES = [
 ];
 
 const WATER_SOURCES = [
-  "Dam Water", "River Water", "Groundwater", "Drinking Water", "Wastewater"
+  "Dam Water", "Drinking Water", "Groundwater", "Marine-Coastal", "River Water", "Wastewater"
 ];
 
 const CEC_CLASSES = [
-  "PFAS", "Personal Care Products", "Pesticides & Herbicides", 
-  "Pharmaceuticals", "Drugs of Abuse"
+  "Microplastics", "Nanomaterials", "Personal Care Products", 
+  "Pesticides & Herbicides", "PFAS", "Pharmaceuticals"
 ];
 
 export default function QuickSearch() {

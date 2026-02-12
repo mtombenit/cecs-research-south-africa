@@ -119,9 +119,20 @@ export default function Database() {
         return false;
       }
 
-      // CEC class filter (for now, all data is PFAS)
-      if (filters.cecClass && filters.cecClass !== 'PFAS') {
-        return false;
+      // CEC class filter
+      if (filters.cecClass) {
+        const cecClassLower = filters.cecClass.toLowerCase();
+        let matchesCecClass = false;
+
+        if (cecClassLower === 'pfas') {
+          matchesCecClass = paper.pfas_compounds?.length > 0;
+        } else {
+          matchesCecClass = 
+            paper.keywords?.some(k => k.toLowerCase().includes(cecClassLower)) ||
+            paper.title?.toLowerCase().includes(cecClassLower) ||
+            paper.abstract?.toLowerCase().includes(cecClassLower);
+        }
+        if (!matchesCecClass) return false;
       }
 
       // Year filters
