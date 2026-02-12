@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { FileText, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import SearchFilters from "@/components/papers/SearchFilters";
+import PendingPapersMonitor from "@/components/papers/PendingPapersMonitor";
 import PaperCard from "@/components/papers/PaperCard";
 import ExportButton from "@/components/export/ExportButton";
 import ProvinceMapViz from "@/components/database-viz/ProvinceMapViz";
@@ -230,6 +231,7 @@ export default function Database() {
 
       {/* Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <PendingPapersMonitor />
         <SearchFilters 
           filters={filters} 
           onFilterChange={handleFilterChange}

@@ -165,7 +165,231 @@ export default function AddPaper() {
     return { isDuplicate: false };
   };
 
+  const processFileInBackground = async (pendingPaperId, file, fileUrl) => {
+    try {
+      // Update status: extracting
+      await base44.entities.PendingPaper.update(pendingPaperId, {
+        status: "extracting",
+        progress: 30
+      });
+
+      // Extract metadata
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Extract detailed metadata from this research paper. Pay special attention to:
+
+PUBLICATION YEAR: Look for publication date in header, footer, citations, or metadata. Extract the 4-digit year.
+
+JOURNAL: Find the journal/publication name - often at the top of the first page or in citations.
+
+DOI: Look for "DOI:", "doi.org/", or similar identifiers. Extract the full DOI (e.g., 10.1234/example).
+
+STUDY LOCATION: Identify specific cities, regions, provinces, or areas in South Africa where research was conducted.
+
+PROVINCE: Determine which South African province(s): Eastern Cape, Free State, Gauteng, KwaZulu-Natal, Limpopo, Mpumalanga, Northern Cape, North West, or Western Cape.
+
+INSTITUTION: Find the affiliated university or research institution.
+
+Extract all available information accurately. If a field is not found, leave it empty or null.`,
+        file_urls: [fileUrl],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            title: { type: "string", description: "Full paper title" },
+            authors: { type: "array", items: { type: "string" }, description: "List of all authors" },
+            abstract: { type: "string", description: "Complete abstract text" },
+            publication_year: { type: "number", description: "4-digit publication year" },
+            journal: { type: "string", description: "Journal or publication name" },
+            doi: { type: "string", description: "Digital Object Identifier (DOI)" },
+            pfas_compounds: { type: "array", items: { type: "string" }, description: "PFAS compounds studied (PFOA, PFOS, etc.)" },
+            study_location: { type: "string", description: "Specific location in South Africa" },
+            province: { type: "string", description: "South African province" },
+            research_type: { type: "string", description: "Type of research" },
+            sample_matrix: { type: "array", items: { type: "string" }, description: "Sample types (water, soil, etc.)" },
+            key_findings: { type: "string", description: "Summary of main findings" },
+            concentrations_reported: { type: "string", description: "Concentration ranges found" },
+            keywords: { type: "array", items: { type: "string" }, description: "Research keywords" },
+            institution: { type: "string", description: "Research institution or university" }
+          }
+        }
+      });
+
+      if (!result) {
+        await base44.entities.PendingPaper.update(pendingPaperId, {
+          status: "error",
+          error_message: "Failed to extract metadata",
+          progress: 100
+        });
+        return;
+      }
+
+      const extractedPaper = {
+        ...result,
+        pdf_url: fileUrl,
+        authors: result.authors || [],
+        pfas_compounds: result.pfas_compounds || [],
+        sample_matrix: result.sample_matrix || [],
+        keywords: result.keywords || [],
+        publication_year: result.publication_year || new Date().getFullYear()
+      };
+
+      // Update status: validating
+      await base44.entities.PendingPaper.update(pendingPaperId, {
+        status: "validating",
+        progress: 50,
+        extracted_data: extractedPaper
+      });
+
+      // Validate South African origin
+      const validationResult = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze this research paper and determine if it is specifically about South African research, locations, or studies conducted in South Africa.
+
+Research Paper:
+Title: ${extractedPaper.title || 'N/A'}
+Abstract: ${extractedPaper.abstract || 'N/A'}
+Keywords: ${extractedPaper.keywords?.join(', ') || 'N/A'}
+Study Location: ${extractedPaper.study_location || 'N/A'}
+Province: ${extractedPaper.province || 'N/A'}
+Institution: ${extractedPaper.institution || 'N/A'}
+Authors: ${extractedPaper.authors?.join(', ') || 'N/A'}
+
+Determine if this paper is about South African research. Look for:
+1. Study conducted in South Africa
+2. South African locations, provinces, cities
+3. South African institutions or authors
+4. Research specifically about South African water resources, environment, or populations
+
+Return your analysis.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            is_south_african: { type: "boolean" },
+            confidence: { type: "number" },
+            reason: { type: "string" }
+          }
+        }
+      });
+
+      if (!validationResult.is_south_african) {
+        await base44.entities.PendingPaper.update(pendingPaperId, {
+          status: "rejected",
+          error_message: `Not South African research: ${validationResult.reason}`,
+          progress: 100
+        });
+        return;
+      }
+
+      // Update status: checking duplicates
+      await base44.entities.PendingPaper.update(pendingPaperId, {
+        status: "checking_duplicates",
+        progress: 70
+      });
+
+      // Check for duplicates
+      const duplicateCheck = await checkDuplicate(extractedPaper);
+      if (duplicateCheck.isDuplicate) {
+        await base44.entities.PendingPaper.update(pendingPaperId, {
+          status: "duplicate",
+          duplicate_of: duplicateCheck.title,
+          progress: 100
+        });
+        return;
+      }
+
+      // Save to database
+      await base44.entities.ResearchPaper.create(extractedPaper);
+      
+      // Mark as complete
+      await base44.entities.PendingPaper.update(pendingPaperId, {
+        status: "complete",
+        progress: 100
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['papers'] });
+      toast.success(`"${extractedPaper.title}" added to database!`);
+
+    } catch (error) {
+      await base44.entities.PendingPaper.update(pendingPaperId, {
+        status: "error",
+        error_message: error.message,
+        progress: 100
+      });
+      console.error('Background processing error:', error);
+    }
+  };
+
   const handleFileUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    setIsExtracting(true);
+    setUploadProgress(0);
+    setUploadStatus("Uploading files...");
+    setUploadedFiles(files);
+
+    try {
+      toast.info(`Uploading ${files.length} file(s)...`);
+
+      // Quick upload phase - save to temp storage immediately
+      const pendingPapers = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileNum = i + 1;
+        
+        try {
+          setUploadStatus(`Uploading ${file.name} (${fileNum}/${files.length})`);
+          setUploadProgress((fileNum / files.length) * 100);
+          
+          // Upload file
+          const { file_url } = await base44.integrations.Core.UploadFile({ file });
+          
+          // Save to temp storage immediately
+          const pending = await base44.entities.PendingPaper.create({
+            filename: file.name,
+            file_url: file_url,
+            status: "uploading",
+            progress: 10
+          });
+          
+          pendingPapers.push(pending);
+          
+        } catch (error) {
+          console.error(`Error uploading ${file.name}:`, error);
+          toast.error(`Failed to upload ${file.name}`);
+        }
+      }
+
+      setUploadStatus("Upload complete! Processing in background...");
+      setUploadProgress(100);
+      toast.success(`${pendingPapers.length} file(s) uploaded! Processing in background...`);
+
+      // Navigate to database immediately
+      setTimeout(() => {
+        navigate(createPageUrl("Database"));
+      }, 1500);
+
+      // Process all files in background
+      pendingPapers.forEach(pending => {
+        const file = files.find(f => f.name === pending.filename);
+        if (file) {
+          processFileInBackground(pending.id, file, pending.file_url);
+        }
+      });
+
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      toast.error("Error uploading files: " + error.message);
+    } finally {
+      setTimeout(() => {
+        setIsExtracting(false);
+        setUploadProgress(0);
+        setUploadStatus("");
+      }, 2000);
+      e.target.value = '';
+    }
+  };
+
+  // Old slow code removed - replaced with fast upload above
+  const handleFileUpload_OLD = async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
@@ -193,11 +417,11 @@ export default function AddPaper() {
           const { file_url } = await base44.integrations.Core.UploadFile({ file });
           console.log(`File uploaded: ${file_url}`);
 
-          // Enhanced AI extraction with detailed instructions
+          // Enhanced AI extraction with detailed instructions - REMOVED, NOW IN BACKGROUND
           setUploadStatus(`Extracting data from ${file.name}... (${fileNum}/${totalFiles})`);
           setUploadProgress((fileNum - 0.5) / totalFiles * 100);
           console.log(`Extracting data from ${file.name}...`);
-          const result = await base44.integrations.Core.InvokeLLM({
+          const result_OLD = await base44.integrations.Core.InvokeLLM({
             prompt: `Extract detailed metadata from this research paper. Pay special attention to:
 
 PUBLICATION YEAR: Look for publication date in header, footer, citations, or metadata. Extract the 4-digit year.
@@ -363,7 +587,7 @@ Return your analysis.`,
         toast.error("No papers could be extracted from the uploaded files");
       }
     } catch (error) {
-      console.error('Error processing files:', error);
+      console.error('Error processing files OLD:', error);
       toast.error("Error processing files: " + error.message);
     } finally {
       setTimeout(() => {
