@@ -61,6 +61,8 @@ export default function AddPaper() {
   const [newKeyword, setNewKeyword] = useState("");
   const [newSample, setNewSample] = useState("");
   const [isExtracting, setIsExtracting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [extractedPapers, setExtractedPapers] = useState([]);
 
@@ -168,24 +170,33 @@ export default function AddPaper() {
     if (files.length === 0) return;
 
     setIsExtracting(true);
+    setUploadProgress(0);
+    setUploadStatus("Preparing upload...");
     setUploadedFiles(files);
     const papers = [];
     let duplicatesFound = 0;
     let extractionErrors = 0;
+    const totalFiles = files.length;
 
     try {
       toast.info(`Processing ${files.length} file(s)...`);
 
-      for (const file of files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileNum = i + 1;
         try {
+          setUploadStatus(`Uploading ${file.name} (${fileNum}/${totalFiles})`);
+          setUploadProgress((fileNum - 0.7) / totalFiles * 100);
           console.log(`Uploading ${file.name}...`);
+          
           // Upload file
           const { file_url } = await base44.integrations.Core.UploadFile({ file });
           console.log(`File uploaded: ${file_url}`);
 
           // Enhanced AI extraction with detailed instructions
-          console.log(`Extracting data from ${file.name}...`);
           setUploadStatus(`Extracting data from ${file.name}... (${fileNum}/${totalFiles})`);
+          setUploadProgress((fileNum - 0.5) / totalFiles * 100);
+          console.log(`Extracting data from ${file.name}...`);
           const result = await base44.integrations.Core.InvokeLLM({
             prompt: `Extract detailed metadata from this research paper. Pay special attention to:
 
@@ -247,6 +258,8 @@ Extract all available information accurately. If a field is not found, leave it 
             };
 
             // AI validation: Check if research is South African
+            setUploadStatus(`Validating research origin... (${fileNum}/${totalFiles})`);
+            setUploadProgress((fileNum - 0.3) / totalFiles * 100);
             console.log(`Validating South African research: ${extractedPaper.title}`);
             try {
               const validationResult = await base44.integrations.Core.InvokeLLM({
@@ -291,7 +304,10 @@ Return your analysis.`,
               toast.warning(`Could not validate South African status for "${extractedPaper.title}". Proceeding with caution.`);
             }
 
+            setUploadStatus(`Checking for duplicates... (${fileNum}/${totalFiles})`);
+            setUploadProgress((fileNum - 0.1) / totalFiles * 100);
             console.log(`Checking for duplicates: ${extractedPaper.title}`);
+            
             // Check for duplicates
             const duplicateCheck = await checkDuplicate(extractedPaper);
             if (duplicateCheck.isDuplicate) {
@@ -301,6 +317,7 @@ Return your analysis.`,
             } else {
               console.log(`New paper: ${extractedPaper.title}`);
               papers.push(extractedPaper);
+              setUploadProgress((fileNum / totalFiles) * 100);
             }
           } else {
             console.error(`Extraction failed for ${file.name}:`, result2);
@@ -325,9 +342,13 @@ Return your analysis.`,
 
         // Automatically save the papers
         try {
+          setUploadStatus(`Saving ${papers.length} papers to database...`);
+          setUploadProgress(95);
           console.log('Saving papers to database...');
           await base44.entities.ResearchPaper.bulkCreate(papers);
           queryClient.invalidateQueries({ queryKey: ['papers'] });
+          setUploadProgress(100);
+          setUploadStatus("Complete!");
           toast.success(`${papers.length} paper(s) added to database!`);
           navigate(createPageUrl("Database"));
         } catch (error) {
@@ -345,7 +366,11 @@ Return your analysis.`,
       console.error('Error processing files:', error);
       toast.error("Error processing files: " + error.message);
     } finally {
-      setIsExtracting(false);
+      setTimeout(() => {
+        setIsExtracting(false);
+        setUploadProgress(0);
+        setUploadStatus("");
+      }, 2000);
       // Reset file input
       e.target.value = '';
     }
@@ -381,26 +406,41 @@ Return your analysis.`,
                   Upload PDF, Excel, CSV, images (JPEG, PNG), or other data files and we'll automatically extract the paper details for you
                 </p>
                 
-                <label htmlFor="file-upload" className="cursor-pointer">
-                  <Button
-                    type="button"
-                    className="bg-teal-600 hover:bg-teal-700"
-                    disabled={isExtracting}
-                    onClick={() => document.getElementById('file-upload').click()}
-                  >
-                    {isExtracting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Extracting Data...
-                      </>
-                    ) : (
-                      <>
-                        <FileText className="w-4 h-4 mr-2" />
-                        Choose Files
-                      </>
-                    )}
-                  </Button>
-                </label>
+                <div className="w-full max-w-md">
+                  {isExtracting && (
+                    <div className="mb-4 space-y-2">
+                      <p className="text-sm text-slate-600 text-center">{uploadStatus}</p>
+                      <div className="w-full bg-slate-200 rounded-full h-2">
+                        <div 
+                          className="bg-teal-600 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-slate-500 text-center">{Math.round(uploadProgress)}%</p>
+                    </div>
+                  )}
+                  
+                  <label htmlFor="file-upload" className="cursor-pointer block">
+                    <Button
+                      type="button"
+                      className="bg-teal-600 hover:bg-teal-700 w-full"
+                      disabled={isExtracting}
+                      onClick={() => document.getElementById('file-upload').click()}
+                    >
+                      {isExtracting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <FileText className="w-4 h-4 mr-2" />
+                          Choose Files
+                        </>
+                      )}
+                    </Button>
+                  </label>
+                </div>
                 <input
                   id="file-upload"
                   type="file"
