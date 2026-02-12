@@ -42,7 +42,7 @@ export default function Database() {
 
   const { data: papers = [], isLoading } = useQuery({
     queryKey: ['papers'],
-    queryFn: () => base44.entities.ResearchPaper.list('-publication_year', 500),
+    queryFn: () => base44.entities.ResearchPaper.list('-publication_year'),
   });
 
   const handleFilterChange = (key, value) => {

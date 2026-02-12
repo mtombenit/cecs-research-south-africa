@@ -14,7 +14,7 @@ import QuickSearch from "@/components/search/QuickSearch";
 export default function Home() {
   const { data: papers = [], isLoading } = useQuery({
     queryKey: ['papers'],
-    queryFn: () => base44.entities.ResearchPaper.list('-publication_year', 100),
+    queryFn: () => base44.entities.ResearchPaper.list('-publication_year'),
   });
 
   // Calculate stats
