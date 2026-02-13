@@ -23,6 +23,7 @@ const waterTypes = [
 ];
 
 const cecCategories = [
+  "Endocrine Disruptors",
   "Microplastics",
   "Nanomaterials",
   "Personal Care Products",

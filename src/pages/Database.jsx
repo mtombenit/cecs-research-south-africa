@@ -158,6 +158,11 @@ export default function Database() {
             paper.keywords?.some(k => k.toLowerCase().includes('nano') || k.toLowerCase().includes('nanoparticle')) ||
             paper.title?.toLowerCase().includes('nano') ||
             paper.abstract?.toLowerCase().includes('nano');
+        } else if (category.includes('endocrine')) {
+          matchesCategory = 
+            paper.keywords?.some(k => k.toLowerCase().includes('endocrine') || k.toLowerCase().includes('edc') || k.toLowerCase().includes('hormone')) ||
+            paper.title?.toLowerCase().includes('endocrine') ||
+            paper.abstract?.toLowerCase().includes('endocrine');
         }
 
         if (!matchesCategory) return false;
