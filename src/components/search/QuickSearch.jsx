@@ -16,7 +16,7 @@ const WATER_SOURCES = [
 ];
 
 const CEC_CLASSES = [
-  "Microplastics", "Nanomaterials", "Personal Care Products", 
+  "Endocrine Disruptors", "Microplastics", "Nanomaterials", "Personal Care Products", 
   "Pesticides & Herbicides", "PFAS", "Pharmaceuticals"
 ];
 
