@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import FloatingAIAssistant from "@/components/ai/FloatingAIAssistant";
+import BackgroundPaperProcessor from "@/components/papers/BackgroundPaperProcessor";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -189,6 +190,9 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Floating AI Assistant */}
       <FloatingAIAssistant />
+
+      {/* Background Paper Processor */}
+      <BackgroundPaperProcessor />
 
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 mt-auto">
