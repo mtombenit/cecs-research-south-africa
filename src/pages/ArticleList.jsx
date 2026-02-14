@@ -6,7 +6,7 @@ import { FileText, Loader2, BookOpen } from "lucide-react";
 
 export default function ArticleList() {
   const { data: papers = [], isLoading } = useQuery({
-    queryKey: ['all-papers'],
+    queryKey: ['papers'],
     queryFn: () => base44.entities.ResearchPaper.list('publication_year'),
   });
 
