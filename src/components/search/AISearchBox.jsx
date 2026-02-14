@@ -127,20 +127,36 @@ Return ONLY queries that would realistically find papers in this database based 
     setIsProcessing(true);
     
     try {
+      // Get database context for RAG
+      const allKeywords = [...new Set(papers.flatMap(p => p.keywords || []))].join(', ');
+      const allCompounds = [...new Set(papers.flatMap(p => p.pfas_compounds || []))].join(', ');
+      const provinces = [...new Set(papers.map(p => p.province).filter(Boolean))].join(', ');
+      
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Parse this natural language search query for a CECs research database and extract filter criteria.
+        prompt: `You are a specialized search assistant for a South African CECs research database. Parse this natural language query and extract filters that will find relevant papers.
 
 Query: "${naturalQuery}"
 
-Extract the following filters if mentioned:
+Database Context (RAG):
+- Available Provinces: ${provinces}
+- Available Compounds: ${allCompounds}
+- Common Keywords: ${allKeywords.slice(0, 500)}
+
+Extract filters if mentioned or IMPLIED from the query:
 - Province: One of [Eastern Cape, Free State, Gauteng, KwaZulu-Natal, Limpopo, Mpumalanga, Northern Cape, North West, Western Cape, National]
 - Water Type: One of [Dam Water, Drinking Water, Groundwater, Marine-Coastal, River Water, Wastewater]
 - CEC Category: One of [Microplastics, Nanomaterials, Personal Care Products, Pesticides & Herbicides, PFAS, Pharmaceuticals]
-- Year From: Starting year (number)
-- Year To: Ending year (number)
-- General Search Terms: Any keywords, compounds, or general terms to search
+- Year From: Starting year (if "after X", "since X", or "recent" mentioned)
+- Year To: Ending year (if "before X" or "until X" mentioned)
+- General Search Terms: Extract specific compounds, keywords, or concepts to search across titles, abstracts, and keywords
 
-Return ONLY the filters that are explicitly mentioned or clearly implied. Leave others empty.`,
+Important:
+- "recent" or "latest" = set yearFrom to 2020
+- Be smart about synonyms (e.g., "drugs" = Pharmaceuticals, "plastics" = Microplastics)
+- Include specific compound names in search terms
+- If location is mentioned but not an exact province match, include it in search terms
+
+Return structured filters that will maximize relevant results from the database.`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -155,23 +171,22 @@ Return ONLY the filters that are explicitly mentioned or clearly implied. Leave 
       });
 
       if (result) {
-        // Clean up the filters - only keep non-empty values
         const filters = {
           province: result.province || '',
           waterType: result.waterType || '',
           cecCategory: result.cecCategory || '',
           yearFrom: result.yearFrom || '',
           yearTo: result.yearTo || '',
-          search: result.search || ''
+          search: result.search || naturalQuery
         };
 
         onFiltersApply(filters);
-        toast.success("AI search applied successfully!");
+        toast.success("Search filters applied!");
         setShowSuggestions(false);
       }
     } catch (error) {
       console.error("AI search error:", error);
-      toast.error("Could not process natural language query");
+      toast.error("Search failed - please try rephrasing your query");
     } finally {
       setIsProcessing(false);
     }
