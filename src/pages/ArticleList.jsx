@@ -10,6 +10,22 @@ export default function ArticleList() {
     queryFn: () => base44.entities.ResearchPaper.list('publication_year'),
   });
 
+  // Group papers by publication year while maintaining numbering
+  const groupedPapers = papers.reduce((acc, paper, index) => {
+    const year = paper.publication_year || 'Unknown';
+    if (!acc[year]) {
+      acc[year] = [];
+    }
+    acc[year].push({ ...paper, globalIndex: index });
+    return acc;
+  }, {});
+
+  const sortedYears = Object.keys(groupedPapers).sort((a, b) => {
+    if (a === 'Unknown') return 1;
+    if (b === 'Unknown') return -1;
+    return a - b;
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,28 +40,37 @@ export default function ArticleList() {
             <p className="text-slate-500">Loading articles...</p>
           </div>
         ) : papers.length > 0 ? (
-          <div className="bg-white shadow-sm rounded-lg border border-slate-200 divide-y divide-slate-200">
-            {papers.map((paper, index) => (
-              <div key={paper.id} className="flex items-start p-4 hover:bg-slate-50 transition-colors">
-                <span className="text-slate-500 font-medium mr-4 flex-shrink-0 w-12 text-right">
-                  {index + 1}.
-                </span>
-                <div className="flex-grow">
-                  <Link 
-                    to={createPageUrl(`PaperDetail?id=${paper.id}`)} 
-                    className="text-teal-700 hover:text-teal-800 font-semibold text-lg leading-tight"
-                  >
-                    {paper.title}
-                  </Link>
-                  <p className="text-slate-600 text-sm mt-1">
-                    {paper.authors?.join(', ')} ({paper.publication_year})
-                  </p>
-                  {paper.journal && (
-                    <p className="text-slate-500 text-xs mt-0.5">{paper.journal}</p>
-                  )}
-                </div>
-                <div className="flex-shrink-0 ml-4">
-                  <BookOpen className="w-5 h-5 text-slate-400" />
+          <div className="space-y-6">
+            {sortedYears.map(year => (
+              <div key={year}>
+                <h2 className="text-2xl font-bold text-teal-700 mb-4 pb-2 border-b-2 border-teal-200">
+                  {year}
+                </h2>
+                <div className="bg-white shadow-sm rounded-lg border border-slate-200 divide-y divide-slate-200">
+                  {groupedPapers[year].map((paper) => (
+                    <div key={paper.id} className="flex items-start p-4 hover:bg-slate-50 transition-colors">
+                      <span className="text-slate-500 font-medium mr-4 flex-shrink-0 w-12 text-right">
+                        {paper.globalIndex + 1}.
+                      </span>
+                      <div className="flex-grow">
+                        <Link 
+                          to={createPageUrl(`PaperDetail?id=${paper.id}`)} 
+                          className="text-teal-700 hover:text-teal-800 font-semibold text-lg leading-tight"
+                        >
+                          {paper.title}
+                        </Link>
+                        <p className="text-slate-600 text-sm mt-1">
+                          {paper.authors?.join(', ')}
+                        </p>
+                        {paper.journal && (
+                          <p className="text-slate-500 text-xs mt-0.5">{paper.journal}</p>
+                        )}
+                      </div>
+                      <div className="flex-shrink-0 ml-4">
+                        <BookOpen className="w-5 h-5 text-slate-400" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
