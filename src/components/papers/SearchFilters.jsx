@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Filter, X, SlidersHorizontal } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import YearRangePicker from "./YearRangePicker";
-import AISearchBox from "@/components/search/AISearchBox";
+
 
 const provinces = [
   "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", "Limpopo",
