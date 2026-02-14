@@ -54,13 +54,13 @@ export default function Home() {
                 </Button>
               </Link>
               <Link to={createPageUrl("AskAI")} className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/30 bg-white/10 text-white hover:bg-white/20 h-12 sm:h-11">
+                <Button size="lg" className="w-full sm:w-auto bg-white text-teal-700 hover:bg-teal-50 shadow-xl shadow-black/10 h-12 sm:h-11">
                   <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Ask AI Assistant
                 </Button>
               </Link>
               <Link to={createPageUrl("ArticleList")} className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/30 bg-white/10 text-white hover:bg-white/20 h-12 sm:h-11">
+                <Button size="lg" className="w-full sm:w-auto bg-white text-teal-700 hover:bg-teal-50 shadow-xl shadow-black/10 h-12 sm:h-11">
                   <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   List All Articles
                 </Button>
