@@ -16,7 +16,7 @@ export default function AISearchBox({ onFiltersApply, papers }) {
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
-  // Generate AI-powered smart suggestions based on database content
+  // Generate GUARANTEED suggestions based on actual database content
   useEffect(() => {
     const generateSmartSuggestions = async () => {
       if (!papers || papers.length === 0) return;
@@ -24,37 +24,47 @@ export default function AISearchBox({ onFiltersApply, papers }) {
       setIsGeneratingSuggestions(true);
       
       try {
-        // Gather database insights
-        const recentPapers = papers.slice(0, 50);
-        const provinces = [...new Set(papers.map(p => p.province).filter(Boolean))];
-        const compounds = [...new Set(papers.flatMap(p => p.pfas_compounds || []))];
-        const waterTypes = [...new Set(papers.flatMap(p => p.sample_matrix || []))];
-        const keywords = [...new Set(papers.flatMap(p => p.keywords || []))].slice(0, 30);
-        const years = [...new Set(papers.map(p => p.publication_year))].sort((a, b) => b - a);
+        // Build comprehensive database statistics
+        const provinceCount = {};
+        const compoundCount = {};
+        const waterTypeCount = {};
+        const keywordCount = {};
+        const yearCount = {};
         
-        // Sample titles for context
-        const sampleTitles = recentPapers.slice(0, 10).map(p => p.title);
+        papers.forEach(paper => {
+          if (paper.province) provinceCount[paper.province] = (provinceCount[paper.province] || 0) + 1;
+          paper.pfas_compounds?.forEach(c => compoundCount[c] = (compoundCount[c] || 0) + 1);
+          paper.sample_matrix?.forEach(w => waterTypeCount[w] = (waterTypeCount[w] || 0) + 1);
+          paper.keywords?.forEach(k => keywordCount[k] = (keywordCount[k] || 0) + 1);
+          if (paper.publication_year) yearCount[paper.publication_year] = (yearCount[paper.publication_year] || 0) + 1;
+        });
+        
+        const topProvinces = Object.entries(provinceCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const topCompounds = Object.entries(compoundCount).sort((a, b) => b[1] - a[1]).slice(0, 8);
+        const topWaterTypes = Object.entries(waterTypeCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const topKeywords = Object.entries(keywordCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
+        const recentYears = Object.keys(yearCount).sort((a, b) => b - a).slice(0, 3);
         
         const result = await base44.integrations.Core.InvokeLLM({
-          prompt: `Generate 6 diverse, intelligent search query suggestions for a South African CECs (Contaminants of Emerging Concern) research database.
+          prompt: `Generate 6 search query suggestions that are GUARANTEED to return results from this database.
 
-Database Context:
-- Available Provinces: ${provinces.join(', ')}
-- Common Compounds: ${compounds.slice(0, 15).join(', ')}
-- Water Types: ${waterTypes.slice(0, 10).join(', ')}
-- Keywords: ${keywords.join(', ')}
-- Year Range: ${years[years.length - 1]} - ${years[0]}
-- Sample Titles: ${sampleTitles.slice(0, 5).join(' | ')}
+STRICT DATABASE CONTENT (use ONLY these exact values):
+Top Provinces (${topProvinces.length} available): ${topProvinces.map(p => `${p[0]} (${p[1]} papers)`).join(', ')}
+Top Compounds (${topCompounds.length} available): ${topCompounds.map(c => `${c[0]} (${c[1]} papers)`).join(', ')}
+Top Water Types (${topWaterTypes.length} available): ${topWaterTypes.map(w => `${w[0]} (${w[1]} papers)`).join(', ')}
+Top Keywords (${topKeywords.length} available): ${topKeywords.map(k => `${k[0]} (${k[1]} papers)`).join(', ')}
+Recent Years with data: ${recentYears.join(', ')}
+Total papers in database: ${papers.length}
 
-Generate natural language queries that:
-1. Combine specific locations (provinces/cities) with contaminants
-2. Focus on specific water types (groundwater, drinking water, etc.)
-3. Include temporal aspects (recent studies, after 2020, etc.)
-4. Mix compound types (PFAS, microplastics, pharmaceuticals)
-5. Are specific enough to return actual results but broad enough to be useful
-6. Sound natural and conversational
+CRITICAL RULES:
+1. Use ONLY provinces, compounds, water types, and keywords listed above
+2. Each suggestion MUST combine elements that exist in the database
+3. Prefer combinations with higher paper counts to guarantee results
+4. Mix simple queries (1 filter) with complex ones (2-3 filters)
+5. Use natural language but ground every term in the actual data
+6. Example: "PFAS in Gauteng water" (if both PFAS and Gauteng exist in data)
 
-Return ONLY queries that would realistically find papers in this database based on the context above.`,
+Generate 6 diverse queries - mix of broad and specific - that will definitely return results.`,
           response_json_schema: {
             type: "object",
             properties: {
@@ -68,18 +78,28 @@ Return ONLY queries that would realistically find papers in this database based 
         
         if (result?.suggestions && result.suggestions.length > 0) {
           setSuggestions(result.suggestions);
+        } else {
+          // Direct fallback using exact database content
+          const directSuggestions = [
+            topProvinces[0] && `research in ${topProvinces[0][0]}`,
+            topCompounds[0] && topProvinces[0] && `${topCompounds[0][0]} in ${topProvinces[0][0]}`,
+            topWaterTypes[0] && `${topWaterTypes[0][0]} studies`,
+            topKeywords[0] && `${topKeywords[0][0]}`,
+            recentYears[0] && `studies published in ${recentYears[0]}`,
+            topCompounds[0] && topWaterTypes[0] && `${topCompounds[0][0]} in ${topWaterTypes[0][0]}`
+          ].filter(Boolean);
+          setSuggestions(directSuggestions);
         }
       } catch (error) {
         console.error('Error generating suggestions:', error);
-        // Fallback to database-driven suggestions
-        const fallbackSuggestions = [
-          provinces[0] && `research in ${provinces[0]}`,
-          compounds[0] && `${compounds[0]} contamination studies`,
-          waterTypes[0] && `${waterTypes[0]} analysis`,
-          `recent studies after ${years[2] || 2020}`,
-          keywords[0] && `${keywords[0]} research`
-        ].filter(Boolean).slice(0, 6);
-        setSuggestions(fallbackSuggestions);
+        // Final fallback with basic queries
+        const basicSuggestions = [
+          'water contamination studies',
+          'PFAS research',
+          'recent publications',
+          'environmental monitoring'
+        ];
+        setSuggestions(basicSuggestions);
       } finally {
         setIsGeneratingSuggestions(false);
       }
