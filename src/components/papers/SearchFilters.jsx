@@ -34,16 +34,6 @@ const cecCategories = [
 
 export default function SearchFilters({ filters, onFilterChange, onClear, papers }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [showAISearch, setShowAISearch] = useState(true);
-
-  const handleAIFiltersApply = (aiFilters) => {
-    // Apply all filters from AI search
-    Object.entries(aiFilters).forEach(([key, value]) => {
-      if (value) {
-        onFilterChange(key, value);
-      }
-    });
-  };
   
   const activeFilterCount = [
     filters.search,
@@ -135,14 +125,7 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
 
   return (
     <div className="space-y-4">
-      {/* AI-Powered Search */}
-      {showAISearch && (
-        <div className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg p-4 border border-teal-100">
-          <AISearchBox onFiltersApply={handleAIFiltersApply} papers={papers} />
-        </div>
-      )}
-
-      {/* Traditional Search bar */}
+      {/* Search bar */}
       <div className="flex gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
