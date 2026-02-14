@@ -32,36 +32,36 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-teal-600 via-teal-700 to-slate-800" />
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1920')] bg-cover bg-center opacity-10" />
         <div className="absolute inset-0 bg-gradient-to-t from-teal-900/50 to-transparent" />
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-28">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-teal-100 text-sm mb-6">
-              <FlaskConical className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/10 backdrop-blur-sm text-teal-100 text-xs sm:text-sm mb-4 sm:mb-6">
+              <FlaskConical className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               South African CECs Research Database
             </div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4 sm:mb-6">
               SA CECs Intelligent Portal
             </h1>
-            <p className="text-xl text-teal-100/90 leading-relaxed mb-8">
+            <p className="text-base sm:text-lg lg:text-xl text-teal-100/90 leading-relaxed mb-6 sm:mb-8">
               Explore published research on Contaminants of Emerging Concern (CECs) conducted in South Africa. Search, analyze, and interact with research data 
               using AI-powered tools.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Link to={createPageUrl("Database")}>
-                <Button size="lg" className="bg-white text-teal-700 hover:bg-teal-50 shadow-xl shadow-black/10">
-                  <FileText className="w-5 h-5 mr-2" />
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+              <Link to={createPageUrl("Database")} className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto bg-white text-teal-700 hover:bg-teal-50 shadow-xl shadow-black/10 h-12 sm:h-11">
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Browse Research
                 </Button>
               </Link>
-              <Link to={createPageUrl("AskAI")}>
-                <Button size="lg" variant="outline" className="border-white/30 text-teal-700 hover:bg-white/10">
-                  <Sparkles className="w-5 h-5 mr-2" />
+              <Link to={createPageUrl("AskAI")} className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 h-12 sm:h-11">
+                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Ask AI Assistant
                 </Button>
               </Link>
-              <Link to={createPageUrl("ArticleList")}>
-                <Button size="lg" variant="outline" className="border-white/30 text-teal-700 hover:bg-white/10">
-                  <BookOpen className="w-5 h-5 mr-2" />
+              <Link to={createPageUrl("ArticleList")} className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 h-12 sm:h-11">
+                  <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   List All Articles
                 </Button>
               </Link>
@@ -71,13 +71,13 @@ export default function Home() {
       </div>
 
       {/* Quick Search Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10 mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-10 relative z-10 mb-6 sm:mb-8">
         <QuickSearch />
       </div>
 
       {/* Stats Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <StatCard
             title="Publications"
             value={papers.length}

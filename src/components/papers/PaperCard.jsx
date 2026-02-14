@@ -22,7 +22,7 @@ export default function PaperCard({ paper, isDuplicate = false }) {
   return (
     <Card className="group border-0 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden bg-white">
       <div className="block">
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-3">
@@ -37,7 +37,7 @@ export default function PaperCard({ paper, isDuplicate = false }) {
               </span>
             </div>
             
-            <h3 className="text-lg font-semibold text-slate-900 group-hover:text-teal-700 transition-colors line-clamp-2 mb-2">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 group-hover:text-teal-700 transition-colors line-clamp-2 mb-2">
               {paper.title}
             </h3>
             
@@ -87,7 +87,7 @@ export default function PaperCard({ paper, isDuplicate = false }) {
             )}
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             {isDuplicate && (
               <div onClick={(e) => e.stopPropagation()}>
                 <DeleteDuplicateButton paperId={paper.id} paperTitle={paper.title} />
@@ -96,40 +96,40 @@ export default function PaperCard({ paper, isDuplicate = false }) {
             <div onClick={(e) => e.stopPropagation()}>
               <SavePaperButton paperId={paper.id} />
             </div>
-            <div onClick={(e) => e.stopPropagation()}>
+            <div onClick={(e) => e.stopPropagation()} className="hidden sm:block">
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-slate-500 hover:text-teal-600"
+                className="text-slate-500 hover:text-teal-600 h-9"
                 onClick={(e) => {
                   e.preventDefault();
                   window.open(paper.pdf_url || `https://sci-hub.se/${paper.doi}`, '_blank');
                 }}
               >
                 <Download className="w-4 h-4 mr-1" />
-                PDF
+                <span className="hidden lg:inline">PDF</span>
               </Button>
             </div>
             {paper.doi && (
-              <div onClick={(e) => e.stopPropagation()}>
+              <div onClick={(e) => e.stopPropagation()} className="hidden sm:block">
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-slate-500 hover:text-teal-600"
+                  className="text-slate-500 hover:text-teal-600 h-9"
                   onClick={(e) => {
                     e.preventDefault();
                     window.open(`https://doi.org/${paper.doi}`, '_blank');
                   }}
                 >
                   <ExternalLink className="w-4 h-4 mr-1" />
-                  DOI
+                  <span className="hidden lg:inline">DOI</span>
                 </Button>
               </div>
             )}
-            <Link to={createPageUrl(`PaperDetail?id=${paper.id}`)}>
+            <Link to={createPageUrl(`PaperDetail?id=${paper.id}`)} className="ml-auto">
               <Button 
                 size="sm" 
-                className="bg-teal-600 hover:bg-teal-700 text-white"
+                className="bg-teal-600 hover:bg-teal-700 text-white h-9 text-xs sm:text-sm"
               >
                 View Details
               </Button>
