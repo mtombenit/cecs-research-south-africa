@@ -20,8 +20,8 @@ export default function PaperCard({ paper, isDuplicate = false }) {
   };
 
   return (
-    <Card className="group border-0 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden bg-white cursor-pointer">
-      <Link to={createPageUrl(`PaperDetail?id=${paper.id}`)} className="block">
+    <Card className="group border-0 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden bg-white">
+      <div className="block">
         <div className="p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
@@ -126,16 +126,18 @@ export default function PaperCard({ paper, isDuplicate = false }) {
                 </Button>
               </div>
             )}
-            <Button 
-              size="sm" 
-              className="bg-teal-600 hover:bg-teal-700 text-white"
-            >
-              View Details
-            </Button>
+            <Link to={createPageUrl(`PaperDetail?id=${paper.id}`)}>
+              <Button 
+                size="sm" 
+                className="bg-teal-600 hover:bg-teal-700 text-white"
+              >
+                View Details
+              </Button>
+            </Link>
           </div>
           </div>
           </div>
-          </Link>
+          </div>
           </Card>
           );
           }
