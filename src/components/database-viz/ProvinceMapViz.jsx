@@ -49,16 +49,16 @@ export default function ProvinceMapViz({ papers, onProvinceClick }) {
   }
 
   return (
-    <Card className="border-0 shadow-sm">
+    <Card className="border-0 shadow-sm relative z-0">
       <CardHeader>
         <CardTitle className="text-lg">Study Locations by Province</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px] rounded-lg overflow-hidden">
+        <div className="h-[400px] rounded-lg overflow-hidden relative z-0">
           <MapContainer
             center={[-28.5, 24.5]}
             zoom={5}
-            style={{ height: "100%", width: "100%" }}
+            style={{ height: "100%", width: "100%", zIndex: 0 }}
             scrollWheelZoom={false}
           >
             <TileLayer

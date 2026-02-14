@@ -177,7 +177,7 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
           <SelectTrigger className="bg-white h-10">
             <SelectValue placeholder="Province" />
           </SelectTrigger>
-          <SelectContent className="z-[100]">
+          <SelectContent className="z-[9999]">
             <SelectItem value={null}>All provinces</SelectItem>
             {provinces.map(p => (
               <SelectItem key={p} value={p}>{p}</SelectItem>
@@ -192,7 +192,7 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
           <SelectTrigger className="bg-white h-10">
             <SelectValue placeholder="Water Type" />
           </SelectTrigger>
-          <SelectContent className="z-[100]">
+          <SelectContent className="z-[9999]">
             <SelectItem value={null}>All water types</SelectItem>
             {waterTypes.map(t => (
               <SelectItem key={t} value={t}>{t}</SelectItem>
@@ -207,7 +207,7 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
           <SelectTrigger className="bg-white h-10">
             <SelectValue placeholder="CEC Category" />
           </SelectTrigger>
-          <SelectContent className="z-[100]">
+          <SelectContent className="z-[9999]">
             <SelectItem value={null}>All CEC categories</SelectItem>
             {cecCategories.map(c => (
               <SelectItem key={c} value={c}>{c}</SelectItem>
