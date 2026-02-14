@@ -6,41 +6,86 @@ import { Search, Sparkles, Loader2, X, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 
-const SUGGESTED_QUERIES = [
-  "microplastics in river water in Gauteng after 2020",
-  "PFAS studies in Western Cape drinking water",
-  "pharmaceutical contamination in wastewater",
-  "pesticides in groundwater KwaZulu-Natal",
-  "nanomaterials in marine water recent studies"
-];
-
 export default function AISearchBox({ onFiltersApply, papers }) {
   const [query, setQuery] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [suggestions, setSuggestions] = useState(SUGGESTED_QUERIES);
+  const [suggestions, setSuggestions] = useState([]);
   const [autoComplete, setAutoComplete] = useState([]);
+  const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
-  // Generate smart suggestions based on database content
+  // Generate AI-powered smart suggestions based on database content
   useEffect(() => {
-    if (papers && papers.length > 0) {
-      const recentYears = [...new Set(papers.map(p => p.publication_year))]
-        .filter(y => y >= 2020)
-        .sort((a, b) => b - a);
+    const generateSmartSuggestions = async () => {
+      if (!papers || papers.length === 0) return;
       
-      const topProvinces = [...new Set(papers.map(p => p.province).filter(Boolean))];
-      const topCompounds = [...new Set(papers.flatMap(p => p.pfas_compounds || []))].slice(0, 5);
+      setIsGeneratingSuggestions(true);
       
-      const dynamicSuggestions = [
-        ...SUGGESTED_QUERIES,
-        topProvinces[0] && `research in ${topProvinces[0]} published in ${recentYears[0]}`,
-        topCompounds[0] && `${topCompounds[0]} contamination studies`,
-      ].filter(Boolean).slice(0, 6);
-      
-      setSuggestions(dynamicSuggestions);
-    }
+      try {
+        // Gather database insights
+        const recentPapers = papers.slice(0, 50);
+        const provinces = [...new Set(papers.map(p => p.province).filter(Boolean))];
+        const compounds = [...new Set(papers.flatMap(p => p.pfas_compounds || []))];
+        const waterTypes = [...new Set(papers.flatMap(p => p.sample_matrix || []))];
+        const keywords = [...new Set(papers.flatMap(p => p.keywords || []))].slice(0, 30);
+        const years = [...new Set(papers.map(p => p.publication_year))].sort((a, b) => b - a);
+        
+        // Sample titles for context
+        const sampleTitles = recentPapers.slice(0, 10).map(p => p.title);
+        
+        const result = await base44.integrations.Core.InvokeLLM({
+          prompt: `Generate 6 diverse, intelligent search query suggestions for a South African CECs (Contaminants of Emerging Concern) research database.
+
+Database Context:
+- Available Provinces: ${provinces.join(', ')}
+- Common Compounds: ${compounds.slice(0, 15).join(', ')}
+- Water Types: ${waterTypes.slice(0, 10).join(', ')}
+- Keywords: ${keywords.join(', ')}
+- Year Range: ${years[years.length - 1]} - ${years[0]}
+- Sample Titles: ${sampleTitles.slice(0, 5).join(' | ')}
+
+Generate natural language queries that:
+1. Combine specific locations (provinces/cities) with contaminants
+2. Focus on specific water types (groundwater, drinking water, etc.)
+3. Include temporal aspects (recent studies, after 2020, etc.)
+4. Mix compound types (PFAS, microplastics, pharmaceuticals)
+5. Are specific enough to return actual results but broad enough to be useful
+6. Sound natural and conversational
+
+Return ONLY queries that would realistically find papers in this database based on the context above.`,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              suggestions: {
+                type: "array",
+                items: { type: "string" }
+              }
+            }
+          }
+        });
+        
+        if (result?.suggestions && result.suggestions.length > 0) {
+          setSuggestions(result.suggestions);
+        }
+      } catch (error) {
+        console.error('Error generating suggestions:', error);
+        // Fallback to database-driven suggestions
+        const fallbackSuggestions = [
+          provinces[0] && `research in ${provinces[0]}`,
+          compounds[0] && `${compounds[0]} contamination studies`,
+          waterTypes[0] && `${waterTypes[0]} analysis`,
+          `recent studies after ${years[2] || 2020}`,
+          keywords[0] && `${keywords[0]} research`
+        ].filter(Boolean).slice(0, 6);
+        setSuggestions(fallbackSuggestions);
+      } finally {
+        setIsGeneratingSuggestions(false);
+      }
+    };
+    
+    generateSmartSuggestions();
   }, [papers]);
 
   // Auto-complete based on typing
