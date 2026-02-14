@@ -3,9 +3,9 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
-  FlaskConical, Home, Database, Sparkles, Plus, Menu, 
-  LogOut, User, TrendingUp, Bookmark, Activity
-} from "lucide-react";
+        FlaskConical, Home, Database, Sparkles, Plus, Menu, 
+        LogOut, User, TrendingUp, Bookmark, Activity, BookOpen
+      } from "lucide-react";
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import FloatingAIAssistant from "@/components/ai/FloatingAIAssistant";
