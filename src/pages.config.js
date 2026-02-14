@@ -57,6 +57,7 @@ import Database from './pages/Database';
 import Home from './pages/Home';
 import PaperDetail from './pages/PaperDetail';
 import Visualizations from './pages/Visualizations';
+import ArticleList from './pages/ArticleList';
 import __Layout from './Layout.jsx';
 
 
@@ -71,6 +72,7 @@ export const PAGES = {
     "Home": Home,
     "PaperDetail": PaperDetail,
     "Visualizations": Visualizations,
+    "ArticleList": ArticleList,
 }
 
 export const pagesConfig = {

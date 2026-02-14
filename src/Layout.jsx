@@ -25,6 +25,7 @@ const navItems = [
   { name: "AI Insights", icon: Sparkles, page: "AIInsights" },
   { name: "Collections", icon: Bookmark, page: "Collections" },
   { name: "Ask AI", icon: Sparkles, page: "AskAI" },
+  { name: "All Articles", icon: BookOpen, page: "ArticleList" },
 ];
 
 export default function Layout({ children, currentPageName }) {
