@@ -147,83 +147,119 @@ Generate 6 diverse queries - mix of broad and specific - that will definitely re
     setIsProcessing(true);
     
     try {
-      // Extract key terms from query for broad search
-      const searchTerms = naturalQuery.toLowerCase()
-        .replace(/[^\w\s-]/g, ' ')
-        .split(/\s+/)
-        .filter(word => word.length > 3);
+      // Build comprehensive database context
+      const provinceList = [...new Set(papers.map(p => p.province).filter(Boolean))];
+      const compoundList = [...new Set(papers.flatMap(p => p.pfas_compounds || []))];
+      const waterTypeList = [...new Set(papers.flatMap(p => p.sample_matrix || []))];
+      const keywordList = [...new Set(papers.flatMap(p => p.keywords || []))];
+      const yearList = [...new Set(papers.map(p => p.publication_year))].sort((a, b) => b - a);
       
-      // Start with ONLY search term - most likely to return results
-      let filters = {
-        province: '',
-        waterType: '',
-        cecCategory: '',
-        yearFrom: '',
-        yearTo: '',
-        search: searchTerms.slice(0, 3).join(' ') || naturalQuery
-      };
-      
-      // Test with just search term
-      let testResults = papers.filter(paper => {
-        const searchLower = filters.search.toLowerCase();
-        return paper.title?.toLowerCase().includes(searchLower) ||
-               paper.abstract?.toLowerCase().includes(searchLower) ||
-               paper.keywords?.some(k => k.toLowerCase().includes(searchLower)) ||
-               paper.pfas_compounds?.some(c => c.toLowerCase().includes(searchLower)) ||
-               paper.study_location?.toLowerCase().includes(searchLower);
-      });
-      
-      // If we got good results (10+), we can try to narrow down with ONE additional filter
-      if (testResults.length >= 10) {
-        // Check if query mentions a specific province
-        const provinceList = ['Gauteng', 'Western Cape', 'KwaZulu-Natal', 'Eastern Cape', 
-                             'Free State', 'Limpopo', 'Mpumalanga', 'Northern Cape', 'North West'];
-        const mentionedProvince = provinceList.find(p => 
-          naturalQuery.toLowerCase().includes(p.toLowerCase())
-        );
-        
-        if (mentionedProvince) {
-          const provinceResults = testResults.filter(p => p.province === mentionedProvince);
-          if (provinceResults.length > 0) {
-            testResults = provinceResults;
-            filters.province = mentionedProvince;
+      // Use AI to intelligently parse the query with full database context
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Parse this natural language search query for a South African CECs research database. Extract search filters that will MAXIMIZE relevant results while staying grounded in the actual database.
+
+User Query: "${naturalQuery}"
+
+ACTUAL DATABASE CONTENT - Use ONLY these values:
+Provinces (${provinceList.length}): ${provinceList.join(', ')}
+Compounds (${compoundList.length}): ${compoundList.join(', ')}
+Water Types (${waterTypeList.length}): ${waterTypeList.join(', ')}
+Keywords (sample): ${keywordList.slice(0, 30).join(', ')}
+Year Range: ${yearList[yearList.length - 1]} to ${yearList[0]}
+Total Papers: ${papers.length}
+
+CRITICAL RULES:
+1. ALWAYS include a "search" term - this is the most important field
+2. Only add structured filters (province, waterType, etc.) if they're EXPLICITLY mentioned AND match database content
+3. Be flexible with search terms - include synonyms and related concepts
+4. For "recent" queries, set yearFrom to 2020
+5. Match water types intelligently (e.g., "wastewater" matches "Wastewater", "Effluent", etc.)
+6. Prioritize recall over precision - broader is better than no results
+
+Examples:
+- "PFAS in South Africa" → search: "PFAS", no other filters (maximize results)
+- "microplastics in Gauteng rivers after 2020" → search: "microplastics river", province: "Gauteng", yearFrom: "2020"
+- "wastewater studies" → search: "wastewater", no other filters
+
+Extract filters:`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            province: { type: "string" },
+            waterType: { type: "string" },
+            cecCategory: { type: "string" },
+            yearFrom: { type: "string" },
+            yearTo: { type: "string" },
+            search: { type: "string" }
           }
         }
-      }
-      
-      // If still no results or very few, try broader single-word searches
-      if (testResults.length === 0) {
-        // Try each major term individually
-        for (const term of searchTerms) {
-          const broadResults = papers.filter(paper => {
-            const termLower = term.toLowerCase();
-            return paper.title?.toLowerCase().includes(termLower) ||
-                   paper.abstract?.toLowerCase().includes(termLower) ||
-                   paper.keywords?.some(k => k.toLowerCase().includes(termLower)) ||
-                   paper.pfas_compounds?.some(c => c.toLowerCase().includes(termLower));
+      });
+
+      if (result) {
+        let filters = {
+          province: result.province || '',
+          waterType: result.waterType || '',
+          cecCategory: result.cecCategory || '',
+          yearFrom: result.yearFrom || '',
+          yearTo: result.yearTo || '',
+          search: result.search || naturalQuery
+        };
+        
+        // Quick validation - test if filters return results
+        let testResults = papers.filter(paper => {
+          if (filters.province && filters.province !== 'National' && paper.province !== filters.province) return false;
+          if (filters.waterType && !paper.sample_matrix?.some(m => m.toLowerCase().includes(filters.waterType.toLowerCase()))) return false;
+          if (filters.yearFrom && paper.publication_year < parseInt(filters.yearFrom)) return false;
+          if (filters.yearTo && paper.publication_year > parseInt(filters.yearTo)) return false;
+          if (filters.search) {
+            const searchLower = filters.search.toLowerCase();
+            return paper.title?.toLowerCase().includes(searchLower) ||
+                   paper.abstract?.toLowerCase().includes(searchLower) ||
+                   paper.keywords?.some(k => k.toLowerCase().includes(searchLower)) ||
+                   paper.pfas_compounds?.some(c => c.toLowerCase().includes(searchLower)) ||
+                   paper.study_location?.toLowerCase().includes(searchLower);
+          }
+          return true;
+        });
+        
+        // If no results, progressively relax filters
+        if (testResults.length === 0) {
+          // Remove all structured filters, keep only search term
+          filters = {
+            province: '',
+            waterType: '',
+            cecCategory: '',
+            yearFrom: '',
+            yearTo: '',
+            search: filters.search
+          };
+          
+          // Try again with just search
+          testResults = papers.filter(paper => {
+            const searchLower = filters.search.toLowerCase();
+            return paper.title?.toLowerCase().includes(searchLower) ||
+                   paper.abstract?.toLowerCase().includes(searchLower) ||
+                   paper.keywords?.some(k => k.toLowerCase().includes(searchLower)) ||
+                   paper.pfas_compounds?.some(c => c.toLowerCase().includes(searchLower));
           });
           
-          if (broadResults.length > 0) {
-            testResults = broadResults;
-            filters.search = term;
-            break;
+          if (testResults.length > 0) {
+            toast.info(`Broadened search - found ${testResults.length} results`);
+          } else {
+            // Show all papers as last resort
+            filters.search = '';
+            toast.info(`No matches found. Showing all ${papers.length} papers.`);
           }
+        } else {
+          toast.success(`Found ${testResults.length} matching papers!`);
         }
-      }
-      
-      // Absolute fallback: show all papers
-      if (testResults.length === 0) {
-        filters = { province: '', waterType: '', cecCategory: '', yearFrom: '', yearTo: '', search: '' };
-        toast.info(`No exact matches found. Showing all ${papers.length} papers.`);
-      } else {
-        toast.success(`Found ${testResults.length} matching papers!`);
-      }
 
-      onFiltersApply(filters);
-      setShowSuggestions(false);
+        onFiltersApply(filters);
+        setShowSuggestions(false);
+      }
     } catch (error) {
       console.error("AI search error:", error);
-      // Just apply search term on error
+      // Fallback to basic search
       onFiltersApply({
         province: '',
         waterType: '',
