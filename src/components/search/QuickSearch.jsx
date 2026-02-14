@@ -38,18 +38,18 @@ export default function QuickSearch() {
   const hasAnySelection = province || waterSource || cecClass;
 
   return (
-    <Card className="p-8 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg">
-          <Search className="w-5 h-5 text-white" />
+    <Card className="p-4 sm:p-6 lg:p-8 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+      <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+        <div className="p-1.5 sm:p-2 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg">
+          <Search className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-slate-900">Guided Database Search</h3>
-          <p className="text-sm text-slate-500">Select criteria to find relevant research</p>
+          <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">Guided Database Search</h3>
+          <p className="text-xs sm:text-sm text-slate-500">Select criteria to find relevant research</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
         {/* Level 1: Province */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
@@ -105,7 +105,7 @@ export default function QuickSearch() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <p className="text-xs text-slate-500">
           {hasAnySelection ? 'Click search to view filtered results' : 'Select at least one criteria to search'}
         </p>
@@ -113,7 +113,7 @@ export default function QuickSearch() {
           onClick={handleSearch} 
           disabled={!hasAnySelection}
           size="lg"
-          className="bg-teal-600 hover:bg-teal-700"
+          className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 h-11 sm:h-10"
         >
           <Search className="w-4 h-4 mr-2" />
           Search Database
