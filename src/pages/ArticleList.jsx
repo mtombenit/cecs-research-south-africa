@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { FileText, Loader2, BookOpen } from "lucide-react";
+import ExportArticleListPDF from "@/components/export/ExportArticleListPDF";
 
 export default function ArticleList() {
   const { data: papers = [], isLoading } = useQuery({
@@ -29,10 +30,15 @@ export default function ArticleList() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-6">All Research Articles</h1>
-        <p className="text-lg text-slate-600 mb-8">
-          Complete list of {papers.length} research papers ranked by publication year.
-        </p>
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">All Research Articles</h1>
+            <p className="text-lg text-slate-600">
+              Complete list of {papers.length} research papers ranked by publication year.
+            </p>
+          </div>
+          <ExportArticleListPDF papers={papers} />
+        </div>
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
