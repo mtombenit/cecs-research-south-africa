@@ -32,6 +32,20 @@ export default function ArticleList() {
     },
   });
 
+  // Find duplicate titles
+  const titleCounts = papers.reduce((acc, paper) => {
+    const title = paper.title?.toLowerCase().trim();
+    if (title) {
+      acc[title] = (acc[title] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
+  const isDuplicate = (paper) => {
+    const title = paper.title?.toLowerCase().trim();
+    return titleCounts[title] > 1;
+  };
+
   // Group papers by publication year while maintaining numbering
   const groupedPapers = papers.reduce((acc, paper, index) => {
     const year = paper.publication_year || 'Unknown';
@@ -95,13 +109,13 @@ export default function ArticleList() {
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0 ml-4">
                         <BookOpen className="w-5 h-5 text-slate-400" />
-                        {user?.role === 'admin' && (
+                        {user?.role === 'admin' && isDuplicate(paper) && (
                           <Button
                             size="icon"
                             variant="ghost"
                             className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                             onClick={() => {
-                              if (confirm(`Delete "${paper.title}"?`)) {
+                              if (confirm(`Delete duplicate "${paper.title}"?`)) {
                                 deleteMutation.mutate(paper.id);
                               }
                             }}
