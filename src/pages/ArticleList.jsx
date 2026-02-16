@@ -21,6 +21,17 @@ export default function ArticleList() {
     queryFn: () => base44.entities.ResearchPaper.list('publication_year'),
   });
 
+  // Find duplicate titles
+  const titleCounts = papers.reduce((acc, paper) => {
+    const title = paper.title?.toLowerCase().trim();
+    if (title) {
+      acc[title] = (acc[title] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
+  const duplicateCount = Object.values(titleCounts).filter(count => count > 1).reduce((sum, count) => sum + (count - 1), 0);
+
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.ResearchPaper.delete(id),
     onSuccess: () => {
@@ -68,17 +79,6 @@ export default function ArticleList() {
       toast.error(`Failed to delete duplicates: ${error.message}`);
     },
   });
-
-  const duplicateCount = Object.values(titleCounts).filter(count => count > 1).reduce((sum, count) => sum + (count - 1), 0);
-
-  // Find duplicate titles
-  const titleCounts = papers.reduce((acc, paper) => {
-    const title = paper.title?.toLowerCase().trim();
-    if (title) {
-      acc[title] = (acc[title] || 0) + 1;
-    }
-    return acc;
-  }, {});
 
   const isDuplicate = (paper) => {
     const title = paper.title?.toLowerCase().trim();
