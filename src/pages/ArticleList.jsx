@@ -32,6 +32,45 @@ export default function ArticleList() {
     },
   });
 
+  const deleteAllDuplicatesMutation = useMutation({
+    mutationFn: async () => {
+      // Group papers by title, keep first, delete rest
+      const titleGroups = {};
+      papers.forEach(paper => {
+        const title = paper.title?.toLowerCase().trim();
+        if (title) {
+          if (!titleGroups[title]) {
+            titleGroups[title] = [];
+          }
+          titleGroups[title].push(paper);
+        }
+      });
+
+      // Delete all but the first paper in each group with duplicates
+      const deletePromises = [];
+      Object.values(titleGroups).forEach(group => {
+        if (group.length > 1) {
+          // Keep the first one, delete the rest
+          group.slice(1).forEach(paper => {
+            deletePromises.push(base44.entities.ResearchPaper.delete(paper.id));
+          });
+        }
+      });
+
+      await Promise.all(deletePromises);
+      return deletePromises.length;
+    },
+    onSuccess: (count) => {
+      queryClient.invalidateQueries({ queryKey: ['papers'] });
+      toast.success(`Deleted ${count} duplicate paper${count !== 1 ? 's' : ''}`);
+    },
+    onError: (error) => {
+      toast.error(`Failed to delete duplicates: ${error.message}`);
+    },
+  });
+
+  const duplicateCount = Object.values(titleCounts).filter(count => count > 1).reduce((sum, count) => sum + (count - 1), 0);
+
   // Find duplicate titles
   const titleCounts = papers.reduce((acc, paper) => {
     const title = paper.title?.toLowerCase().trim();
@@ -72,7 +111,23 @@ export default function ArticleList() {
               Complete list of {papers.length} research papers ranked by publication year.
             </p>
           </div>
-          <ExportArticleListPDF papers={papers} />
+          <div className="flex gap-3">
+            {user?.role === 'admin' && duplicateCount > 0 && (
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (confirm(`Delete ${duplicateCount} duplicate paper${duplicateCount !== 1 ? 's' : ''}? This will keep one copy of each.`)) {
+                    deleteAllDuplicatesMutation.mutate();
+                  }
+                }}
+                disabled={deleteAllDuplicatesMutation.isPending}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete All Duplicates ({duplicateCount})
+              </Button>
+            )}
+            <ExportArticleListPDF papers={papers} />
+          </div>
         </div>
 
         {isLoading ? (
