@@ -179,11 +179,19 @@ export default function AddPaper() {
 
       // Quick upload phase - save to temp storage immediately
       const pendingPapers = [];
+      const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
+      
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const fileNum = i + 1;
         
         try {
+          // Check file size
+          if (file.size > maxFileSize) {
+            toast.error(`${file.name} exceeds 10MB limit (${(file.size / 1024 / 1024).toFixed(1)}MB)`);
+            continue;
+          }
+          
           setUploadStatus(`Uploading ${file.name} (${fileNum}/${files.length})`);
           setUploadProgress((fileNum / files.length) * 100);
           
@@ -202,7 +210,7 @@ export default function AddPaper() {
           
         } catch (error) {
           console.error(`Error uploading ${file.name}:`, error);
-          toast.error(`Failed to upload ${file.name}`);
+          toast.error(`Failed to upload ${file.name}: ${error.message}`);
         }
       }
 
