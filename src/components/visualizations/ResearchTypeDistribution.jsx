@@ -37,7 +37,7 @@ export default function ResearchTypeDistribution({ papers }) {
   };
 
   const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-    if (percent < 0.05) return null; // Don't show label if less than 5%
+    if (percent < 0.08) return null; // Don't show label if less than 8%
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * Math.PI / 180);
     const y = cy + radius * Math.sin(-midAngle * Math.PI / 180);
@@ -47,9 +47,9 @@ export default function ResearchTypeDistribution({ papers }) {
         x={x} 
         y={y} 
         fill="white" 
-        textAnchor={x > cx ? 'start' : 'end'} 
+        textAnchor="middle"
         dominantBaseline="central"
-        className="text-xs font-semibold"
+        className="text-xs font-bold"
       >
         {`${(percent * 100).toFixed(0)}%`}
       </text>
@@ -66,15 +66,15 @@ export default function ResearchTypeDistribution({ papers }) {
       </CardHeader>
       <CardContent>
         {chartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={450}>
             <PieChart>
               <Pie
                 data={chartData}
                 cx="50%"
-                cy="50%"
+                cy="45%"
                 labelLine={false}
                 label={renderCustomLabel}
-                outerRadius={120}
+                outerRadius={130}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -85,14 +85,15 @@ export default function ResearchTypeDistribution({ papers }) {
               <Tooltip content={<CustomTooltip />} />
               <Legend 
                 verticalAlign="bottom" 
-                height={36}
+                height={60}
                 iconType="circle"
-                wrapperStyle={{ fontSize: '12px' }}
+                wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                layout="horizontal"
               />
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-[400px] flex items-center justify-center text-slate-400">
+          <div className="h-[450px] flex items-center justify-center text-slate-400">
             <p>No research type data available</p>
           </div>
         )}

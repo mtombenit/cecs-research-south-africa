@@ -44,17 +44,18 @@ export default function ProvinceDistribution({ papers }) {
       </CardHeader>
       <CardContent>
         {chartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 50 }}>
+          <ResponsiveContainer width="100%" height={450}>
+            <BarChart data={chartData} margin={{ top: 20, right: 20, left: 10, bottom: 80 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis 
                 dataKey="name" 
                 angle={-45} 
                 textAnchor="end" 
-                height={100}
-                tick={{ fill: '#64748b', fontSize: 12 }}
+                height={120}
+                tick={{ fill: '#64748b', fontSize: 11 }}
+                interval={0}
               />
-              <YAxis tick={{ fill: '#64748b' }} />
+              <YAxis tick={{ fill: '#64748b', fontSize: 12 }} />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(14, 165, 233, 0.1)' }} />
               <Bar dataKey="count" radius={[8, 8, 0, 0]}>
                 {chartData.map((entry, index) => (
@@ -64,7 +65,7 @@ export default function ProvinceDistribution({ papers }) {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-[400px] flex items-center justify-center text-slate-400">
+          <div className="h-[450px] flex items-center justify-center text-slate-400">
             <p>No province data available</p>
           </div>
         )}
