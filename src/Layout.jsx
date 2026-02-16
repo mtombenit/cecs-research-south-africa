@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
         FlaskConical, Home, Database, Sparkles, Plus, Menu, 
-        LogOut, User, TrendingUp, Bookmark, Activity, BookOpen
+        LogOut, User, TrendingUp, Bookmark, Activity, BookOpen, Trash2
       } from "lucide-react";
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
@@ -109,12 +109,20 @@ export default function Layout({ children, currentPageName }) {
                     </div>
                     <DropdownMenuSeparator />
                     {user.role === 'admin' && (
-                      <DropdownMenuItem asChild>
-                        <Link to={createPageUrl("AgentActivity")}>
-                          <Activity className="w-4 h-4 mr-2" />
-                          Agent Activity
-                        </Link>
-                      </DropdownMenuItem>
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to={createPageUrl("AgentActivity")}>
+                            <Activity className="w-4 h-4 mr-2" />
+                            Agent Activity
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to={createPageUrl("DuplicateManager")}>
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Duplicate Manager
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
                     )}
                     <DropdownMenuItem onClick={() => base44.auth.logout()}>
                       <LogOut className="w-4 h-4 mr-2" />
@@ -157,15 +165,26 @@ export default function Layout({ children, currentPageName }) {
                         </div>
                       </div>
                       {user.role === 'admin' && (
-                        <Link to={createPageUrl("AgentActivity")} onClick={() => setMobileOpen(false)}>
-                          <Button 
-                            variant="ghost" 
-                            className="w-full justify-start text-slate-600"
-                          >
-                            <Activity className="w-4 h-4 mr-2" />
-                            Agent Activity
-                          </Button>
-                        </Link>
+                        <>
+                          <Link to={createPageUrl("AgentActivity")} onClick={() => setMobileOpen(false)}>
+                            <Button 
+                              variant="ghost" 
+                              className="w-full justify-start text-slate-600"
+                            >
+                              <Activity className="w-4 h-4 mr-2" />
+                              Agent Activity
+                            </Button>
+                          </Link>
+                          <Link to={createPageUrl("DuplicateManager")} onClick={() => setMobileOpen(false)}>
+                            <Button 
+                              variant="ghost" 
+                              className="w-full justify-start text-slate-600"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Duplicate Manager
+                            </Button>
+                          </Link>
+                        </>
                       )}
                       <Button 
                         variant="ghost" 

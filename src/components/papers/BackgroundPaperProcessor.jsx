@@ -15,7 +15,7 @@ export default function BackgroundPaperProcessor() {
   useEffect(() => {
     // Process papers that need processing
     const papersToProcess = pendingPapers.filter(p => 
-      ['uploading', 'extracting', 'validating', 'checking_duplicates'].includes(p.status)
+      ['uploading', 'extracting', 'validating'].includes(p.status)
     );
 
     papersToProcess.forEach(paper => {
@@ -23,29 +23,7 @@ export default function BackgroundPaperProcessor() {
     });
   }, [pendingPapers]);
 
-  const checkDuplicate = async (newPaper) => {
-    if (!newPaper.title) return { isDuplicate: false };
 
-    const allExistingPapers = await base44.entities.ResearchPaper.list(null, 500);
-    
-    // First, perform exact checks for efficiency
-    for (const existing of allExistingPapers) {
-      // Exact DOI match
-      if (newPaper.doi && existing.doi && newPaper.doi.toLowerCase() === existing.doi.toLowerCase()) {
-        return { isDuplicate: true, title: existing.title };
-      }
-      
-      // Exact title match (case-insensitive, trimmed)
-      const newTitle = newPaper.title.toLowerCase().trim();
-      const existingTitle = existing.title?.toLowerCase().trim();
-      if (existingTitle && newTitle === existingTitle) {
-        return { isDuplicate: true, title: existing.title };
-      }
-    }
-
-    // No exact matches found
-    return { isDuplicate: false };
-  };
 
   const processPaper = async (paper) => {
     try {
@@ -180,31 +158,9 @@ Return your analysis.`,
           return;
         }
 
-        await base44.entities.PendingPaper.update(paper.id, {
-          status: "checking_duplicates",
-          progress: 70
-        });
-        window[processingKey] = false;
-        return;
-      }
-
-      if (paper.status === 'checking_duplicates') {
-        const extractedPaper = paper.extracted_data;
-        
-        // Check for duplicates
-        const duplicateCheck = await checkDuplicate(extractedPaper);
-        if (duplicateCheck.isDuplicate) {
-          await base44.entities.PendingPaper.update(paper.id, {
-            status: "duplicate",
-            duplicate_of: duplicateCheck.title,
-            progress: 100
-          });
-          window[processingKey] = false;
-          return;
-        }
-
-        // Save to database
-        await base44.entities.ResearchPaper.create(extractedPaper);
+        // Save to database immediately without duplicate check
+        const extractedPaper2 = paper.extracted_data;
+        await base44.entities.ResearchPaper.create(extractedPaper2);
         
         // Mark as complete
         await base44.entities.PendingPaper.update(paper.id, {
@@ -213,7 +169,7 @@ Return your analysis.`,
         });
 
         queryClient.invalidateQueries({ queryKey: ['papers'] });
-        toast.success(`"${extractedPaper.title}" added to database!`);
+        toast.success(`"${extractedPaper2.title}" added to database!`);
         window[processingKey] = false;
         return;
       }

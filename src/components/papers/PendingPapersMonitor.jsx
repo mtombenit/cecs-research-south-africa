@@ -26,7 +26,6 @@ export default function PendingPapersMonitor() {
     uploading: { icon: Loader2, color: 'text-blue-500', label: 'Uploading', spin: true },
     extracting: { icon: Loader2, color: 'text-purple-500', label: 'Extracting metadata', spin: true },
     validating: { icon: Loader2, color: 'text-orange-500', label: 'Validating', spin: true },
-    checking_duplicates: { icon: Loader2, color: 'text-teal-500', label: 'Checking duplicates', spin: true },
   };
 
   return (

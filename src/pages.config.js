@@ -58,6 +58,7 @@ import Database from './pages/Database';
 import Home from './pages/Home';
 import PaperDetail from './pages/PaperDetail';
 import Visualizations from './pages/Visualizations';
+import DuplicateManager from './pages/DuplicateManager';
 import __Layout from './Layout.jsx';
 
 
@@ -73,6 +74,7 @@ export const PAGES = {
     "Home": Home,
     "PaperDetail": PaperDetail,
     "Visualizations": Visualizations,
+    "DuplicateManager": DuplicateManager,
 }
 
 export const pagesConfig = {
