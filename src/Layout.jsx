@@ -84,7 +84,7 @@ export default function Layout({ children, currentPageName }) {
                 <FlaskConical className="w-5 h-5 text-white" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="font-bold text-slate-900 text-sm md:text-base lg:text-lg leading-tight">SA CECs Intelligent Portal</h1>
+                <h1 className="font-bold text-slate-900 text-xs sm:text-sm lg:text-base leading-tight whitespace-nowrap">SA CECs Intelligent Portal</h1>
                 <p className="text-xs text-slate-500">Research Portal</p>
               </div>
             </Link>
