@@ -55,10 +55,10 @@ import AskAI from './pages/AskAI';
 import CollectionDetail from './pages/CollectionDetail';
 import Collections from './pages/Collections';
 import Database from './pages/Database';
+import DuplicateManager from './pages/DuplicateManager';
 import Home from './pages/Home';
 import PaperDetail from './pages/PaperDetail';
 import Visualizations from './pages/Visualizations';
-import DuplicateManager from './pages/DuplicateManager';
 import __Layout from './Layout.jsx';
 
 
@@ -71,10 +71,10 @@ export const PAGES = {
     "CollectionDetail": CollectionDetail,
     "Collections": Collections,
     "Database": Database,
+    "DuplicateManager": DuplicateManager,
     "Home": Home,
     "PaperDetail": PaperDetail,
     "Visualizations": Visualizations,
-    "DuplicateManager": DuplicateManager,
 }
 
 export const pagesConfig = {

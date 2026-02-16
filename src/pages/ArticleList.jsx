@@ -1,14 +1,35 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { FileText, Loader2, BookOpen } from "lucide-react";
+import { FileText, Loader2, BookOpen, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useState, useEffect } from "react";
 import ExportArticleListPDF from "@/components/export/ExportArticleListPDF";
 
 export default function ArticleList() {
+  const queryClient = useQueryClient();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => {});
+  }, []);
+
   const { data: papers = [], isLoading } = useQuery({
     queryKey: ['papers'],
     queryFn: () => base44.entities.ResearchPaper.list('publication_year'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.ResearchPaper.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['papers'] });
+      toast.success("Paper deleted successfully");
+    },
+    onError: (error) => {
+      toast.error(`Failed to delete: ${error.message}`);
+    },
   });
 
   // Group papers by publication year while maintaining numbering
@@ -72,8 +93,22 @@ export default function ArticleList() {
                           <p className="text-slate-500 text-xs mt-0.5">{paper.journal}</p>
                         )}
                       </div>
-                      <div className="flex-shrink-0 ml-4">
+                      <div className="flex items-center gap-2 flex-shrink-0 ml-4">
                         <BookOpen className="w-5 h-5 text-slate-400" />
+                        {user?.role === 'admin' && (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => {
+                              if (confirm(`Delete "${paper.title}"?`)) {
+                                deleteMutation.mutate(paper.id);
+                              }
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
                       </div>
                     </div>
                   ))}
