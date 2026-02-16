@@ -23,38 +23,28 @@ export default function BackgroundPaperProcessor() {
     });
   }, [pendingPapers]);
 
-  const checkDuplicate = async (extractedPaper) => {
-    const { data: existingPapers } = await base44.entities.ResearchPaper.list();
+  const checkDuplicate = async (newPaper) => {
+    if (!newPaper.title) return { isDuplicate: false };
+
+    const allExistingPapers = await base44.entities.ResearchPaper.list(null, 500);
     
-    const prompt = `Check if this paper is a duplicate of any existing papers in the database.
-
-NEW PAPER:
-Title: ${extractedPaper.title}
-Authors: ${extractedPaper.authors?.join(', ')}
-Year: ${extractedPaper.publication_year}
-DOI: ${extractedPaper.doi || 'N/A'}
-
-EXISTING PAPERS:
-${existingPapers.slice(0, 50).map(p => `- ${p.title} (${p.publication_year}) by ${p.authors?.join(', ')}`).join('\n')}
-
-Is this a duplicate? Consider title similarity, same authors, same year, or same DOI.`;
-
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt,
-      response_json_schema: {
-        type: "object",
-        properties: {
-          is_duplicate: { type: "boolean" },
-          duplicate_title: { type: "string" },
-          reason: { type: "string" }
-        }
+    // First, perform exact checks for efficiency
+    for (const existing of allExistingPapers) {
+      // Exact DOI match
+      if (newPaper.doi && existing.doi && newPaper.doi.toLowerCase() === existing.doi.toLowerCase()) {
+        return { isDuplicate: true, title: existing.title };
       }
-    });
+      
+      // Exact title match (case-insensitive, trimmed)
+      const newTitle = newPaper.title.toLowerCase().trim();
+      const existingTitle = existing.title?.toLowerCase().trim();
+      if (existingTitle && newTitle === existingTitle) {
+        return { isDuplicate: true, title: existing.title };
+      }
+    }
 
-    return {
-      isDuplicate: result.is_duplicate,
-      title: result.duplicate_title || ''
-    };
+    // No exact matches found
+    return { isDuplicate: false };
   };
 
   const processPaper = async (paper) => {
@@ -74,18 +64,28 @@ Is this a duplicate? Consider title similarity, same authors, same year, or same
       }
 
       if (paper.status === 'extracting') {
-        // Extract metadata
+        // Extract metadata with improved prompt
         const result = await base44.integrations.Core.InvokeLLM({
-          prompt: `Extract detailed metadata from this research paper. Pay special attention to:
+          prompt: `You are extracting metadata from a research paper PDF. Extract ALL available information with maximum accuracy.
 
-PUBLICATION YEAR: Look for publication date in header, footer, citations, or metadata. Extract the 4-digit year.
-JOURNAL: Find the journal/publication name - often at the top of the first page or in citations.
-DOI: Look for "DOI:", "doi.org/", or similar identifiers. Extract the full DOI (e.g., 10.1234/example).
-STUDY LOCATION: Identify specific cities, regions, provinces, or areas in South Africa where research was conducted.
-PROVINCE: Determine which South African province(s): Eastern Cape, Free State, Gauteng, KwaZulu-Natal, Limpopo, Mpumalanga, Northern Cape, North West, or Western Cape.
-INSTITUTION: Find the affiliated university or research institution.
+CRITICAL INSTRUCTIONS:
+1. TITLE: Extract the complete, exact title of the paper
+2. AUTHORS: List ALL authors in order as they appear
+3. ABSTRACT: Extract the full abstract text
+4. PUBLICATION YEAR: Find the 4-digit year (check header, footer, citations, copyright notices)
+5. JOURNAL: Identify the journal/publication source name
+6. DOI: Look for "DOI:", "doi:", "doi.org/", "dx.doi.org/" - extract the complete identifier
+7. STUDY LOCATION: Find specific cities, regions, or areas in South Africa where the study was conducted
+8. PROVINCE: Identify which South African province(s): Eastern Cape, Free State, Gauteng, KwaZulu-Natal, Limpopo, Mpumalanga, Northern Cape, North West, Western Cape
+9. RESEARCH TYPE: Classify as: Environmental Monitoring, Human Health, Water Quality, Soil Contamination, Wildlife, Treatment Technology, Risk Assessment, or Review
+10. PFAS COMPOUNDS: List all PFAS chemicals studied (e.g., PFOA, PFOS, PFHxS, PFNA, etc.)
+11. SAMPLE MATRIX: List sample types analyzed (e.g., water, soil, sediment, blood, fish)
+12. KEY FINDINGS: Summarize the main results and conclusions
+13. CONCENTRATIONS: Report any PFAS concentration ranges or values found
+14. KEYWORDS: Extract research keywords
+15. INSTITUTION: Identify the affiliated university or research organization
 
-Extract all available information accurately. If a field is not found, leave it empty or null.`,
+IMPORTANT: Extract data exactly as it appears in the document. If a field is not found, return null or empty array.`,
           file_urls: [paper.file_url],
           response_json_schema: {
             type: "object",
@@ -109,10 +109,10 @@ Extract all available information accurately. If a field is not found, leave it 
           }
         });
 
-        if (!result) {
+        if (!result || !result.title) {
           await base44.entities.PendingPaper.update(paper.id, {
             status: "error",
-            error_message: "Failed to extract metadata",
+            error_message: "Failed to extract metadata - could not read title",
             progress: 100
           });
           window[processingKey] = false;
