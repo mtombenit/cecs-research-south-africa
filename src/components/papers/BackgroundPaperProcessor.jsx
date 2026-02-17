@@ -18,9 +18,10 @@ export default function BackgroundPaperProcessor() {
       ['uploading', 'extracting', 'validating'].includes(p.status)
     );
 
-    papersToProcess.forEach(paper => {
-      processPaper(paper);
-    });
+    // Process only one paper at a time to avoid rate limits
+    if (papersToProcess.length > 0) {
+      processPaper(papersToProcess[0]);
+    }
   }, [pendingPapers]);
 
 
@@ -44,7 +45,7 @@ export default function BackgroundPaperProcessor() {
 
       if (paper.status === 'extracting') {
         // Add delay to avoid rate limits
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
 
         // Extract metadata with improved prompt
         const result = await base44.integrations.Core.InvokeLLM({
@@ -122,9 +123,9 @@ IMPORTANT: Extract data exactly as it appears in the document. If a field is not
 
       if (paper.status === 'validating') {
         const extractedPaper = paper.extracted_data;
-        
+
         // Add delay to avoid rate limits
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         
         // Validate South African origin
         const validationResult = await base44.integrations.Core.InvokeLLM({
@@ -185,10 +186,12 @@ Return your analysis.`,
 
     } catch (error) {
       let errorMessage = error.message;
-      
+
       // Handle specific error types
       if (errorMessage.includes('rate limit') || errorMessage.includes('Rate limit')) {
-        errorMessage = 'Rate limit exceeded - will retry automatically';
+        errorMessage = 'Rate limit exceeded - will retry in 10 seconds';
+        // Wait longer before retry
+        await new Promise(resolve => setTimeout(resolve, 10000));
         // Reset status to retry
         await base44.entities.PendingPaper.update(paper.id, {
           status: paper.status, // Keep same status to retry
