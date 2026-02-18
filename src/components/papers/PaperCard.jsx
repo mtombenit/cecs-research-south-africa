@@ -96,20 +96,7 @@ export default function PaperCard({ paper, isDuplicate = false }) {
             <div onClick={(e) => e.stopPropagation()}>
               <SavePaperButton paperId={paper.id} />
             </div>
-            <div onClick={(e) => e.stopPropagation()} className="hidden sm:block">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-slate-500 hover:text-teal-600 h-9"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.open(paper.pdf_url || `https://sci-hub.se/${paper.doi}`, '_blank');
-                }}
-              >
-                <Download className="w-4 h-4 mr-1" />
-                <span className="hidden lg:inline">PDF</span>
-              </Button>
-            </div>
+
             {paper.doi && (
               <div onClick={(e) => e.stopPropagation()} className="hidden sm:block">
                 <Button 
