@@ -13,6 +13,7 @@ const PAGE_SIZE = 50;
 export default function ArticleList() {
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
