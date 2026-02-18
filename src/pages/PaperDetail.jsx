@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import PaperAIChat from "@/components/papers/PaperAIChat";
+import PaperAIInsights from "@/components/papers/PaperAIInsights";
 import SavePaperButton from "@/components/collections/SavePaperButton";
 import { 
   ArrowLeft, Calendar, MapPin, Users, FileText, ExternalLink, 
