@@ -88,13 +88,16 @@ export default function ArticleList() {
     return titleCounts[title] > 1;
   };
 
-  // Group papers by publication year while maintaining numbering
-  const groupedPapers = papers.reduce((acc, paper, index) => {
+  // Paginate papers
+  const totalPages = Math.ceil(papers.length / PAGE_SIZE);
+  const paginatedPapers = papers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  // Group paginated papers by publication year while maintaining global numbering
+  const groupedPapers = paginatedPapers.reduce((acc, paper) => {
+    const globalIndex = papers.indexOf(paper);
     const year = paper.publication_year || 'Unknown';
-    if (!acc[year]) {
-      acc[year] = [];
-    }
-    acc[year].push({ ...paper, globalIndex: index });
+    if (!acc[year]) acc[year] = [];
+    acc[year].push({ ...paper, globalIndex });
     return acc;
   }, {});
 
