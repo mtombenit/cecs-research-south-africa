@@ -188,10 +188,40 @@ export default function ArticleList() {
                     </div>
                   ))}
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
+                </div>
+                ))}
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-6">
+                <p className="text-sm text-slate-500">
+                  Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, papers.length)} of {papers.length} articles
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => { setCurrentPage(p => p - 1); window.scrollTo(0, 0); }}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+                  </Button>
+                  <span className="text-sm text-slate-600 px-2">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => { setCurrentPage(p => p + 1); window.scrollTo(0, 0); }}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </div>
+                </div>
+                )}
+                </div>
+                ) : (
           <div className="text-center py-20">
             <div className="w-16 h-16 mx-auto mb-4 bg-slate-100 rounded-2xl flex items-center justify-center">
               <FileText className="w-8 h-8 text-slate-400" />
