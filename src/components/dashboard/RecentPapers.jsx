@@ -64,18 +64,7 @@ export default function RecentPapers({ papers, isLoading }) {
                        {paper.province}
                      </span>
                    )}
-                   {(paper.pdf_url || paper.doi) && (
-                     <a 
-                       href={paper.pdf_url || `https://sci-hub.se/${paper.doi}`}
-                       target="_blank" 
-                       rel="noopener noreferrer"
-                       onClick={(e) => e.stopPropagation()}
-                       className="flex items-center text-xs text-teal-600 hover:text-teal-700"
-                     >
-                       <Download className="w-3 h-3 mr-1" />
-                       PDF
-                     </a>
-                   )}
+
                   </div>
                 </div>
               </div>

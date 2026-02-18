@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import SavePaperButton from "@/components/collections/SavePaperButton";
 import DeleteDuplicateButton from "@/components/papers/DeleteDuplicateButton";
-import { FileText, MapPin, Calendar, ExternalLink, Users, Beaker, Download } from "lucide-react";
+import { FileText, MapPin, Calendar, ExternalLink, Users, Beaker } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
