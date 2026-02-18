@@ -114,7 +114,7 @@ export default function ArticleList() {
           <div>
             <h1 className="text-3xl font-bold text-slate-900 mb-2">All Research Articles</h1>
             <p className="text-lg text-slate-600">
-              Complete list of {papers.length} research papers ranked by publication year.
+              Showing {Math.min(currentPage * PAGE_SIZE, papers.length)} of {papers.length} research papers ranked by publication year.
             </p>
           </div>
           <div className="flex gap-3">
