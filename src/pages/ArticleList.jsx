@@ -2,11 +2,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { FileText, Loader2, BookOpen, Trash2 } from "lucide-react";
+import { FileText, Loader2, BookOpen, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import ExportArticleListPDF from "@/components/export/ExportArticleListPDF";
+
+const PAGE_SIZE = 50;
 
 export default function ArticleList() {
   const queryClient = useQueryClient();
