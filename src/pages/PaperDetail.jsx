@@ -108,6 +108,8 @@ export default function PaperDetail() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            <PaperAIInsights paper={paper} />
+
             {paper.abstract && (
               <Card className="border-0 shadow-sm">
                 <CardContent className="p-6">
