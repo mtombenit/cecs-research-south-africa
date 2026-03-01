@@ -16,6 +16,10 @@ export default function PaperAIInsights({ paper }) {
   const generateInsights = async () => {
     setLoading(true);
     setError(null);
+    const contentSection = paper.markdown_content
+      ? `\n\nFull Paper Content (Markdown):\n${paper.markdown_content.slice(0, 8000)}`
+      : `\nAbstract: ${paper.abstract || "N/A"}\nKey Findings: ${paper.key_findings || "N/A"}\nConcentrations Reported: ${paper.concentrations_reported || "N/A"}`;
+
     const result = await base44.integrations.Core.InvokeLLM({
       prompt: `You are an expert analyst of PFAS and environmental research papers. Analyze the following research paper and provide structured insights.
 
@@ -23,14 +27,11 @@ Paper Title: ${paper.title}
 Authors: ${paper.authors?.join(", ")}
 Year: ${paper.publication_year}
 Journal: ${paper.journal || "N/A"}
-Abstract: ${paper.abstract || "N/A"}
-Key Findings: ${paper.key_findings || "N/A"}
-Concentrations Reported: ${paper.concentrations_reported || "N/A"}
 PFAS Compounds: ${paper.pfas_compounds?.join(", ") || "N/A"}
 Sample Matrix: ${paper.sample_matrix?.join(", ") || "N/A"}
 Research Type: ${paper.research_type || "N/A"}
 Province: ${paper.province || "N/A"}
-Study Location: ${paper.study_location || "N/A"}
+Study Location: ${paper.study_location || "N/A"}${contentSection}
 
 Provide:
 1. A concise 2-3 sentence plain-language summary of what this paper is about and why it matters.
