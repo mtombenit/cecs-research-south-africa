@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
         FlaskConical, Home, Database, Sparkles, Plus, Menu, 
-        LogOut, User, TrendingUp, Bookmark, Activity, BookOpen, Trash2
+        LogOut, User, TrendingUp, Activity, BookOpen, Trash2
       } from "lucide-react";
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
