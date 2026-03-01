@@ -31,10 +31,9 @@ export default function PaperAIChat({ paper }) {
   }, [messages]);
 
   const buildPaperContext = () => {
-    return `You are an AI research assistant specialized in PFAS research, helping users understand a specific research paper.
+    const hasFullContent = !!paper.markdown_content;
 
-Paper Details:
-Title: ${paper.title}
+    const baseDetails = `Title: ${paper.title}
 Authors: ${paper.authors?.join(", ")}
 Publication Year: ${paper.publication_year}
 Journal: ${paper.journal || "Not specified"}
@@ -44,18 +43,17 @@ Study Location: ${paper.study_location || "Not specified"}
 Research Type: ${paper.research_type || "Not specified"}
 PFAS Compounds Studied: ${paper.pfas_compounds?.join(", ") || "Not specified"}
 Sample Matrix: ${paper.sample_matrix?.join(", ") || "Not specified"}
-
-Abstract:
-${paper.abstract || "Not available"}
-
-Key Findings:
-${paper.key_findings || "Not available"}
-
-Concentrations Reported:
-${paper.concentrations_reported || "Not available"}
-
 Institution: ${paper.institution || "Not specified"}
-Keywords: ${paper.keywords?.join(", ") || "Not specified"}
+Keywords: ${paper.keywords?.join(", ") || "Not specified"}`;
+
+    const contentSection = hasFullContent
+      ? `\n\n--- FULL PAPER CONTENT (Markdown) ---\n${paper.markdown_content}`
+      : `\n\nAbstract:\n${paper.abstract || "Not available"}\n\nKey Findings:\n${paper.key_findings || "Not available"}\n\nConcentrations Reported:\n${paper.concentrations_reported || "Not available"}`;
+
+    return `You are an AI research assistant specialized in PFAS research, helping users understand a specific research paper.
+
+Paper Details:
+${baseDetails}${contentSection}
 
 Your Capabilities:
 1. Summarize the paper's key findings and methodology
