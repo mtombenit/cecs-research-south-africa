@@ -166,15 +166,23 @@ Return your analysis.`,
           return;
         }
 
-        // Save to database immediately without duplicate check
+        // Save to database
         const extractedPaper2 = paper.extracted_data;
-        await base44.entities.ResearchPaper.create(extractedPaper2);
+        const newPaper = await base44.entities.ResearchPaper.create(extractedPaper2);
         
         // Mark as complete
         await base44.entities.PendingPaper.update(paper.id, {
           status: "complete",
           progress: 100
         });
+
+        // Kick off background Markdown extraction for richer AI context
+        if (newPaper?.id && paper.file_url) {
+          base44.functions.invoke('extractMarkdown', {
+            paper_id: newPaper.id,
+            file_url: paper.file_url
+          }).catch(() => {}); // Non-blocking, best-effort
+        }
 
         queryClient.invalidateQueries({ queryKey: ['papers'] });
         toast.success(`"${extractedPaper2.title}" added to database!`);
