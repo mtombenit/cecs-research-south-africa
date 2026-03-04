@@ -109,18 +109,18 @@ Provide:
 
   // Merge historical + forecast for chart
   const chartData = forecast
-    ? [
-        ...forecast.historical.map(d => ({
-          year: d.year,
-          historical: d.avg_concentration,
-          papers: d.papers,
-        })),
-        ...((forecast.forecast_points || []).map(f => ({
-          year: f.year,
-          forecast: f.predicted_concentration,
-          confidence: f.confidence,
-        }))),
-      ]
+    ? (() => {
+        const map = {};
+        (forecast.historical || []).forEach(d => {
+          map[d.year] = { year: d.year, actual: d.avg_concentration, papers: d.papers };
+        });
+        (forecast.forecast_points || []).forEach(f => {
+          if (!map[f.year]) map[f.year] = { year: f.year };
+          map[f.year].forecast = f.predicted_concentration;
+          map[f.year].confidence = f.confidence;
+        });
+        return Object.values(map).sort((a, b) => a.year - b.year);
+      })()
     : [];
 
   const trendColors = {
