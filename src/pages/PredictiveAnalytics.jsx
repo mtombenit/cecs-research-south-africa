@@ -132,6 +132,121 @@ Provide:
 
   const currentYear = new Date().getFullYear();
 
+  const handleDownloadReport = () => {
+    const doc = new jsPDF();
+    const margin = 20;
+    let y = margin;
+    const lineH = 7;
+    const pageH = doc.internal.pageSize.height;
+
+    const checkPage = (needed = lineH) => {
+      if (y + needed > pageH - margin) { doc.addPage(); y = margin; }
+    };
+
+    // Title
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("Predictive Analytics Report", margin, y);
+    y += 10;
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100);
+    doc.text(`SA CECs Intelligent Portal  •  Generated: ${new Date().toLocaleDateString("en-ZA")}`, margin, y);
+    y += lineH;
+    doc.text(`Compound: ${selectedCompound}   |   Province: ${selectedProvince === "all" ? "All Provinces" : selectedProvince}`, margin, y);
+    y += 10;
+    doc.setTextColor(0);
+
+    // Trend Summary
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Trend Summary", margin, y);
+    y += lineH;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const summaryLines = doc.splitTextToSize(forecast.trend_summary || "", 170);
+    checkPage(summaryLines.length * lineH);
+    doc.text(summaryLines, margin, y);
+    y += summaryLines.length * lineH + 6;
+
+    // Trend direction
+    doc.setFont("helvetica", "bold");
+    doc.text(`Trend Direction: `, margin, y);
+    doc.setFont("helvetica", "normal");
+    doc.text((forecast.trend_direction || "").toUpperCase(), margin + 34, y);
+    y += lineH + 6;
+
+    // Key Drivers
+    checkPage(20);
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Key Drivers", margin, y);
+    y += lineH;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    (forecast.key_factors || []).forEach(f => {
+      checkPage();
+      doc.text(`• ${f}`, margin + 4, y);
+      y += lineH;
+    });
+    y += 4;
+
+    // Historical Data
+    checkPage(20);
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Historical Data", margin, y);
+    y += lineH;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("Year", margin, y);
+    doc.text("Avg Concentration", margin + 30, y);
+    doc.text("Papers", margin + 90, y);
+    y += lineH;
+    doc.setFont("helvetica", "normal");
+    (forecast.historical || []).forEach(d => {
+      checkPage();
+      doc.text(String(d.year), margin, y);
+      doc.text(d.avg_concentration != null ? String(d.avg_concentration) : "N/A", margin + 30, y);
+      doc.text(String(d.papers), margin + 90, y);
+      y += lineH;
+    });
+    y += 4;
+
+    // 5-Year Forecast
+    checkPage(20);
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("5-Year Forecast", margin, y);
+    y += lineH;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("Year", margin, y);
+    doc.text("Predicted Concentration", margin + 30, y);
+    doc.text("Confidence", margin + 100, y);
+    y += lineH;
+    doc.setFont("helvetica", "normal");
+    (forecast.forecast_points || []).forEach(f => {
+      checkPage();
+      doc.text(String(f.year), margin, y);
+      doc.text(f.predicted_concentration?.toFixed(2) ?? "N/A", margin + 30, y);
+      doc.text(f.confidence || "", margin + 100, y);
+      y += lineH;
+    });
+    y += 6;
+
+    // Disclaimer
+    checkPage(20);
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    doc.setFont("helvetica", "italic");
+    const disclaimer = doc.splitTextToSize(`Disclaimer: ${forecast.uncertainty_note} Forecasts are AI-generated from published research data and should not replace formal environmental assessments.`, 170);
+    doc.text(disclaimer, margin, y);
+
+    doc.save(`PredictiveReport_${selectedCompound}_${selectedProvince}_${new Date().getFullYear()}.pdf`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
