@@ -425,10 +425,15 @@ Provide:
               </CardContent>
             </Card>
 
-            {/* Disclaimer */}
-            <div className="flex items-start gap-2 text-xs text-slate-500 bg-amber-50 border border-amber-100 rounded-lg p-4">
-              <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-              <p><strong>Disclaimer:</strong> {forecast.uncertainty_note} Forecasts are AI-generated from published research data and should not replace formal environmental assessments.</p>
+            {/* Disclaimer + Download */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex items-start gap-2 text-xs text-slate-500 bg-amber-50 border border-amber-100 rounded-lg p-4 flex-1">
+                <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                <p><strong>Disclaimer:</strong> {forecast.uncertainty_note} Forecasts are AI-generated from published research data and should not replace formal environmental assessments.</p>
+              </div>
+              <Button onClick={handleDownloadReport} className="bg-teal-600 hover:bg-teal-700 flex-shrink-0">
+                <Download className="w-4 h-4 mr-2" /> Download Report
+              </Button>
             </div>
           </div>
         )}
