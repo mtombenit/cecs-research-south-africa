@@ -112,18 +112,35 @@ Provide:
   // Merge historical + forecast for chart
   const chartData = forecast
     ? (() => {
+        const isMonthlyForecast = forecast.forecast_points?.[0]?.period !== undefined;
         const map = {};
-        (forecast.historical || []).forEach(d => {
-          map[d.year] = { year: d.year, actual: d.avg_concentration, papers: d.papers };
-        });
-        (forecast.forecast_points || []).forEach(f => {
-          if (!map[f.year]) map[f.year] = { year: f.year };
-          map[f.year].forecast = f.predicted_concentration;
-          map[f.year].confidence = f.confidence;
-        });
-        return Object.values(map).sort((a, b) => a.year - b.year);
+        if (isMonthlyForecast) {
+          // For monthly: spread historical yearly data as a single point per year
+          (forecast.historical || []).forEach(d => {
+            const key = `${d.year}-06`; // mid-year as representative
+            map[key] = { period: key, actual: d.avg_concentration, papers: d.papers };
+          });
+          (forecast.forecast_points || []).forEach(f => {
+            if (!map[f.period]) map[f.period] = { period: f.period };
+            map[f.period].forecast = f.predicted_concentration;
+            map[f.period].confidence = f.confidence;
+          });
+          return Object.values(map).sort((a, b) => a.period.localeCompare(b.period));
+        } else {
+          (forecast.historical || []).forEach(d => {
+            map[d.year] = { year: d.year, actual: d.avg_concentration, papers: d.papers };
+          });
+          (forecast.forecast_points || []).forEach(f => {
+            if (!map[f.year]) map[f.year] = { year: f.year };
+            map[f.year].forecast = f.predicted_concentration;
+            map[f.year].confidence = f.confidence;
+          });
+          return Object.values(map).sort((a, b) => a.year - b.year);
+        }
       })()
     : [];
+
+  const isMonthlyChart = chartData.length > 0 && chartData[0].period !== undefined;
 
   const trendColors = {
     increasing: "bg-red-100 text-red-700",
