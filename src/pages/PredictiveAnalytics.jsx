@@ -389,14 +389,14 @@ Provide:
                 <ResponsiveContainer width="100%" height={340}>
                   <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                    <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+                    <XAxis dataKey={isMonthlyChart ? "period" : "year"} tick={{ fontSize: 11 }} interval={isMonthlyChart ? 5 : 0} />
                     <YAxis tick={{ fontSize: 12 }} label={{ value: "Conc. (avg, units vary)", angle: -90, position: "insideLeft", offset: 10, style: { fontSize: 11 } }} />
                     <Tooltip
                       contentStyle={{ fontSize: 12, borderRadius: 8 }}
                       formatter={(value, name) => [value?.toFixed ? value.toFixed(2) : value, name === "actual" ? "Actual" : "Forecast"]}
                     />
                     <Legend />
-                    <ReferenceLine x={currentYear} stroke="#94a3b8" strokeDasharray="4 4" label={{ value: "Now", position: "top", fontSize: 11, fill: "#94a3b8" }} />
+                    <ReferenceLine x={isMonthlyChart ? `${currentYear}-03` : currentYear} stroke="#94a3b8" strokeDasharray="4 4" label={{ value: "Now", position: "top", fontSize: 11, fill: "#94a3b8" }} />
                     <Line
                       type="monotone"
                       dataKey="actual"
