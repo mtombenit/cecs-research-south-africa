@@ -68,7 +68,7 @@ export default function PredictiveAnalytics() {
     const historical = getHistoricalData();
 
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an environmental data scientist. Based on the following historical research data for ${selectedCompound}${selectedProvince !== "all" ? ` in ${selectedProvince}` : " across South Africa"}, generate a 5-year concentration trend forecast (${new Date().getFullYear() + 1} to ${new Date().getFullYear() + 5}).
+      prompt: `You are an environmental data scientist. Based on the following historical research data for ${selectedCompound}${selectedProvince !== "all" ? ` in ${selectedProvince}` : " across South Africa"}, generate a concentration trend forecast from 2010 to 2030.
 
 Historical data points (publication year, number of papers, average reported concentration where available):
 ${JSON.stringify(historical, null, 2)}
