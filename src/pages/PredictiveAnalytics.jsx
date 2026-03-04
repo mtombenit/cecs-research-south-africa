@@ -24,7 +24,7 @@ export default function PredictiveAnalytics() {
 
   // Collect all unique PFAS compounds
   const allCompounds = [...new Set(papers.flatMap(p => p.pfas_compounds || []))].sort();
-  const allProvinces = [...new Set(papers.map(p => p.province).filter(Boolean))].filter(p => p !== "Dodoma").sort();
+  const allProvinces = ["Gauteng", "Western Cape", "Northern Cape", "Eastern Cape", "Mpumalanga", "Limpopo"];
 
   // Build historical data points from papers
   const getHistoricalData = () => {
