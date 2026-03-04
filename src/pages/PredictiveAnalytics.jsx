@@ -24,7 +24,7 @@ export default function PredictiveAnalytics() {
 
   // Collect all unique PFAS compounds
   const allCompounds = [...new Set(papers.flatMap(p => p.pfas_compounds || []))].sort();
-  const allProvinces = [...new Set(papers.map(p => p.province).filter(Boolean))].sort();
+  const allProvinces = [...new Set(papers.map(p => p.province).filter(Boolean))].filter(p => p !== "Dodoma").sort();
 
   // Build historical data points from papers
   const getHistoricalData = () => {
@@ -170,7 +170,7 @@ Provide:
                   <SelectTrigger>
                     <SelectValue placeholder="All provinces" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-60 overflow-y-auto">
                     <SelectItem value="all">All Provinces</SelectItem>
                     {allProvinces.map(p => (
                       <SelectItem key={p} value={p}>{p}</SelectItem>
