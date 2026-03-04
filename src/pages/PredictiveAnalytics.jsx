@@ -68,8 +68,9 @@ export default function PredictiveAnalytics() {
 
     const historical = getHistoricalData();
 
+    const isMonthly = granularity === "monthly";
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an environmental data scientist. Based on the following historical research data for ${selectedCompound}${selectedProvince !== "all" ? ` in ${selectedProvince}` : " across South Africa"}, generate a concentration trend forecast from 2010 to 2030.
+      prompt: `You are an environmental data scientist. Based on the following historical research data for ${selectedCompound}${selectedProvince !== "all" ? ` in ${selectedProvince}` : " across South Africa"}, generate a concentration trend forecast.
 
 Historical data points (publication year, number of papers, average reported concentration where available):
 ${JSON.stringify(historical, null, 2)}
@@ -77,7 +78,7 @@ ${JSON.stringify(historical, null, 2)}
 Also consider general global trends: PFAS regulations tightening post-2020, South African awareness increasing, legacy contamination persisting.
 
 Provide:
-1. forecast_points: array of objects covering ONLY future years from ${new Date().getFullYear() + 1} to 2030 (one per year) with { year: number, predicted_concentration: number, confidence: "low"|"medium"|"high" }. Do NOT include years up to and including ${new Date().getFullYear()} in forecast_points — those are covered by actual historical data.
+1. forecast_points: array of objects covering ONLY future ${isMonthly ? "months" : "years"} from ${isMonthly ? `${new Date().getFullYear()}-${String(new Date().getMonth() + 2).padStart(2, "0")}` : new Date().getFullYear() + 1} to ${isMonthly ? `${new Date().getFullYear() + 3}-12` : "2030"} (one per ${isMonthly ? "month" : "year"}) with { ${isMonthly ? 'period: string (format "YYYY-MM")' : "year: number"}, predicted_concentration: number, confidence: "low"|"medium"|"high" }. Do NOT include ${isMonthly ? "months" : "years"} up to and including the current ${isMonthly ? "month" : "year"} — those are covered by actual historical data.
 2. trend_direction: "increasing" | "decreasing" | "stable" | "uncertain"
 3. trend_summary: 2-3 sentence plain English summary of the predicted trend and key drivers
 4. key_factors: array of 3 short strings (factors influencing the forecast)
