@@ -368,12 +368,12 @@ Provide:
                     <ReferenceLine x={currentYear} stroke="#94a3b8" strokeDasharray="4 4" label={{ value: "Now", position: "top", fontSize: 11, fill: "#94a3b8" }} />
                     <Line
                       type="monotone"
-                      dataKey="historical"
+                      dataKey="actual"
                       stroke="#0d9488"
                       strokeWidth={2.5}
                       dot={{ r: 4, fill: "#0d9488" }}
                       connectNulls
-                      name="Historical Avg"
+                      name="Actual"
                     />
                     <Line
                       type="monotone"
