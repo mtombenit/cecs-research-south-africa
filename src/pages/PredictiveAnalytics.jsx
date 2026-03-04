@@ -76,7 +76,7 @@ ${JSON.stringify(historical, null, 2)}
 Also consider general global trends: PFAS regulations tightening post-2020, South African awareness increasing, legacy contamination persisting.
 
 Provide:
-1. forecast_points: array of objects covering 2010 to 2030 (one per year) with { year: number, predicted_concentration: number, confidence: "low"|"medium"|"high" }
+1. forecast_points: array of objects covering ONLY future years from ${new Date().getFullYear() + 1} to 2030 (one per year) with { year: number, predicted_concentration: number, confidence: "low"|"medium"|"high" }. Do NOT include years up to and including ${new Date().getFullYear()} in forecast_points — those are covered by actual historical data.
 2. trend_direction: "increasing" | "decreasing" | "stable" | "uncertain"
 3. trend_summary: 2-3 sentence plain English summary of the predicted trend and key drivers
 4. key_factors: array of 3 short strings (factors influencing the forecast)
