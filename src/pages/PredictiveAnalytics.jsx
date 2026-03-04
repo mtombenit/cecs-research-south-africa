@@ -15,6 +15,7 @@ import {
 export default function PredictiveAnalytics() {
   const [selectedCompound, setSelectedCompound] = useState("");
   const [selectedProvince, setSelectedProvince] = useState("all");
+  const [granularity, setGranularity] = useState("annual");
   const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(false);
 
