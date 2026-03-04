@@ -267,7 +267,7 @@ Provide:
         {/* Controls */}
         <Card className="border-0 shadow-sm mb-8">
           <CardContent className="p-6">
-            <div className="grid sm:grid-cols-3 gap-4 items-end">
+            <div className="grid sm:grid-cols-4 gap-4 items-end">
               <div>
                 <label className="text-sm font-medium text-slate-700 mb-1.5 block">PFAS Compound *</label>
                 <Select value={selectedCompound} onValueChange={setSelectedCompound}>
