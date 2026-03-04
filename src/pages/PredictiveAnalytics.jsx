@@ -393,7 +393,7 @@ Provide:
             {/* Forecast table */}
             <Card className="border-0 shadow-sm">
               <CardContent className="p-6">
-                <p className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-4">5-Year Forecast Points</p>
+                <p className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-4">Forecast Points (2010–2030)</p>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
