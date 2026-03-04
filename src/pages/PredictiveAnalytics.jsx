@@ -350,7 +350,7 @@ Provide:
             <Card className="border-0 shadow-sm">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base font-semibold text-slate-900">
-                  {selectedCompound} Concentration Trend — Historical & Forecast
+                  {selectedCompound} Concentration Trend — 2010 to 2030
                   {selectedProvince !== "all" && ` (${selectedProvince})`}
                 </CardTitle>
               </CardHeader>
