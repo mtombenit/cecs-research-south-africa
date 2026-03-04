@@ -282,6 +282,18 @@ Provide:
                 </Select>
               </div>
               <div>
+                <label className="text-sm font-medium text-slate-700 mb-1.5 block">Forecast Granularity</label>
+                <Select value={granularity} onValueChange={setGranularity}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="annual">Annual</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <label className="text-sm font-medium text-slate-700 mb-1.5 block">Province (optional)</label>
                 <Select value={selectedProvince} onValueChange={setSelectedProvince}>
                   <SelectTrigger>
