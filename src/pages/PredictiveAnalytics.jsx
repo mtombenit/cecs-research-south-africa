@@ -81,7 +81,7 @@ Provide:
 1. forecast_points: array of objects covering ONLY future ${isMonthly ? "months" : "years"} from ${isMonthly ? `${new Date().getFullYear()}-${String(new Date().getMonth() + 2).padStart(2, "0")}` : new Date().getFullYear() + 1} to ${isMonthly ? `${new Date().getFullYear() + 3}-12` : "2030"} (one per ${isMonthly ? "month" : "year"}) with { ${isMonthly ? 'period: string (format "YYYY-MM")' : "year: number"}, predicted_concentration: number, confidence: "low"|"medium"|"high" }. Do NOT include ${isMonthly ? "months" : "years"} up to and including the current ${isMonthly ? "month" : "year"} — those are covered by actual historical data.
 2. trend_direction: "increasing" | "decreasing" | "stable" | "uncertain"
 3. trend_summary: 2-3 sentence plain English summary of the predicted trend and key drivers
-4. key_factors: array of 3 short strings (factors influencing the forecast)
+4. key_factors: array of 3 short strings — each must directly explain WHY the concentration is predicted to go ${isMonthly ? "in the forecasted direction" : "in the direction you identified"} (e.g. if decreasing, explain what is driving the decrease; if increasing, what is driving the increase). They must be consistent with trend_direction.
 5. uncertainty_note: one sentence about data limitations`,
       response_json_schema: {
         type: "object",
