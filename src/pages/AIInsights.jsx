@@ -499,7 +499,7 @@ Return a structured analysis with specific data points and insights.`;
             )}
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }
