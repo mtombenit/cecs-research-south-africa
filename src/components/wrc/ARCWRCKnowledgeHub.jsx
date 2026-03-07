@@ -137,9 +137,9 @@ export default function ARCWRCKnowledgeHub() {
                 <div style={s.cardTitle}>Records by Province</div>
                 <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={provData} layout="vertical" margin={{left:10,right:20}}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                     <XAxis type="number" tick={{fill:"#64748B",fontSize:10}} />
-                    <YAxis type="category" dataKey="name" tick={{fill:"#94A3B8",fontSize:9}} width={100} />
+                    <YAxis type="category" dataKey="name" tick={{fill:"#475569",fontSize:9}} width={100} />
                     <Tooltip content={<CustomTooltip />} />
                     <Bar dataKey="value" radius={[0,3,3,0]}>{provData.map((e)=><Cell key={e.name} fill={PROV_COLORS[e.name]||"#38BDF8"} />)}</Bar>
                   </BarChart>
