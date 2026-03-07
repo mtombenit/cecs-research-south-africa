@@ -151,8 +151,8 @@ export default function ARCWRCKnowledgeHub() {
                 <div style={s.cardTitle}>Distribution by Water Body Type</div>
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={wbtData} margin={{left:10,right:20}}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                    <XAxis dataKey="name" tick={{fill:"#94A3B8",fontSize:8}} angle={-30} textAnchor="end" height={55} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                    <XAxis dataKey="name" tick={{fill:"#475569",fontSize:8}} angle={-30} textAnchor="end" height={55} />
                     <YAxis tick={{fill:"#64748B",fontSize:10}} />
                     <Tooltip content={<CustomTooltip />} />
                     <Bar dataKey="value" radius={[3,3,0,0]}>{wbtData.map((e)=><Cell key={e.name} fill={WBT_COLORS[e.name]||"#38BDF8"} />)}</Bar>
