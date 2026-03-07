@@ -314,8 +314,8 @@ export default function ARCWRCKnowledgeHub() {
             </div>
             <ResponsiveContainer width="100%" height={360}>
               <BarChart data={filteredWWTP} margin={{left:10,right:20,bottom:60}}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                <XAxis dataKey="name" tick={{fill:"#94A3B8",fontSize:9}} angle={-35} textAnchor="end" height={70} interval={0} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                <XAxis dataKey="name" tick={{fill:"#475569",fontSize:9}} angle={-35} textAnchor="end" height={70} interval={0} />
                 <YAxis tick={{fill:"#64748B",fontSize:10}} tickFormatter={v=>`${v}%`} domain={[-250,100]} />
                 <Tooltip content={({active,payload,label})=>{
                   if (!active||!payload?.length) return null;
