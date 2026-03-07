@@ -12,6 +12,7 @@ import ARCWRCKnowledgeHub from "@/components/wrc/ARCWRCKnowledgeHub";
 const COLORS = ['#0d9488', '#06b6d4', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#6366f1'];
 
 export default function AIInsights() {
+  const [activeTab, setActiveTab] = useState("insights");
   const [selectedPapers, setSelectedPapers] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState(null);
