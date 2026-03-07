@@ -193,7 +193,7 @@ export default function ARCWRCKnowledgeHub() {
                     return (
                       <g key={i}>
                         {isHot && <circle cx={x} cy={y} r={r+4} fill={col} fillOpacity={0.15} />}
-                        <circle cx={x} cy={y} r={r} fill={col} fillOpacity={0.85} stroke={hoveredSite?.site===site.site?"#FFFFFF":col} strokeWidth={hoveredSite?.site===site.site?1.5:0.5} style={{cursor:"pointer"}} onMouseEnter={(e)=>{ setHoveredSite(site); setTooltip({x:e.clientX,y:e.clientY}); }} onMouseLeave={()=>{ setHoveredSite(null); setTooltip(null); }} />
+                        <circle cx={x} cy={y} r={r} fill={col} fillOpacity={0.9} stroke={hoveredSite?.site===site.site?"#1E293B":col} strokeWidth={hoveredSite?.site===site.site?1.5:0.5} style={{cursor:"pointer"}} onMouseEnter={(e)=>{ setHoveredSite(site); setTooltip({x:e.clientX,y:e.clientY}); }} onMouseLeave={()=>{ setHoveredSite(null); setTooltip(null); }} />
                       </g>
                     );
                   })}
