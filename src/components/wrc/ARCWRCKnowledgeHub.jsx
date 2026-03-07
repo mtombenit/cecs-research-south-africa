@@ -200,15 +200,15 @@ export default function ARCWRCKnowledgeHub() {
                 </svg>
               </div>
               <div style={{flex:"0 0 180px"}}>
-                <div style={{fontSize:"0.62rem",color:"#64748B",letterSpacing:"0.1em",marginBottom:"10px",textTransform:"uppercase"}}>CEC Category</div>
+                <div style={{fontSize:"0.62rem",color:"#64748B",letterSpacing:"0.1em",marginBottom:"10px",textTransform:"uppercase",fontWeight:"600"}}>CEC Category</div>
                 {D.cats.map(c=>(
                   <div key={c} style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"6px"}}>
                     <div style={{width:"10px",height:"10px",borderRadius:"50%",background:CAT_COLORS[c],flexShrink:0}} />
-                    <span style={{fontSize:"0.65rem",color:"#94A3B8"}}>{c.replace("Polycyclic Aromatic Hydrocarbons","PAHs").replace("Pharmaceuticals & PPCPs","PPCPs")}</span>
+                    <span style={{fontSize:"0.65rem",color:"#475569"}}>{c.replace("Polycyclic Aromatic Hydrocarbons","PAHs").replace("Pharmaceuticals & PPCPs","PPCPs")}</span>
                   </div>
                 ))}
-                <div style={{marginTop:"16px",fontSize:"0.62rem",color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase"}}>Dot Size</div>
-                <div style={{fontSize:"0.65rem",color:"#94A3B8",marginTop:"6px",lineHeight:1.6}}>Proportional to number of contaminants detected at site. Glowing = multi-category hotspot.</div>
+                <div style={{marginTop:"16px",fontSize:"0.62rem",color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase",fontWeight:"600"}}>Dot Size</div>
+                <div style={{fontSize:"0.65rem",color:"#64748B",marginTop:"6px",lineHeight:1.6}}>Proportional to number of contaminants detected at site. Glowing = multi-category hotspot.</div>
               </div>
             </div>
             {hoveredSite && tooltip && (
