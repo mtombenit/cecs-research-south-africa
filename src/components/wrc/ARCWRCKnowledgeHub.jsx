@@ -406,9 +406,9 @@ export default function ARCWRCKnowledgeHub() {
                   <table style={{borderCollapse:"collapse",width:"100%",fontSize:"0.62rem"}}>
                     <thead>
                       <tr>
-                        <th style={{padding:"6px 10px",color:"#64748B",textAlign:"left",borderBottom:"1px solid #1E293B"}}>Water Body</th>
+                        <th style={{padding:"6px 10px",color:"#475569",textAlign:"left",borderBottom:"2px solid #E2E8F0",fontWeight:"600"}}>Water Body</th>
                         {D.cats.map(c=>(
-                          <th key={c} style={{padding:"4px 6px",color:"#94A3B8",textAlign:"center",borderBottom:"1px solid #1E293B",fontSize:"0.55rem",writingMode:"vertical-lr",transform:"rotate(180deg)",height:"70px",verticalAlign:"bottom"}}>
+                         <th key={c} style={{padding:"4px 6px",color:"#475569",textAlign:"center",borderBottom:"2px solid #E2E8F0",fontSize:"0.55rem",writingMode:"vertical-lr",transform:"rotate(180deg)",height:"70px",verticalAlign:"bottom",fontWeight:"600"}}>
                             {shortCats.find(sc=>sc.full===c)?.short||c}
                           </th>
                         ))}
