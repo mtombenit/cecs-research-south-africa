@@ -269,13 +269,13 @@ export default function ARCWRCKnowledgeHub() {
               <table style={{borderCollapse:"collapse",width:"100%",fontSize:"0.65rem"}}>
                 <thead>
                   <tr>
-                    <th style={{padding:"8px 12px",color:"#64748B",textAlign:"left",fontWeight:"500",borderBottom:"1px solid #1E293B"}}>Province</th>
+                    <th style={{padding:"8px 12px",color:"#475569",textAlign:"left",fontWeight:"600",borderBottom:"2px solid #E2E8F0"}}>Province</th>
                     {D.cats.map(c=>(
-                      <th key={c} style={{padding:"6px 8px",color:"#94A3B8",fontWeight:"500",textAlign:"center",borderBottom:"1px solid #1E293B",fontSize:"0.58rem",writingMode:"vertical-lr",transform:"rotate(180deg)",height:"80px",verticalAlign:"bottom"}}>
+                      <th key={c} style={{padding:"6px 8px",color:"#475569",fontWeight:"600",textAlign:"center",borderBottom:"2px solid #E2E8F0",fontSize:"0.58rem",writingMode:"vertical-lr",transform:"rotate(180deg)",height:"80px",verticalAlign:"bottom"}}>
                         {c.replace("Polycyclic Aromatic Hydrocarbons","PAHs").replace("Pharmaceuticals & PPCPs","PPCPs")}
                       </th>
                     ))}
-                    <th style={{padding:"6px 8px",color:"#38BDF8",fontWeight:"700",textAlign:"center",borderBottom:"1px solid #1E293B"}}>TOTAL</th>
+                    <th style={{padding:"6px 8px",color:"#2563EB",fontWeight:"700",textAlign:"center",borderBottom:"2px solid #E2E8F0"}}>TOTAL</th>
                   </tr>
                 </thead>
                 <tbody>
