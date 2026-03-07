@@ -368,8 +368,8 @@ export default function ARCWRCKnowledgeHub() {
                 <Tooltip content={({active,payload,label})=>{
                   if (!active||!payload?.length) return null;
                   const d=payload[0]?.payload;
-                  return <div style={{background:"#0F172A",border:"1px solid #1E293B",borderRadius:"6px",padding:"10px",fontSize:"0.68rem",color:"#E2E8F0"}}>
-                    <div style={{color:"#38BDF8",marginBottom:"4px"}}>{label}</div>
+                  return <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:"6px",padding:"10px",fontSize:"0.68rem",color:"#1E293B",boxShadow:"0 4px 12px rgba(0,0,0,0.1)"}}>
+                    <div style={{color:"#2563EB",marginBottom:"4px",fontWeight:"700"}}>{label}</div>
                     <div>Median: <strong>{d?.median} {d?.unit}</strong></div>
                     <div>Max: <strong>{d?.max?.toLocaleString()}</strong></div>
                     <div>n = {d?.n}</div>
