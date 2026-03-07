@@ -380,15 +380,15 @@ export default function ARCWRCKnowledgeHub() {
             </ResponsiveContainer>
             <div style={{marginTop:"20px",display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:"10px"}}>
               {D.top_conc.slice(0,6).map(c=>(
-                <div key={c.name} style={{background:"#060C18",border:`1px solid ${CAT_COLORS[c.cat]||"#1E293B"}44`,borderRadius:"6px",padding:"10px"}}>
-                  <div style={{fontSize:"0.68rem",fontWeight:"700",color:CAT_COLORS[c.cat]||"#38BDF8",marginBottom:"4px"}}>{c.name}</div>
+                <div key={c.name} style={{background:"#F8FAFC",border:`1px solid ${CAT_COLORS[c.cat]||"#E2E8F0"}66`,borderRadius:"6px",padding:"10px",borderLeft:`3px solid ${CAT_COLORS[c.cat]||"#2563EB"}`}}>
+                  <div style={{fontSize:"0.68rem",fontWeight:"700",color:CAT_COLORS[c.cat]||"#2563EB",marginBottom:"4px"}}>{c.name}</div>
                   <div style={{fontSize:"0.6rem",color:"#64748B",marginBottom:"6px"}}>{c.cat.replace("Pharmaceuticals & PPCPs","PPCP")}</div>
-                  <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.65rem",color:"#94A3B8"}}>
-                    <span>min: <strong style={{color:"#E2E8F0"}}>{c.min}</strong></span>
-                    <span>med: <strong style={{color:"#FBBF24"}}>{c.median}</strong></span>
-                    <span>max: <strong style={{color:"#F87171"}}>{c.max?.toLocaleString()}</strong></span>
+                  <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.65rem",color:"#64748B"}}>
+                    <span>min: <strong style={{color:"#1E293B"}}>{c.min}</strong></span>
+                    <span>med: <strong style={{color:"#D97706"}}>{c.median}</strong></span>
+                    <span>max: <strong style={{color:"#DC2626"}}>{c.max?.toLocaleString()}</strong></span>
                   </div>
-                  <div style={{fontSize:"0.58rem",color:"#475569",marginTop:"4px"}}>n={c.n} · {c.unit||"mixed units"}</div>
+                  <div style={{fontSize:"0.58rem",color:"#94A3B8",marginTop:"4px"}}>n={c.n} · {c.unit||"mixed units"}</div>
                 </div>
               ))}
             </div>
