@@ -179,7 +179,7 @@ export default function ARCWRCKnowledgeHub() {
                   {Object.entries(PROV_PATHS).map(([prov, path]) => {
                     const total = D.prov_totals[prov] || 0;
                     const opacity = total > 0 ? 0.15 + (total/253)*0.5 : 0.05;
-                    return <path key={prov} d={path} fill={PROV_COLORS[prov]||"#334155"} fillOpacity={opacity} stroke={hoveredProv===prov?"#38BDF8":"#1E3A5F"} strokeWidth={hoveredProv===prov?1.5:0.8} style={{cursor:"pointer"}} onMouseEnter={()=>setHoveredProv(prov)} onMouseLeave={()=>setHoveredProv(null)} />;
+                    return <path key={prov} d={path} fill={PROV_COLORS[prov]||"#CBD5E1"} fillOpacity={opacity} stroke={hoveredProv===prov?"#2563EB":"#94A3B8"} strokeWidth={hoveredProv===prov?1.5:0.8} style={{cursor:"pointer"}} onMouseEnter={()=>setHoveredProv(prov)} onMouseLeave={()=>setHoveredProv(null)} />;
                   })}
                   {[["Western Cape",165,465],["Eastern Cape",285,385],["Northern Cape",205,275],["Free State",370,290],["North West",305,215],["Gauteng",395,230],["Limpopo",390,155],["Mpumalanga",475,185],["KwaZulu-Natal",470,330]].map(([name,x,y])=>(
                     <text key={name} x={x} y={y} textAnchor="middle" fill="#475569" fontSize="8" fontFamily="monospace">{name}</text>
