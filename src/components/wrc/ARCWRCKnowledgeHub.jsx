@@ -232,9 +232,9 @@ export default function ARCWRCKnowledgeHub() {
               <table style={{borderCollapse:"collapse",fontSize:"0.6rem",width:"100%"}}>
                 <thead>
                   <tr>
-                    <td style={{padding:"4px",color:"#475569",fontSize:"0.55rem"}}>↓ Row with →</td>
+                    <td style={{padding:"4px",color:"#64748B",fontSize:"0.55rem"}}>↓ Row with →</td>
                     {D.top_names.map(n=>(
-                      <th key={n} style={{padding:"2px 4px",color:"#94A3B8",fontWeight:"500",writingMode:"vertical-lr",transform:"rotate(180deg)",height:"90px",verticalAlign:"bottom",fontSize:"0.58rem"}}>{n}</th>
+                      <th key={n} style={{padding:"2px 4px",color:"#475569",fontWeight:"600",writingMode:"vertical-lr",transform:"rotate(180deg)",height:"90px",verticalAlign:"bottom",fontSize:"0.58rem"}}>{n}</th>
                     ))}
                   </tr>
                 </thead>
