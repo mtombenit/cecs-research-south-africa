@@ -62,8 +62,8 @@ const s = {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{background:"#0F172A",border:"1px solid #1E293B",borderRadius:"6px",padding:"10px 14px",fontSize:"0.7rem",color:"#E2E8F0"}}>
-      <div style={{color:"#38BDF8",marginBottom:"6px",fontWeight:"700"}}>{label}</div>
+    <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:"6px",padding:"10px 14px",fontSize:"0.7rem",color:"#1E293B",boxShadow:"0 4px 12px rgba(0,0,0,0.1)"}}>
+      <div style={{color:"#2563EB",marginBottom:"6px",fontWeight:"700"}}>{label}</div>
       {payload.map((p,i) => (
         <div key={i} style={{color:p.color,marginBottom:"2px"}}>{p.name}: <strong>{p.value?.toLocaleString?.() ?? p.value}</strong></div>
       ))}
