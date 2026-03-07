@@ -362,9 +362,9 @@ export default function ARCWRCKnowledgeHub() {
             <div style={s.cardTitle}>Concentration Distribution — Top Detected Compounds</div>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={D.top_conc.slice(0,15)} layout="vertical" margin={{left:20,right:60}}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                 <XAxis type="number" scale="log" domain={[0.01,'auto']} tick={{fill:"#64748B",fontSize:9}} tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}k`:v} />
-                <YAxis type="category" dataKey="name" tick={{fill:"#94A3B8",fontSize:9}} width={110} />
+                <YAxis type="category" dataKey="name" tick={{fill:"#475569",fontSize:9}} width={110} />
                 <Tooltip content={({active,payload,label})=>{
                   if (!active||!payload?.length) return null;
                   const d=payload[0]?.payload;
