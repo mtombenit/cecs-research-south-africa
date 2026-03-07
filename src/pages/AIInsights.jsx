@@ -186,7 +186,7 @@ Return a structured analysis with specific data points and insights.`;
 
       {activeTab === "wrc" && <ARCWRCKnowledgeHub />}
 
-      {activeTab === "insights" && <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {activeTab === "insights" && (<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Paper Selection */}
           <div className="lg:col-span-1">
