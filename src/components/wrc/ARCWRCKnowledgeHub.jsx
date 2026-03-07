@@ -125,9 +125,9 @@ export default function ARCWRCKnowledgeHub() {
                 <div style={s.cardTitle}>Records by CEC Category</div>
                 <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={catData} layout="vertical" margin={{left:10,right:20}}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                     <XAxis type="number" tick={{fill:"#64748B",fontSize:10}} />
-                    <YAxis type="category" dataKey="name" tick={{fill:"#94A3B8",fontSize:9}} width={80} />
+                    <YAxis type="category" dataKey="name" tick={{fill:"#475569",fontSize:9}} width={80} />
                     <Tooltip content={<CustomTooltip />} />
                     <Bar dataKey="value" radius={[0,3,3,0]}>{catData.map((e)=><Cell key={e.full} fill={CAT_COLORS[e.full]||"#38BDF8"} />)}</Bar>
                   </BarChart>
