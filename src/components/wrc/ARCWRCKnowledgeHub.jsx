@@ -471,7 +471,7 @@ export default function ARCWRCKnowledgeHub() {
         )}
       </div>
 
-      <div style={{textAlign:"center",padding:"16px",fontSize:"0.58rem",color:"#1E3A5F",borderTop:"1px solid #0F1A2E",letterSpacing:"0.1em"}}>
+      <div style={{textAlign:"center",padding:"16px",fontSize:"0.58rem",color:"#64748B",borderTop:"1px solid #E2E8F0",letterSpacing:"0.1em"}}>
         ARC-WRC CEC INTELLIGENCE PLATFORM · 817 RECORDS · 9 DATASETS · KNOWLEDGE HUB
       </div>
     </div>
