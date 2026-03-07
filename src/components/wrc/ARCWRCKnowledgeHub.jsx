@@ -342,8 +342,8 @@ export default function ARCWRCKnowledgeHub() {
             <div style={s.cardTitle}>Temporal Trends — Records Published by Year and CEC Category</div>
             <ResponsiveContainer width="100%" height={380}>
               <LineChart data={temporalData} margin={{left:10,right:20,bottom:10}}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                <XAxis dataKey="year" tick={{fill:"#94A3B8",fontSize:11}} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                <XAxis dataKey="year" tick={{fill:"#475569",fontSize:11}} />
                 <YAxis tick={{fill:"#64748B",fontSize:10}} />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend wrapperStyle={{fontSize:"0.62rem",paddingTop:"12px"}} formatter={(v)=>v.replace("Polycyclic Aromatic Hydrocarbons","PAHs").replace("Pharmaceuticals & PPCPs","PPCPs")} />
