@@ -416,13 +416,13 @@ export default function ARCWRCKnowledgeHub() {
                     </thead>
                     <tbody>
                       {D.wbt_types.map((wbt,ri)=>(
-                        <tr key={wbt} style={{background:ri%2===0?"#0F172A":"#080D18"}}>
-                          <td style={{padding:"6px 10px",color:WBT_COLORS[wbt]||"#E2E8F0",fontWeight:"600",borderRight:"1px solid #1E293B",whiteSpace:"nowrap"}}>{wbt}</td>
+                        <tr key={wbt} style={{background:ri%2===0?"#FFFFFF":"#F8FAFC"}}>
+                          <td style={{padding:"6px 10px",color:WBT_COLORS[wbt]||"#1E293B",fontWeight:"600",borderRight:"1px solid #E2E8F0",whiteSpace:"nowrap"}}>{wbt}</td>
                           {D.cats.map(c=>{
                             const v=(D.wbt_cat[c]||{})[wbt]||0;
                             const maxV=Math.max(...D.cats.map(cc=>(D.wbt_cat[cc]||{})[wbt]||0));
                             const intensity=maxV>0?v/maxV:0;
-                            return <td key={c} style={{textAlign:"center",padding:"6px 4px",background:v>0?`rgba(56,189,248,${0.08+intensity*0.7})`:"#0A0E1A",color:v>0?`rgba(240,249,255,${0.4+intensity*0.6})`:"#1E293B",fontWeight:v>0?"600":"400",border:"1px solid #0A0E1A",minWidth:"36px"}}>{v||"—"}</td>;
+                            return <td key={c} style={{textAlign:"center",padding:"6px 4px",background:v>0?`rgba(37,99,235,${0.07+intensity*0.65})`:"#F8FAFC",color:v>0?(intensity>0.5?"#FFFFFF":"#1E3A6E"):"#CBD5E1",fontWeight:v>0?"600":"400",border:"1px solid #E2E8F0",minWidth:"36px"}}>{v||"—"}</td>;
                           })}
                         </tr>
                       ))}
