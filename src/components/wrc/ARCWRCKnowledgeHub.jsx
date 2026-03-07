@@ -48,7 +48,7 @@ const s = {
   statVal: { fontSize:"1.6rem", fontWeight:"700", color:"#F0F9FF", lineHeight:1 },
   statLbl: { fontSize:"0.6rem", color:"#94A3B8", letterSpacing:"0.1em", textTransform:"uppercase" },
   tabs: { display:"flex", gap:"0", borderBottom:"none", overflowX:"auto" },
-  tabBtn: (active) => ({ padding:"8px 14px", fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:"uppercase", border:"none", cursor:"pointer", fontFamily:"inherit", borderBottom: active ? "2px solid #38BDF8" : "2px solid transparent", background:"transparent", color: active ? "#38BDF8" : "#64748B", transition:"all 0.15s", whiteSpace:"nowrap" }),
+  tabBtn: (active) => ({ padding:"8px 14px", fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:"uppercase", border:"none", cursor:"pointer", fontFamily:"inherit", fontWeight:"500", borderBottom: active ? "2px solid #38BDF8" : "2px solid transparent", background:"transparent", color: active ? "#38BDF8" : "#64748B", transition:"all 0.15s", whiteSpace:"nowrap" }),
   body: { padding:"24px 28px" },
   card: { background:"#0F172A", border:"1px solid #1E293B", borderRadius:"8px", padding:"20px", marginBottom:"20px" },
   cardTitle: { fontSize:"0.7rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"#38BDF8", marginBottom:"16px", borderBottom:"1px solid #1E293B", paddingBottom:"8px" },
