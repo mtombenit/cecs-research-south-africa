@@ -213,11 +213,11 @@ export default function ARCWRCKnowledgeHub() {
             </div>
             {hoveredSite && tooltip && (
               <div style={{...s.siteTooltip, left:tooltip.x+12, top:tooltip.y-20}}>
-                <div style={{color:"#38BDF8",fontWeight:"700",marginBottom:"4px"}}>{hoveredSite.site.slice(0,40)}</div>
-                <div>Province: <span style={{color:"#F0F9FF"}}>{hoveredSite.province}</span></div>
-                <div>Type: <span style={{color:"#F0F9FF"}}>{hoveredSite.wbt}</span></div>
-                <div>Contaminants: <span style={{color:"#FBBF24"}}>{hoveredSite.n_contaminants}</span></div>
-                <div>Categories: <span style={{color:"#FBBF24"}}>{hoveredSite.n_cats}</span></div>
+                <div style={{color:"#2563EB",fontWeight:"700",marginBottom:"4px"}}>{hoveredSite.site.slice(0,40)}</div>
+                <div>Province: <span style={{color:"#1E293B",fontWeight:"600"}}>{hoveredSite.province}</span></div>
+                <div>Type: <span style={{color:"#1E293B",fontWeight:"600"}}>{hoveredSite.wbt}</span></div>
+                <div>Contaminants: <span style={{color:"#DC2626",fontWeight:"700"}}>{hoveredSite.n_contaminants}</span></div>
+                <div>Categories: <span style={{color:"#D97706",fontWeight:"700"}}>{hoveredSite.n_cats}</span></div>
                 <div style={{marginTop:"4px",fontSize:"0.62rem",color:"#64748B"}}>{hoveredSite.cats.join(", ")}</div>
               </div>
             )}
