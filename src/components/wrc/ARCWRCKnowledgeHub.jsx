@@ -39,7 +39,7 @@ const PROV_PATHS = {
 };
 
 const s = {
-  container: { fontFamily:"'IBM Plex Mono', 'Courier New', monospace", background:"#0A0E1A", minHeight:"100%", color:"#E2E8F0", padding:"0" },
+  container: { fontFamily:"inherit", background:"#0A0E1A", minHeight:"100%", color:"#E2E8F0", padding:"0" },
   header: { background:"linear-gradient(135deg, #0A0E1A 0%, #111827 50%, #0A0E1A 100%)", borderBottom:"1px solid #1E3A5F", padding:"20px 28px 0" },
   title: { fontSize:"1.5rem", fontWeight:"700", color:"#38BDF8", letterSpacing:"0.08em", marginBottom:"4px" },
   subtitle: { fontSize:"0.7rem", color:"#64748B", letterSpacing:"0.15em", textTransform:"uppercase", marginBottom:"16px" },
