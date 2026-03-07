@@ -307,9 +307,9 @@ export default function ARCWRCKnowledgeHub() {
           <div style={s.card}>
             <div style={s.cardTitle}>WWTP ARV Removal Efficiency — KwaZulu-Natal (eThekwini)</div>
             <div style={{display:"flex",gap:"10px",marginBottom:"16px",alignItems:"center",flexWrap:"wrap"}}>
-              <span style={{fontSize:"0.65rem",color:"#64748B"}}>Filter by plant:</span>
+              <span style={{fontSize:"0.65rem",color:"#64748B",fontWeight:"600"}}>Filter by plant:</span>
               {["All",...wwtpSites].map(site=>(
-                <button key={site} onClick={()=>setSelectedWWTP(site)} style={{padding:"4px 12px",fontSize:"0.62rem",background:selectedWWTP===site?"#1E3A5F":"transparent",border:`1px solid ${selectedWWTP===site?"#38BDF8":"#1E293B"}`,color:selectedWWTP===site?"#38BDF8":"#64748B",borderRadius:"4px",cursor:"pointer",fontFamily:"inherit"}}>{site}</button>
+                <button key={site} onClick={()=>setSelectedWWTP(site)} style={{padding:"4px 12px",fontSize:"0.62rem",background:selectedWWTP===site?"#2563EB":"transparent",border:`1px solid ${selectedWWTP===site?"#2563EB":"#CBD5E1"}`,color:selectedWWTP===site?"#FFFFFF":"#64748B",borderRadius:"4px",cursor:"pointer",fontFamily:"inherit"}}>{site}</button>
               ))}
             </div>
             <ResponsiveContainer width="100%" height={360}>
