@@ -282,16 +282,16 @@ export default function ARCWRCKnowledgeHub() {
                   {D.provinces.map((prov,ri)=>{
                     const rowTotal = D.cats.reduce((sum,c)=>sum+(D.prov_cat[prov]?.[c]||0),0);
                     return (
-                      <tr key={prov} style={{background:ri%2===0?"#0F172A":"#080D18"}}>
-                        <td style={{padding:"8px 12px",color:PROV_COLORS[prov]||"#E2E8F0",fontWeight:"600",whiteSpace:"nowrap",borderRight:"1px solid #1E293B"}}>{prov}</td>
+                      <tr key={prov} style={{background:ri%2===0?"#FFFFFF":"#F8FAFC"}}>
+                        <td style={{padding:"8px 12px",color:PROV_COLORS[prov]||"#1E293B",fontWeight:"600",whiteSpace:"nowrap",borderRight:"1px solid #E2E8F0"}}>{prov}</td>
                         {D.cats.map(c=>{
                           const v = D.prov_cat[prov]?.[c]||0;
                           const intensity = maxGap>0?v/maxGap:0;
-                          const bg = v===0 ? "#2D0A0A" : `rgba(16,185,129,${0.08+intensity*0.7})`;
-                          const color = v===0 ? "#7F1D1D" : intensity>0.4?"#ECFDF5":"#6EE7B7";
-                          return <td key={c} style={{background:bg,textAlign:"center",padding:"8px 4px",color,fontWeight:v>0?"600":"400",border:"1px solid #0A0E1A",minWidth:"42px"}}>{v===0?"—":v}</td>;
+                          const bg = v===0 ? "#FEF2F2" : `rgba(37,99,235,${0.07+intensity*0.65})`;
+                          const color = v===0 ? "#DC2626" : intensity>0.4?"#FFFFFF":"#1E3A6E";
+                          return <td key={c} style={{background:bg,textAlign:"center",padding:"8px 4px",color,fontWeight:v>0?"600":"400",border:"1px solid #E2E8F0",minWidth:"42px"}}>{v===0?"—":v}</td>;
                         })}
-                        <td style={{textAlign:"center",padding:"8px",fontWeight:"700",color:rowTotal>0?"#38BDF8":"#7F1D1D",background:rowTotal>50?"#0F2744":"#0A0E1A",border:"1px solid #1E293B"}}>{rowTotal}</td>
+                        <td style={{textAlign:"center",padding:"8px",fontWeight:"700",color:rowTotal>0?"#2563EB":"#DC2626",background:rowTotal>50?"#DBEAFE":"#FEF2F2",border:"1px solid #E2E8F0"}}>{rowTotal}</td>
                       </tr>
                     );
                   })}
