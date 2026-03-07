@@ -320,11 +320,11 @@ export default function ARCWRCKnowledgeHub() {
                 <Tooltip content={({active,payload,label})=>{
                   if (!active||!payload?.length) return null;
                   const d=payload[0]?.payload;
-                  return <div style={{background:"#0F172A",border:"1px solid #1E293B",borderRadius:"6px",padding:"10px",fontSize:"0.68rem",color:"#E2E8F0"}}>
-                    <div style={{color:"#38BDF8",marginBottom:"4px"}}>{label} @ {d?.site}</div>
+                  return <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:"6px",padding:"10px",fontSize:"0.68rem",color:"#1E293B",boxShadow:"0 4px 12px rgba(0,0,0,0.1)"}}>
+                    <div style={{color:"#2563EB",marginBottom:"4px",fontWeight:"700"}}>{label} @ {d?.site}</div>
                     <div>Influent: <strong>{d?.influent?.toLocaleString()} ng/L</strong></div>
                     <div>Effluent: <strong>{d?.effluent?.toLocaleString()} ng/L</strong></div>
-                    <div style={{color:d?.removal<0?"#F87171":d?.removal>80?"#34D399":"#FBBF24"}}>Removal: <strong>{d?.removal}%</strong></div>
+                    <div style={{color:d?.removal<0?"#DC2626":d?.removal>80?"#16A34A":"#D97706",fontWeight:"600"}}>Removal: <strong>{d?.removal}%</strong></div>
                   </div>;
                 }} />
                 <Bar dataKey="removal" radius={[3,3,0,0]}>
