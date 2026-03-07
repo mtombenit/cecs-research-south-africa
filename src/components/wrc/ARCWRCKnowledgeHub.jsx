@@ -453,8 +453,8 @@ export default function ARCWRCKnowledgeHub() {
               <div style={s.cardTitle}>Priority Risk Sites — Multi-Category Hotspots</div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:"12px"}}>
                 {D.sites.filter(site=>site.n_cats>=2||site.n_contaminants>=8).sort((a,b)=>b.n_contaminants-a.n_contaminants).slice(0,8).map(site=>(
-                  <div key={site.site} style={{background:"#060C18",border:"1px solid #1E3A5F",borderRadius:"6px",padding:"12px",borderLeft:"3px solid #F59E0B"}}>
-                    <div style={{fontSize:"0.68rem",fontWeight:"700",color:"#FBBF24",marginBottom:"4px"}}>{site.site.slice(0,45)}{site.site.length>45?"…":""}</div>
+                  <div key={site.site} style={{background:"#FFFBEB",border:"1px solid #FDE68A",borderRadius:"6px",padding:"12px",borderLeft:"3px solid #D97706"}}>
+                    <div style={{fontSize:"0.68rem",fontWeight:"700",color:"#92400E",marginBottom:"4px"}}>{site.site.slice(0,45)}{site.site.length>45?"…":""}</div>
                     <div style={{fontSize:"0.6rem",color:"#64748B",marginBottom:"8px"}}>{site.province} · {site.wbt}</div>
                     <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"6px"}}>
                       <span style={{...s.badge("#38BDF8")}}>{site.n_contaminants} contaminants</span>
