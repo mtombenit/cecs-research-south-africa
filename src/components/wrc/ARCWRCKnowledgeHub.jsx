@@ -243,13 +243,13 @@ export default function ARCWRCKnowledgeHub() {
                     const maxVal = Math.max(...D.top_names.map(col=>D.cooc[row]?.[col]||0));
                     return (
                       <tr key={row}>
-                        <td style={{padding:"2px 8px 2px 4px",color:"#94A3B8",whiteSpace:"nowrap",fontSize:"0.6rem",fontWeight:"500"}}>{row}</td>
+                        <td style={{padding:"2px 8px 2px 4px",color:"#475569",whiteSpace:"nowrap",fontSize:"0.6rem",fontWeight:"600"}}>{row}</td>
                         {D.top_names.map(col=>{
                           const v = D.cooc[row]?.[col]||0;
-                          if (row===col) return <td key={col} style={{background:"#1E293B",width:"22px",height:"22px"}} />;
+                          if (row===col) return <td key={col} style={{background:"#E2E8F0",width:"22px",height:"22px"}} />;
                           const intensity = maxVal > 0 ? v/maxVal : 0;
-                          const bg = v===0 ? "#0A0E1A" : `rgba(56,189,248,${0.1+intensity*0.85})`;
-                          return <td key={col} style={{background:bg,width:"22px",height:"22px",textAlign:"center",color:v>0?"#E2E8F0":"#1E293B",fontSize:"0.55rem",border:"1px solid #0A0E1A",cursor:"default"}} title={`${row} + ${col}: ${v} shared sites`}>{v>0?v:""}</td>;
+                          const bg = v===0 ? "#F8FAFC" : `rgba(37,99,235,${0.08+intensity*0.75})`;
+                          return <td key={col} style={{background:bg,width:"22px",height:"22px",textAlign:"center",color:v>0?(intensity>0.5?"#FFFFFF":"#1E3A5E"):"#CBD5E1",fontSize:"0.55rem",border:"1px solid #E2E8F0",cursor:"default"}} title={`${row} + ${col}: ${v} shared sites`}>{v>0?v:""}</td>;
                         })}
                       </tr>
                     );
