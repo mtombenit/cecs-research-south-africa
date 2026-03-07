@@ -439,12 +439,12 @@ export default function ARCWRCKnowledgeHub() {
                   { source:"Marine/Estuarine", color:"#0891B2", signature:"Microplastics (Fragments + Films)", detail:"KZN estuaries show PE/PP/PS polymer suite from urban stormwater." },
                   { source:"Urban Stormwater", color:"#DB2777", signature:"APEOs + PPCPs + Pesticides", detail:"Jukskei River (Gauteng) multi-category detection in single urban catchment." },
                 ].map(src=>(
-                  <div key={src.source} style={{background:"#060C18",border:`1px solid ${src.color}33`,borderRadius:"6px",padding:"12px",marginBottom:"10px"}}>
+                  <div key={src.source} style={{background:"#F8FAFC",border:`1px solid ${src.color}44`,borderRadius:"6px",padding:"12px",marginBottom:"10px",borderLeft:`3px solid ${src.color}`}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"4px"}}>
                       <span style={{fontSize:"0.7rem",fontWeight:"700",color:src.color}}>{src.source}</span>
                       <span style={{...s.badge(src.color)}}>{src.signature}</span>
                     </div>
-                    <div style={{fontSize:"0.65rem",color:"#94A3B8",lineHeight:1.5}}>{src.detail}</div>
+                    <div style={{fontSize:"0.65rem",color:"#475569",lineHeight:1.5}}>{src.detail}</div>
                   </div>
                 ))}
               </div>
