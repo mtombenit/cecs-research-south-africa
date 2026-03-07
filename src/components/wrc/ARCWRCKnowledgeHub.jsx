@@ -229,12 +229,16 @@ export default function ARCWRCKnowledgeHub() {
           <div style={s.card}>
             <div style={s.cardTitle}>Contaminant Co-occurrence Heatmap — Top 20 Compounds (shared site frequency)</div>
             <div style={{overflowX:"auto"}}>
-              <table style={{borderCollapse:"collapse",fontSize:"0.6rem",width:"100%"}}>
+              <table style={{borderCollapse:"collapse",fontSize:"0.6rem",tableLayout:"fixed"}}>
+                <colgroup>
+                  <col style={{width:"120px"}} />
+                  {D.top_names.map(n=><col key={n} style={{width:"24px"}} />)}
+                </colgroup>
                 <thead>
                   <tr>
-                    <td style={{padding:"4px",color:"#64748B",fontSize:"0.55rem"}}>↓ Row with →</td>
+                    <td style={{padding:"4px",color:"#64748B",fontSize:"0.55rem",width:"120px"}}>↓ Row with →</td>
                     {D.top_names.map(n=>(
-                      <th key={n} style={{padding:"2px 4px",color:"#475569",fontWeight:"600",writingMode:"vertical-lr",transform:"rotate(180deg)",height:"90px",verticalAlign:"bottom",fontSize:"0.58rem"}}>{n}</th>
+                      <th key={n} style={{padding:"2px 2px",color:"#475569",fontWeight:"600",writingMode:"vertical-lr",transform:"rotate(180deg)",height:"90px",verticalAlign:"bottom",fontSize:"0.58rem",width:"24px",overflow:"hidden"}}>{n}</th>
                     ))}
                   </tr>
                 </thead>
@@ -243,13 +247,13 @@ export default function ARCWRCKnowledgeHub() {
                     const maxVal = Math.max(...D.top_names.map(col=>D.cooc[row]?.[col]||0));
                     return (
                       <tr key={row}>
-                        <td style={{padding:"2px 8px 2px 4px",color:"#475569",whiteSpace:"nowrap",fontSize:"0.6rem",fontWeight:"600"}}>{row}</td>
+                        <td style={{padding:"2px 6px 2px 0",color:"#475569",whiteSpace:"nowrap",fontSize:"0.6rem",fontWeight:"600",width:"120px",overflow:"hidden",textOverflow:"ellipsis"}}>{row}</td>
                         {D.top_names.map(col=>{
                           const v = D.cooc[row]?.[col]||0;
-                          if (row===col) return <td key={col} style={{background:"#E2E8F0",width:"22px",height:"22px"}} />;
+                          if (row===col) return <td key={col} style={{background:"#E2E8F0",width:"24px",height:"22px"}} />;
                           const intensity = maxVal > 0 ? v/maxVal : 0;
                           const bg = v===0 ? "#F8FAFC" : `rgba(37,99,235,${0.08+intensity*0.75})`;
-                          return <td key={col} style={{background:bg,width:"22px",height:"22px",textAlign:"center",color:v>0?(intensity>0.5?"#FFFFFF":"#1E3A5E"):"#CBD5E1",fontSize:"0.55rem",border:"1px solid #E2E8F0",cursor:"default"}} title={`${row} + ${col}: ${v} shared sites`}>{v>0?v:""}</td>;
+                          return <td key={col} style={{background:bg,width:"24px",height:"22px",textAlign:"center",color:v>0?(intensity>0.5?"#FFFFFF":"#1E3A5E"):"#CBD5E1",fontSize:"0.55rem",border:"1px solid #E2E8F0",cursor:"default"}} title={`${row} + ${col}: ${v} shared sites`}>{v>0?v:""}</td>;
                         })}
                       </tr>
                     );
