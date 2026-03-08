@@ -156,6 +156,72 @@ Consider: Are they combination drugs / co-prescribed in the same therapy (e.g. S
   );
 };
 
+const GapCellDetail = ({ cell, onClose }) => {
+  const [insight, setInsight] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!cell) return;
+    setInsight(null);
+    setLoading(true);
+    const isGap = cell.v === 0;
+    base44.integrations.Core.InvokeLLM({
+      prompt: isGap
+        ? `You are an environmental chemistry expert specialising in South African water quality. Explain in 2–3 concise sentences WHY there are ZERO records of "${cell.cat}" contamination in ${cell.prov}, and what specific contamination risks likely exist there that are NOT being monitored. Consider the province's land use, water bodies, industry, and population. Be specific and scientifically grounded.`
+        : `You are an environmental chemistry expert specialising in South African water quality. Explain in 2–3 concise sentences WHY ${cell.prov} has ${cell.v} records of "${cell.cat}" contamination — what specific sources, water bodies, or research programmes drove this monitoring? Be specific and scientifically grounded.`,
+      add_context_from_internet: true,
+    }).then(res => {
+      setInsight(typeof res === "string" ? res : res?.text || res?.result || JSON.stringify(res));
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [cell?.prov, cell?.cat]);
+
+  if (!cell) return (
+    <div style={{background:"#F8FAFC",border:"1px dashed #CBD5E1",borderRadius:"8px",padding:"20px",textAlign:"center",color:"#94A3B8",fontSize:"0.68rem",lineHeight:1.7}}>
+      <div style={{fontSize:"1.4rem",marginBottom:"8px"}}>🗺️</div>
+      <div style={{fontWeight:"600",color:"#64748B",marginBottom:"4px"}}>Click any cell</div>
+      to explore the research coverage or gap for that province × category.
+    </div>
+  );
+
+  const isGap = cell.v === 0;
+  const provColor = PROV_COLORS[cell.prov] || "#2563EB";
+  const catColor = CAT_COLORS[cell.cat] || "#7C3AED";
+
+  return (
+    <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:"8px",padding:"16px",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"12px"}}>
+        <div style={{fontSize:"0.62rem",color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase",fontWeight:"600"}}>Cell Analysis</div>
+        <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",color:"#94A3B8",fontSize:"0.9rem",lineHeight:1}}>✕</button>
+      </div>
+      <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"12px",flexWrap:"wrap"}}>
+        <span style={{background:provColor+"18",color:provColor,border:`1px solid ${provColor}44`,borderRadius:"4px",padding:"3px 8px",fontSize:"0.65rem",fontWeight:"700"}}>{cell.prov}</span>
+        <span style={{color:"#94A3B8",fontSize:"0.7rem"}}>×</span>
+        <span style={{background:catColor+"18",color:catColor,border:`1px solid ${catColor}44`,borderRadius:"4px",padding:"3px 8px",fontSize:"0.65rem",fontWeight:"700"}}>{cell.cat.replace("Polycyclic Aromatic Hydrocarbons","PAHs").replace("Pharmaceuticals & PPCPs","PPCPs")}</span>
+      </div>
+      <div style={{background: isGap ? "#FEF2F2" : "#EFF6FF", border: isGap ? "1px solid #FECACA" : "1px solid #BFDBFE", borderRadius:"6px",padding:"10px 12px",marginBottom:"12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div>
+          <div style={{fontSize:"1.6rem",fontWeight:"700",color: isGap ? "#DC2626" : "#2563EB",lineHeight:1}}>{isGap ? "—" : cell.v}</div>
+          <div style={{fontSize:"0.6rem",color:"#64748B",marginTop:"2px"}}>{isGap ? "no records" : "records in dataset"}</div>
+        </div>
+        <div style={{textAlign:"right"}}>
+          <div style={{fontSize:"0.68rem",fontWeight:"700",color: isGap ? "#DC2626" : cell.v > 50 ? "#16A34A" : cell.v > 10 ? "#D97706" : "#2563EB"}}>{isGap ? "Data Gap" : cell.v > 50 ? "Well Studied" : cell.v > 10 ? "Moderate" : "Limited"}</div>
+          <div style={{fontSize:"0.58rem",color:"#94A3B8"}}>coverage</div>
+        </div>
+      </div>
+      <div style={{background: isGap ? "#FFFBEB" : "#F0FDF4", border: isGap ? "1px solid #FDE68A" : "1px solid #BBF7D0", borderLeft: isGap ? "3px solid #D97706" : "3px solid #16A34A", borderRadius:"4px",padding:"8px 10px",fontSize:"0.63rem",color: isGap ? "#92400E" : "#14532D",lineHeight:1.6}}>
+        {loading ? (
+          <span style={{color:"#B45309",fontStyle:"italic"}}>⏳ Fetching scientific context…</span>
+        ) : insight ? insight : (
+          isGap
+            ? "This province–category combination has no records in the dataset, representing a monitoring gap."
+            : "Records exist for this province–category combination."
+        )}
+      </div>
+    </div>
+  );
+};
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
