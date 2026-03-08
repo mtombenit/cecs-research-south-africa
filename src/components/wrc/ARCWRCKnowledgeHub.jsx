@@ -64,7 +64,7 @@ const PairDetail = ({ pair, onClose, top_conc }) => {
   const [insight, setInsight] = useState(null);
   const [loadingInsight, setLoadingInsight] = useState(false);
 
-  useState(() => {
+  useEffect(() => {
     if (!pair) return;
     setInsight(null);
     setLoadingInsight(true);
