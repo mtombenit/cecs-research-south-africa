@@ -414,7 +414,7 @@ export default function ARCWRCKnowledgeHub() {
                 </tbody>
               </table>
             </div>
-            <div style={s.insight}>▸ <strong>Northern Cape</strong> has zero records across ALL categories. ▸ <strong>Limpopo</strong> has only PAH records. ▸ <strong>Free State</strong> has no PPCPs, Microplastics, or ARV data. ▸ Heavy Metals are the only category with coverage in Mpumalanga.</div>
+            <div style={s.insight}>▸ <strong>Northern Cape</strong> has zero records across ALL 9 categories — the Orange River (SA's longest), the Vaal Dam catchment boundary, and extensive irrigation zones remain completely uncharacterised for CECs. ▸ <strong>Limpopo</strong> has only PAH records (16), all from Mokolo River near Lephalale — the coal-fired power station (Medupi) catchment drives PAH contamination but no pharmaceutical or microplastic monitoring has been conducted. ▸ <strong>Free State</strong> has zero PPCPs, Microplastics or ARV data despite containing the Vaal Dam (primary Gauteng water supply); only 3 heavy metal and 3 pesticide records exist. ▸ <strong>Mpumalanga</strong> Heavy Metals (24 records) cluster around the Limpopo/Vhembe geothermal springs and gold mine water, reflecting legacy mining contamination from the Witwatersrand-Bushveld industrial corridor.</div>
           </div>
         )}
 
@@ -448,7 +448,7 @@ export default function ARCWRCKnowledgeHub() {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-            <div style={s.insight}>▸ <strong>Lopinavir concentration INCREASES</strong> across all three WWTPs (−52% to −192%). ▸ <strong>Efavirenz</strong> shows 0% removal at DEWATS and negative at Northern. ▸ <strong>Zidovudine, Lamivudine, and Indinavir</strong> are effectively removed (&gt;90%) at most plants.</div>
+            <div style={s.insight}>▸ <strong>Lopinavir INCREASES through all three WWTPs (−52% to −192%)</strong>: Lopinavir has very high lipophilicity (log Kow = 6.9) and sorbs strongly to sewage solids during primary/secondary treatment; under aerobic conditions in the secondary clarifier, desorption from biosolids releases Lopinavir back into the aqueous effluent — a well-documented phenomenon for highly hydrophobic pharmaceuticals. ▸ <strong>Efavirenz: 0% removal at DEWATS, −38% at Northern WWTP</strong>: Efavirenz (log Kow = 5.0) is also lipophilic but additionally highly resistant to biodegradation; its cyclopropyl-benzoxazinone ring structure confers exceptional metabolic stability. ▸ <strong>Zidovudine (99.1% removal at DEWATS)</strong> and <strong>Lamivudine (94.1%)</strong> are hydrophilic nucleoside analogues (log Kow &lt; 0) that are readily removed by conventional activated sludge via aerobic biodegradation. ▸ <strong>Indinavir (&gt;87% at all plants)</strong> is a protease inhibitor that, unlike Lopinavir/Ritonavir, undergoes extensive hepatic glucuronidation in vivo — its conjugated metabolites are more polar and more biodegradable.</div>
           </div>
         )}
 
