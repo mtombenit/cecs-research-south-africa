@@ -175,6 +175,7 @@ export default function ARCWRCKnowledgeHub() {
   const [selectedWWTP, setSelectedWWTP] = useState("All");
   const [tooltip, setTooltip] = useState(null);
   const [selectedPair, setSelectedPair] = useState(null);
+  const [selectedCell, setSelectedCell] = useState(null);
 
   const catData = Object.entries(D.cat_counts).map(([name, value]) => ({ name: name.replace("Polycyclic Aromatic Hydrocarbons","PAHs"), full: name, value }));
   const provData = Object.entries(D.prov_totals).sort((a,b)=>b[1]-a[1]).map(([name,value])=>({name,value}));
