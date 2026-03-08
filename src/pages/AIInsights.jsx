@@ -77,6 +77,7 @@ Return a structured analysis with specific data points and insights.`;
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,
+        add_context_from_internet: true,
         response_json_schema: {
           type: "object",
           properties: {
