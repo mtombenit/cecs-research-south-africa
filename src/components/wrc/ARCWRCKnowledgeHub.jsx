@@ -59,6 +59,75 @@ const s = {
   siteTooltip: { position:"fixed", background:"#FFFFFF", border:"1px solid #2563EB", borderRadius:"6px", padding:"10px 14px", fontSize:"0.68rem", pointerEvents:"none", zIndex:1000, maxWidth:"220px", color:"#1E293B", boxShadow:"0 4px 12px rgba(0,0,0,0.1)" },
 };
 
+const PairDetail = ({ pair, onClose, top_conc }) => {
+  if (!pair) return (
+    <div style={{background:"#F8FAFC",border:"1px dashed #CBD5E1",borderRadius:"8px",padding:"20px",textAlign:"center",color:"#94A3B8",fontSize:"0.68rem",lineHeight:1.7}}>
+      <div style={{fontSize:"1.4rem",marginBottom:"8px"}}>🔬</div>
+      <div style={{fontWeight:"600",color:"#64748B",marginBottom:"4px"}}>Click any cell</div>
+      to explore the co-occurrence relationship between two contaminants.
+    </div>
+  );
+  const colorA = Object.entries(CAT_COLORS).find(([k])=>pair.a.toLowerCase().includes(k.split(" ")[0].toLowerCase()))?.[1] || "#2563EB";
+  const colorB = Object.entries(CAT_COLORS).find(([k])=>pair.b.toLowerCase().includes(k.split(" ")[0].toLowerCase()))?.[1] || "#7C3AED";
+  const strengthLabel = pair.v >= 14 ? "Very Strong" : pair.v >= 8 ? "Strong" : pair.v >= 4 ? "Moderate" : "Weak";
+  const strengthColor = pair.v >= 14 ? "#DC2626" : pair.v >= 8 ? "#D97706" : pair.v >= 4 ? "#2563EB" : "#64748B";
+  const catAName = top_conc.find(c=>c.name===pair.a)?.cat || "";
+  const catBName = top_conc.find(c=>c.name===pair.b)?.cat || "";
+  const concA = top_conc.find(c=>c.name===pair.a);
+  const concB = top_conc.find(c=>c.name===pair.b);
+  return (
+    <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:"8px",padding:"16px",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"12px"}}>
+        <div style={{fontSize:"0.62rem",color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase",fontWeight:"600"}}>Pair Analysis</div>
+        <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",color:"#94A3B8",fontSize:"0.9rem",lineHeight:1}}>✕</button>
+      </div>
+      <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"12px",flexWrap:"wrap"}}>
+        <span style={{background:colorA+"18",color:colorA,border:`1px solid ${colorA}44`,borderRadius:"4px",padding:"3px 8px",fontSize:"0.65rem",fontWeight:"700"}}>{pair.a}</span>
+        <span style={{color:"#94A3B8",fontSize:"0.7rem"}}>+</span>
+        <span style={{background:colorB+"18",color:colorB,border:`1px solid ${colorB}44`,borderRadius:"4px",padding:"3px 8px",fontSize:"0.65rem",fontWeight:"700"}}>{pair.b}</span>
+      </div>
+      <div style={{background:"#EFF6FF",border:"1px solid #BFDBFE",borderRadius:"6px",padding:"10px 12px",marginBottom:"12px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div>
+          <div style={{fontSize:"1.6rem",fontWeight:"700",color:"#2563EB",lineHeight:1}}>{pair.v}</div>
+          <div style={{fontSize:"0.6rem",color:"#64748B",marginTop:"2px"}}>shared sampling sites</div>
+        </div>
+        <div style={{textAlign:"right"}}>
+          <div style={{fontSize:"0.68rem",fontWeight:"700",color:strengthColor}}>{strengthLabel}</div>
+          <div style={{fontSize:"0.58rem",color:"#94A3B8"}}>co-occurrence</div>
+        </div>
+      </div>
+      {(catAName || catBName) && (
+        <div style={{marginBottom:"12px"}}>
+          <div style={{fontSize:"0.6rem",color:"#64748B",letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:"600",marginBottom:"6px"}}>CEC Categories</div>
+          {catAName && <div style={{fontSize:"0.65rem",color:"#475569",marginBottom:"3px"}}>• <strong>{pair.a}</strong>: {catAName}</div>}
+          {catBName && catBName !== catAName && <div style={{fontSize:"0.65rem",color:"#475569",marginBottom:"3px"}}>• <strong>{pair.b}</strong>: {catBName}</div>}
+          {catBName && catBName === catAName && <div style={{fontSize:"0.65rem",color:"#059669",fontStyle:"italic"}}>Both from same category</div>}
+        </div>
+      )}
+      {(concA || concB) && (
+        <div style={{marginBottom:"12px"}}>
+          <div style={{fontSize:"0.6rem",color:"#64748B",letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:"600",marginBottom:"6px"}}>Reported Concentrations</div>
+          {concA && <div style={{background:"#F8FAFC",borderRadius:"4px",padding:"6px 8px",marginBottom:"4px",fontSize:"0.62rem"}}>
+            <span style={{color:colorA,fontWeight:"700"}}>{concA.name}</span>
+            <div style={{color:"#64748B",marginTop:"2px"}}>median <strong style={{color:"#1E293B"}}>{concA.median}</strong> · max <strong style={{color:"#DC2626"}}>{concA.max?.toLocaleString()}</strong> <span style={{color:"#94A3B8"}}>{concA.unit}</span></div>
+          </div>}
+          {concB && <div style={{background:"#F8FAFC",borderRadius:"4px",padding:"6px 8px",fontSize:"0.62rem"}}>
+            <span style={{color:colorB,fontWeight:"700"}}>{concB.name}</span>
+            <div style={{color:"#64748B",marginTop:"2px"}}>median <strong style={{color:"#1E293B"}}>{concB.median}</strong> · max <strong style={{color:"#DC2626"}}>{concB.max?.toLocaleString()}</strong> <span style={{color:"#94A3B8"}}>{concB.unit}</span></div>
+          </div>}
+        </div>
+      )}
+      <div style={{background:"#FFFBEB",border:"1px solid #FDE68A",borderLeft:"3px solid #D97706",borderRadius:"4px",padding:"8px 10px",fontSize:"0.63rem",color:"#92400E",lineHeight:1.6}}>
+        {pair.v >= 14
+          ? "High-frequency co-detection signals a dominant contamination pathway. Both compounds likely originate from the same point source or catchment."
+          : pair.v >= 8
+          ? "Moderate co-occurrence suggests overlapping pollution sources or shared transport pathways in monitored catchments."
+          : "Low co-occurrence may indicate incidental detection or localised hotspot contamination events."}
+      </div>
+    </div>
+  );
+};
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
