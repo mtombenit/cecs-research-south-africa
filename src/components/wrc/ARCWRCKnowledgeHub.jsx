@@ -448,39 +448,48 @@ export default function ARCWRCKnowledgeHub() {
         {tab === "Gap Matrix" && (
           <div style={s.card}>
             <div style={s.cardTitle}>Research Gap Matrix — Province × CEC Category</div>
-            <div style={{overflowX:"auto"}}>
-              <table style={{borderCollapse:"collapse",width:"100%",fontSize:"0.65rem"}}>
-                <thead>
-                  <tr>
-                    <th style={{padding:"8px 12px",color:"#475569",textAlign:"left",fontWeight:"600",borderBottom:"2px solid #E2E8F0"}}>Province</th>
-                    {D.cats.map(c=>(
-                      <th key={c} style={{padding:"6px 8px",color:"#475569",fontWeight:"600",textAlign:"center",borderBottom:"2px solid #E2E8F0",fontSize:"0.58rem",writingMode:"vertical-lr",transform:"rotate(180deg)",height:"80px",verticalAlign:"bottom"}}>
-                        {c.replace("Polycyclic Aromatic Hydrocarbons","PAHs").replace("Pharmaceuticals & PPCPs","PPCPs")}
-                      </th>
-                    ))}
-                    <th style={{padding:"6px 8px",color:"#2563EB",fontWeight:"700",textAlign:"center",borderBottom:"2px solid #E2E8F0"}}>TOTAL</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {D.provinces.map((prov,ri)=>{
-                    const rowTotal = D.cats.reduce((sum,c)=>sum+(D.prov_cat[prov]?.[c]||0),0);
-                    return (
-                      <tr key={prov} style={{background:ri%2===0?"#FFFFFF":"#F8FAFC"}}>
-                        <td style={{padding:"8px 12px",color:PROV_COLORS[prov]||"#1E293B",fontWeight:"600",whiteSpace:"nowrap",borderRight:"1px solid #E2E8F0"}}>{prov}</td>
-                        {D.cats.map(c=>{
-                          const v = D.prov_cat[prov]?.[c]||0;
-                          const intensity = maxGap>0?v/maxGap:0;
-                          const bg = v===0 ? "#FEF2F2" : `rgba(37,99,235,${0.07+intensity*0.65})`;
-                          const color = v===0 ? "#DC2626" : intensity>0.4?"#FFFFFF":"#1E3A6E";
-                          return <td key={c} style={{background:bg,textAlign:"center",padding:"8px 4px",color,fontWeight:v>0?"600":"400",border:"1px solid #E2E8F0",minWidth:"42px"}}>{v===0?"—":v}</td>;
-                        })}
-                        <td style={{textAlign:"center",padding:"8px",fontWeight:"700",color:rowTotal>0?"#2563EB":"#DC2626",background:rowTotal>50?"#DBEAFE":"#FEF2F2",border:"1px solid #E2E8F0"}}>{rowTotal}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            <div style={{display:"flex",gap:"20px",alignItems:"flex-start"}}>
+              <div style={{overflowX:"auto",flex:"0 0 auto"}}>
+                <table style={{borderCollapse:"collapse",fontSize:"0.65rem"}}>
+                  <thead>
+                    <tr>
+                      <th style={{padding:"8px 12px",color:"#475569",textAlign:"left",fontWeight:"600",borderBottom:"2px solid #E2E8F0",whiteSpace:"nowrap"}}>Province</th>
+                      {D.cats.map(c=>(
+                        <th key={c} style={{padding:"6px 8px",color:"#475569",fontWeight:"600",textAlign:"center",borderBottom:"2px solid #E2E8F0",fontSize:"0.58rem",writingMode:"vertical-lr",transform:"rotate(180deg)",height:"80px",verticalAlign:"bottom"}}>
+                          {c.replace("Polycyclic Aromatic Hydrocarbons","PAHs").replace("Pharmaceuticals & PPCPs","PPCPs")}
+                        </th>
+                      ))}
+                      <th style={{padding:"6px 8px",color:"#2563EB",fontWeight:"700",textAlign:"center",borderBottom:"2px solid #E2E8F0"}}>TOTAL</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {D.provinces.map((prov,ri)=>{
+                      const rowTotal = D.cats.reduce((sum,c)=>sum+(D.prov_cat[prov]?.[c]||0),0);
+                      return (
+                        <tr key={prov} style={{background:ri%2===0?"#FFFFFF":"#F8FAFC"}}>
+                          <td style={{padding:"8px 12px",color:PROV_COLORS[prov]||"#1E293B",fontWeight:"600",whiteSpace:"nowrap",borderRight:"1px solid #E2E8F0"}}>{prov}</td>
+                          {D.cats.map(c=>{
+                            const v = D.prov_cat[prov]?.[c]||0;
+                            const intensity = maxGap>0?v/maxGap:0;
+                            const bg = v===0 ? "#FEF2F2" : `rgba(37,99,235,${0.07+intensity*0.65})`;
+                            const color = v===0 ? "#DC2626" : intensity>0.4?"#FFFFFF":"#1E3A6E";
+                            const isSelected = selectedCell?.prov===prov && selectedCell?.cat===c;
+                            return <td key={c} onClick={()=>setSelectedCell({prov,cat:c,v})} style={{background: isSelected ? "#FEF9C3" : bg, textAlign:"center",padding:"8px 4px",color: isSelected ? "#92400E" : color,fontWeight:"600",border: isSelected ? "2px solid #D97706" : "1px solid #E2E8F0",minWidth:"42px",cursor:"pointer",transition:"opacity 0.1s"}} title={`${prov} × ${c}: ${v} records`}>{v===0?"—":v}</td>;
+                          })}
+                          <td style={{textAlign:"center",padding:"8px",fontWeight:"700",color:rowTotal>0?"#2563EB":"#DC2626",background:rowTotal>50?"#DBEAFE":"#FEF2F2",border:"1px solid #E2E8F0"}}>{rowTotal}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Right detail panel */}
+              <div style={{flex:"1 1 220px",minWidth:"200px"}}>
+                <GapCellDetail cell={selectedCell} onClose={()=>setSelectedCell(null)} />
+              </div>
             </div>
+
             <div style={s.insight}>▸ <strong>Northern Cape</strong> has zero records across ALL 9 categories — the Orange River (SA's longest), the Vaal Dam catchment boundary, and extensive irrigation zones remain completely uncharacterised for CECs. ▸ <strong>Limpopo</strong> has only PAH records (16), all from Mokolo River near Lephalale — the coal-fired power station (Medupi) catchment drives PAH contamination but no pharmaceutical or microplastic monitoring has been conducted. ▸ <strong>Free State</strong> has zero PPCPs, Microplastics or ARV data despite containing the Vaal Dam (primary Gauteng water supply); only 3 heavy metal and 3 pesticide records exist. ▸ <strong>Mpumalanga</strong> Heavy Metals (24 records) cluster around the Limpopo/Vhembe geothermal springs and gold mine water, reflecting legacy mining contamination from the Witwatersrand-Bushveld industrial corridor.</div>
           </div>
         )}
