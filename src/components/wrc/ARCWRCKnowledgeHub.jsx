@@ -229,7 +229,8 @@ export default function ARCWRCKnowledgeHub() {
         {tab === "Co-occurrence" && (
           <div style={s.card}>
             <div style={s.cardTitle}>Contaminant Co-occurrence Heatmap — Top 20 Compounds (shared site frequency)</div>
-            <div style={{overflowX:"auto"}}>
+            <div style={{display:"flex",gap:"20px",alignItems:"flex-start"}}>
+            <div style={{overflowX:"auto",flex:"0 0 auto"}}>
               <table style={{borderCollapse:"collapse",fontSize:"0.6rem",tableLayout:"fixed"}}>
                 <colgroup>
                   <col style={{width:"120px"}} />
