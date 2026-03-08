@@ -341,7 +341,7 @@ export default function ARCWRCKnowledgeHub() {
                   <div style={{fontWeight:"600",color:"#64748B",marginBottom:"4px"}}>Click any cell</div>
                   to explore the co-occurrence relationship between two contaminants.
                 </div>
-              ) : <PairDetail pair={selectedPair} onClose={()=>setSelectedPair(null)} top_conc={D.top_conc} />
+              ) : <PairDetail pair={selectedPair} onClose={()=>setSelectedPair(null)} top_conc={D.top_conc} />}
             </div>
             </div>{/* end flex row */}
 
