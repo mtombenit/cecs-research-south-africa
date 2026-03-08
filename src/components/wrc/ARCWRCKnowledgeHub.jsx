@@ -61,6 +61,29 @@ const s = {
 };
 
 const PairDetail = ({ pair, onClose, top_conc }) => {
+  const [insight, setInsight] = useState(null);
+  const [loadingInsight, setLoadingInsight] = useState(false);
+
+  useState(() => {
+    if (!pair) return;
+    setInsight(null);
+    setLoadingInsight(true);
+    const concA = top_conc.find(c=>c.name===pair.a);
+    const concB = top_conc.find(c=>c.name===pair.b);
+    base44.integrations.Core.InvokeLLM({
+      prompt: `You are an environmental chemistry expert. Explain in 2–3 concise sentences WHY these two contaminants co-occur in South African water systems, detected together at ${pair.v} shared sampling sites.
+
+Compound A: ${pair.a}${concA ? ` (category: ${concA.cat}, median ${concA.median} ${concA.unit}, max ${concA.max?.toLocaleString()} ${concA.unit})` : ""}
+Compound B: ${pair.b}${concB ? ` (category: ${concB.cat}, median ${concB.median} ${concB.unit}, max ${concB.max?.toLocaleString()} ${concB.unit})` : ""}
+
+Consider: Are they combination drugs / co-prescribed in the same therapy (e.g. SA ART programme)? Do they share a pollution source (WWTP, industrial, agricultural)? Do they have similar physicochemical persistence or transport properties? Use factual, scientifically grounded reasoning. Be specific to South Africa's context.`,
+      add_context_from_internet: true,
+    }).then(res => {
+      setInsight(typeof res === "string" ? res : res?.text || res?.result || JSON.stringify(res));
+      setLoadingInsight(false);
+    }).catch(() => setLoadingInsight(false));
+  }, [pair?.a, pair?.b]);
+
   if (!pair) return (
     <div style={{background:"#F8FAFC",border:"1px dashed #CBD5E1",borderRadius:"8px",padding:"20px",textAlign:"center",color:"#94A3B8",fontSize:"0.68rem",lineHeight:1.7}}>
       <div style={{fontSize:"1.4rem",marginBottom:"8px"}}>🔬</div>
@@ -119,11 +142,15 @@ const PairDetail = ({ pair, onClose, top_conc }) => {
         </div>
       )}
       <div style={{background:"#FFFBEB",border:"1px solid #FDE68A",borderLeft:"3px solid #D97706",borderRadius:"4px",padding:"8px 10px",fontSize:"0.63rem",color:"#92400E",lineHeight:1.6}}>
-        {pair.v >= 14
-          ? "High-frequency co-detection signals a dominant contamination pathway. Both compounds likely originate from the same point source or catchment."
-          : pair.v >= 8
-          ? "Moderate co-occurrence suggests overlapping pollution sources or shared transport pathways in monitored catchments."
-          : "Low co-occurrence may indicate incidental detection or localised hotspot contamination events."}
+        {loadingInsight ? (
+          <span style={{color:"#B45309",fontStyle:"italic"}}>⏳ Fetching scientific context…</span>
+        ) : insight ? insight : (
+          pair.v >= 14
+            ? "High-frequency co-detection signals a dominant contamination pathway. Both compounds likely originate from the same point source or catchment."
+            : pair.v >= 8
+            ? "Moderate co-occurrence suggests overlapping pollution sources or shared transport pathways in monitored catchments."
+            : "Low co-occurrence may indicate incidental detection or localised hotspot contamination events."
+        )}
       </div>
     </div>
   );
