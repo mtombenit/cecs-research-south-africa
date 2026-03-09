@@ -41,7 +41,7 @@ const PROV_PATHS = {
 
 const s = {
   container: { fontFamily:"inherit", background:"#F8FAFC", minHeight:"100%", color:"#1E293B", padding:"0" },
-  header: { background:"linear-gradient(135deg, #0D9B6E 0%, #14B87F 60%, #0D9B6E 100%)", borderBottom:"3px solid #34D399", padding:"24px 28px 0" },
+  header: { background:"linear-gradient(135deg, #1A9E8F 0%, #2AB8A8 60%, #1A9E8F 100%)", borderBottom:"3px solid #2AB8A8", padding:"24px 28px 0" },
   title: { fontSize:"1.4rem", fontWeight:"700", color:"#FFFFFF", letterSpacing:"0.03em", marginBottom:"4px" },
   subtitle: { fontSize:"0.68rem", color:"#6EE7B7", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:"20px" },
   statsRow: { display:"flex", gap:"32px", marginBottom:"20px", flexWrap:"wrap" },
