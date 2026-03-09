@@ -43,7 +43,7 @@ const s = {
   container: { fontFamily:"inherit", background:"#F8FAFC", minHeight:"100%", color:"#1E293B", padding:"0" },
   header: { background:"linear-gradient(135deg, #0F5B46 0%, #1A7B5F 60%, #0F5B46 100%)", borderBottom:"3px solid #10B981", padding:"24px 28px 0" },
   title: { fontSize:"1.4rem", fontWeight:"700", color:"#FFFFFF", letterSpacing:"0.03em", marginBottom:"4px" },
-  subtitle: { fontSize:"0.68rem", color:"#93C5FD", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:"20px" },
+  subtitle: { fontSize:"0.68rem", color:"#6EE7B7", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:"20px" },
   statsRow: { display:"flex", gap:"32px", marginBottom:"20px", flexWrap:"wrap" },
   stat: { textAlign:"center" },
   statVal: { fontSize:"1.8rem", fontWeight:"700", color:"#FFFFFF", lineHeight:1 },
