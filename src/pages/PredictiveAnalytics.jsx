@@ -280,9 +280,29 @@ Provide:
             <h1 className="text-3xl font-bold text-slate-900">Predictive Analytics</h1>
           </div>
           <p className="text-slate-500 ml-14">
-            AI-powered concentration trend forecasting for PFAS compounds based on historical South African research data.
+            AI-powered concentration trend forecasting based on historical South African research data.
           </p>
         </div>
+
+        {/* Tabs */}
+        <div className="flex gap-1 mb-8 border-b border-slate-200">
+          {[{ key: "pfas", label: "PFAS Analytics" }, { key: "cecs", label: "ARC-WRC CECs" }].map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-5 py-2.5 text-sm font-semibold rounded-t-lg border-b-2 transition-colors ${
+                activeTab === tab.key
+                  ? "border-teal-600 text-teal-700 bg-teal-50"
+                  : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === "cecs" && <ARCWRCCECs />}
+        {activeTab === "pfas" && <>
 
         {/* Controls */}
         <Card className="border-0 shadow-sm mb-8">
