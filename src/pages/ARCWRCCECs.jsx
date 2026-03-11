@@ -422,7 +422,7 @@ export default function ARCWRCCECs() {
                     </div>
                     <ResponsiveContainer width="100%" height={280}>
                       <LineChart margin={{left:8,right:20,top:6,bottom:4}}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                         <XAxis dataKey="year" type="number" domain={[2004,2040]} tickCount={10}
                           tick={{fill:"#64748B",fontSize:9}} tickFormatter={v=>String(v)} />
                         <YAxis tick={{fill:"#64748B",fontSize:9}} tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}k`:v}
