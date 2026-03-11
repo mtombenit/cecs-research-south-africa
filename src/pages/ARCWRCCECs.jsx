@@ -458,9 +458,9 @@ export default function ARCWRCCECs() {
               <div style={{overflowX:"auto"}}>
                 <table style={{borderCollapse:"collapse",width:"100%",fontSize:"0.68rem"}}>
                   <thead>
-                    <tr style={{background:"#1E293B"}}>
+                    <tr style={{background:"#F1F5F9"}}>
                       {["Drug","WWTP Removal","2022 (ng/L)","2030 (ng/L)","2040 (ng/L)","PNEC (ng/L)","2040 HQ","Risk"].map(h=>(
-                        <th key={h} style={{padding:"7px 10px",color:"#94A3B8",fontWeight:"600",textAlign:"left",borderBottom:"1px solid #1E293B",whiteSpace:"nowrap"}}>{h}</th>
+                        <th key={h} style={{padding:"7px 10px",color:"#475569",fontWeight:"600",textAlign:"left",borderBottom:"1px solid #E2E8F0",whiteSpace:"nowrap"}}>{h}</th>
                       ))}
                     </tr>
                   </thead>
