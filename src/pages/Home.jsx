@@ -29,7 +29,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-600 via-teal-700 to-slate-800" />
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-400 via-teal-500 to-slate-600" />
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1920')] bg-cover bg-center opacity-10" />
         <div className="absolute inset-0 bg-gradient-to-t from-teal-900/50 to-transparent" />
 
