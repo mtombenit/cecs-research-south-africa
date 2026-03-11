@@ -14,6 +14,7 @@ import {
 } from "recharts";
 
 export default function PredictiveAnalytics() {
+  const [activeTab, setActiveTab] = useState("pfas");
   const [selectedCompound, setSelectedCompound] = useState("");
   const [selectedProvince, setSelectedProvince] = useState("all");
   const [granularity, setGranularity] = useState("annual");
