@@ -107,7 +107,7 @@ function ProbBar({pct, color, label}) {
         <span style={{fontSize:"0.72rem",color:"#94A3B8"}}>{label}</span>
         <span style={{fontSize:"0.72rem",fontWeight:"700",color:pct>45?risk:"#64748B"}}>{pct}%</span>
       </div>
-      <div style={{background:"#1E293B",borderRadius:"3px",height:"5px",overflow:"hidden"}}>
+      <div style={{background:"#E2E8F0",borderRadius:"3px",height:"5px",overflow:"hidden"}}>
         <div style={{width:`${pct}%`,height:"100%",background:color,borderRadius:"3px",transition:"width 0.6s ease"}}/>
       </div>
     </div>
