@@ -302,7 +302,7 @@ Provide:
         </div>
 
         {activeTab === "cecs" && <ARCWRCCECs />}
-        {activeTab === "pfas" && <>
+        {activeTab === "pfas" && <div>
 
         {/* Controls */}
         <Card className="border-0 shadow-sm mb-8">
