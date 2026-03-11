@@ -319,8 +319,8 @@ export default function ARCWRCCECs() {
                       {results.hiRange && <div style={{fontSize:"0.68rem",color:"#64748B"}}>Plausible range: {results.hiRange.lo} – {results.hiRange.hi}</div>}
                     </div>
                   </div>
-                  <div style={{background:"#060D1A",borderRadius:"6px",padding:"10px 14px",marginBottom:"10px"}}>
-                    <div style={{fontSize:"0.62rem",color:"#475569",marginBottom:"8px",letterSpacing:"0.1em",textTransform:"uppercase"}}>HI interpretation</div>
+                  <div style={{background:"#F1F5F9",borderRadius:"6px",padding:"10px 14px",marginBottom:"10px"}}>
+                    <div style={{fontSize:"0.62rem",color:"#64748B",marginBottom:"8px",letterSpacing:"0.1em",textTransform:"uppercase"}}>HI interpretation</div>
                     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:"8px",textAlign:"center"}}>
                       {[["<1","LOW","#10B981"],["1–3","MODERATE","#3B82F6"],["3–10","HIGH","#F59E0B"],[">10","CRITICAL","#EF4444"]].map(([r,l,c])=>(
                         <div key={r} style={{background:c+"11",border:`1px solid ${c}44`,borderRadius:"4px",padding:"6px",opacity:r.includes(">10")&&results.hiEst>10||r==="1–3"&&results.hiEst>1&&results.hiEst<=3||r==="<1"&&results.hiEst<=1||r==="3–10"&&results.hiEst>3&&results.hiEst<=10?1:0.35}}>
