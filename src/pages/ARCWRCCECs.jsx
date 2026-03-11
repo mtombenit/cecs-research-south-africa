@@ -288,12 +288,12 @@ export default function ARCWRCCECs() {
         {/* RESULTS */}
         <div>
           {!ran && (
-            <div style={{...S.card,textAlign:"center",padding:"60px 20px",border:"1px dashed #1E3A5F"}}>
+            <div style={{...S.card,textAlign:"center",padding:"60px 20px",border:"1px dashed #CBD5E1"}}>
               <div style={{fontSize:"2.5rem",marginBottom:"14px"}}>🔬</div>
-              <div style={{fontSize:"1rem",color:"#3B82F6",fontWeight:"700",marginBottom:"8px"}}>Configure your site and run predictions</div>
-              <div style={{fontSize:"0.75rem",color:"#475569",lineHeight:1.7}}>
+              <div style={{fontSize:"1rem",color:"#0F766E",fontWeight:"700",marginBottom:"8px"}}>Configure your site and run predictions</div>
+              <div style={{fontSize:"0.75rem",color:"#64748B",lineHeight:1.7}}>
                 Set the province, water body type, and coordinates on the left,<br/>
-                then click <strong style={{color:"#60A5FA"}}>▶ Run All 3 Predictions</strong>
+                then click <strong style={{color:"#0D9488"}}>▶ Run All 3 Predictions</strong>
               </div>
             </div>
           )}
