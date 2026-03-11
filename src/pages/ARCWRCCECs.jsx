@@ -69,24 +69,24 @@ const CAT_COL   = {"Pharmaceuticals & PPCPs":"#3B82F6","Microplastics":"#7C3AED"
 const CAT_SHORT = {"Pharmaceuticals & PPCPs":"PPCPs","Microplastics":"Microplastics","Polycyclic Aromatic Hydrocarbons":"PAHs","Antiretrovirals (ARVs)":"ARVs","Pesticides":"Pesticides","Heavy Metals":"Heavy Metals","Alkylphenols & APEOs":"APEOs","Microbial CECs":"Microbial CECs","Nanomaterials":"Nanomaterials"};
 
 const S = {
-  app: {fontFamily:"Arial,sans-serif",background:"#060D1A",minHeight:"100%",color:"#E2E8F0",padding:"0"},
-  hdr: {background:"linear-gradient(135deg,#0D1B2A,#1A2744)",borderBottom:"2px solid #1E3A5F",padding:"22px 32px"},
-  title:{fontSize:"1.5rem",fontWeight:"700",color:"#60A5FA",letterSpacing:"0.05em"},
-  sub:  {fontSize:"0.68rem",color:"#475569",letterSpacing:"0.15em",textTransform:"uppercase",marginTop:"4px"},
+  app: {fontFamily:"Arial,sans-serif",background:"#F8FAFC",minHeight:"100%",color:"#1E293B",padding:"0"},
+  hdr: {background:"linear-gradient(135deg,#0F766E,#0D9488)",borderBottom:"2px solid #0D9488",padding:"22px 32px"},
+  title:{fontSize:"1.5rem",fontWeight:"700",color:"#FFFFFF",letterSpacing:"0.05em"},
+  sub:  {fontSize:"0.68rem",color:"#CCFBF1",letterSpacing:"0.15em",textTransform:"uppercase",marginTop:"4px"},
   body: {padding:"28px 32px",display:"grid",gridTemplateColumns:"320px 1fr",gap:"28px",alignItems:"start"},
-  panel:{background:"#0F172A",border:"1px solid #1E293B",borderRadius:"10px",padding:"20px"},
-  ptitle:{fontSize:"0.65rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#3B82F6",marginBottom:"14px",borderBottom:"1px solid #1E293B",paddingBottom:"8px"},
+  panel:{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:"10px",padding:"20px",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"},
+  ptitle:{fontSize:"0.65rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#0F766E",marginBottom:"14px",borderBottom:"1px solid #E2E8F0",paddingBottom:"8px"},
   field:{marginBottom:"16px"},
   label:{fontSize:"0.65rem",color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"5px",display:"block"},
-  select:{width:"100%",background:"#060D1A",border:"1px solid #1E3A5F",color:"#E2E8F0",padding:"8px 10px",borderRadius:"6px",fontSize:"0.8rem",fontFamily:"Arial,sans-serif",outline:"none"},
-  input:{width:"100%",background:"#060D1A",border:"1px solid #1E3A5F",color:"#E2E8F0",padding:"8px 10px",borderRadius:"6px",fontSize:"0.8rem",fontFamily:"Arial,sans-serif",outline:"none",boxSizing:"border-box"},
-  btn:  {width:"100%",padding:"11px",background:"linear-gradient(135deg,#1D4ED8,#2563EB)",color:"white",border:"none",borderRadius:"6px",fontSize:"0.8rem",fontWeight:"700",cursor:"pointer",fontFamily:"Arial,sans-serif",letterSpacing:"0.08em"},
+  select:{width:"100%",background:"#F8FAFC",border:"1px solid #CBD5E1",color:"#1E293B",padding:"8px 10px",borderRadius:"6px",fontSize:"0.8rem",fontFamily:"Arial,sans-serif",outline:"none"},
+  input:{width:"100%",background:"#F8FAFC",border:"1px solid #CBD5E1",color:"#1E293B",padding:"8px 10px",borderRadius:"6px",fontSize:"0.8rem",fontFamily:"Arial,sans-serif",outline:"none",boxSizing:"border-box"},
+  btn:  {width:"100%",padding:"11px",background:"linear-gradient(135deg,#0F766E,#0D9488)",color:"white",border:"none",borderRadius:"6px",fontSize:"0.8rem",fontWeight:"700",cursor:"pointer",fontFamily:"Arial,sans-serif",letterSpacing:"0.08em"},
   badge:(c,bg)=>({display:"inline-block",padding:"2px 8px",borderRadius:"4px",fontSize:"0.6rem",fontWeight:"700",background:bg||c+"22",color:c,border:`1px solid ${c}44`}),
-  card: {background:"#0F172A",border:"1px solid #1E293B",borderRadius:"8px",padding:"16px",marginBottom:"16px"},
-  ctitle:{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#3B82F6",marginBottom:"12px",display:"flex",alignItems:"center",gap:"8px"},
+  card: {background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:"8px",padding:"16px",marginBottom:"16px",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"},
+  ctitle:{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#0F766E",marginBottom:"12px",display:"flex",alignItems:"center",gap:"8px"},
   row:  {display:"flex",gap:"12px",flexWrap:"wrap"},
-  hint: {fontSize:"0.65rem",color:"#475569",marginTop:"4px"},
-  warn: {fontSize:"0.65rem",color:"#F59E0B",marginTop:"4px"},
+  hint: {fontSize:"0.65rem",color:"#64748B",marginTop:"4px"},
+  warn: {fontSize:"0.65rem",color:"#B45309",marginTop:"4px"},
 };
 
 const RISK_C = {CRITICAL:"#EF4444",HIGH:"#F59E0B",MODERATE:"#3B82F6",LOW:"#10B981"};
