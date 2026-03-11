@@ -24,7 +24,7 @@ const navItems = [
   { name: "Visualizations", icon: TrendingUp, page: "Visualizations" },
   { name: "AI Insights", icon: Sparkles, page: "AIInsights" },
   { name: "Predictive Analytics", icon: TrendingUp, page: "PredictiveAnalytics" },
-  { name: "ARC-WRC CECs", icon: FlaskConical, page: "ARCWRCCECs" },
+
   { name: "Ask AI", icon: Sparkles, page: "AskAI" },
   { name: "All Articles", icon: BookOpen, page: "ArticleList" },
 ];
