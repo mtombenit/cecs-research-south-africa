@@ -60,6 +60,7 @@ import Home from './pages/Home';
 import PaperDetail from './pages/PaperDetail';
 import PredictiveAnalytics from './pages/PredictiveAnalytics';
 import Visualizations from './pages/Visualizations';
+import ARCWRCCECs from './pages/ARCWRCCECs';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +78,7 @@ export const PAGES = {
     "PaperDetail": PaperDetail,
     "PredictiveAnalytics": PredictiveAnalytics,
     "Visualizations": Visualizations,
+    "ARCWRCCECs": ARCWRCCECs,
 }
 
 export const pagesConfig = {
