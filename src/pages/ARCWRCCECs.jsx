@@ -356,10 +356,10 @@ export default function ARCWRCCECs() {
                   const top = sorted.slice(0,3);
                   const flagged = sorted.filter(x=>x.p>60);
                   return (
-                    <div style={{background:"#060D1A",borderRadius:"6px",padding:"12px 14px"}}>
-                      <div style={{fontSize:"0.62rem",color:"#475569",marginBottom:"8px",letterSpacing:"0.1em",textTransform:"uppercase"}}>Interpretation</div>
-                      <div style={{fontSize:"0.72rem",color:"#94A3B8",lineHeight:1.8}}>
-                        <strong style={{color:"#60A5FA"}}>Most likely detections:</strong>{" "}
+                    <div style={{background:"#F1F5F9",borderRadius:"6px",padding:"12px 14px"}}>
+                      <div style={{fontSize:"0.62rem",color:"#64748B",marginBottom:"8px",letterSpacing:"0.1em",textTransform:"uppercase"}}>Interpretation</div>
+                      <div style={{fontSize:"0.72rem",color:"#475569",lineHeight:1.8}}>
+                        <strong style={{color:"#0F766E"}}>Most likely detections:</strong>{" "}
                         {top.map(x=><span key={x.cat} style={{color:CAT_COL[x.cat],fontWeight:"700"}}>{CAT_SHORT[x.cat]} ({x.p}%){" "}</span>)}
                         {flagged.length>0&&<><br/><strong style={{color:"#EF4444"}}>⚠ High-probability (&gt;60%):</strong>{" "}{flagged.map(x=><span key={x.cat} style={{color:CAT_COL[x.cat]}}>{CAT_SHORT[x.cat]} </span>)}</>}
                         {results.clf["Antiretrovirals (ARVs)"]>30&&results.province==="KwaZulu-Natal"&&<><br/><span style={{color:"#10B981"}}>ARV signal elevated — consistent with KZN WWTP catchment location.</span></>}
