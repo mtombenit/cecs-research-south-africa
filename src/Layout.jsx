@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
         FlaskConical, Home, Database, Sparkles, Plus, Menu, 
-        LogOut, User, TrendingUp, Activity, BookOpen, Trash2
+        LogOut, User, TrendingUp, Activity, BookOpen, Trash2, Upload
       } from "lucide-react";
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
@@ -21,6 +21,7 @@ import {
 const navItems = [
   { name: "Home", icon: Home, page: "Home" },
   { name: "Database", icon: Database, page: "Database" },
+  { name: "Upload CEC Data", icon: Upload, page: "UploadCECData" },
   { name: "Visualizations", icon: TrendingUp, page: "Visualizations" },
   { name: "AI Insights", icon: Sparkles, page: "AIInsights" },
   { name: "Predictive Analytics", icon: TrendingUp, page: "PredictiveAnalytics" },
