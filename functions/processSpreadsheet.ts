@@ -151,7 +151,12 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('Processing error:', error);
+    return Response.json({ 
+      error: error.message,
+      stack: error.stack,
+      details: String(error)
+    }, { status: 500 });
   }
 });
 

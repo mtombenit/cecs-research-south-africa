@@ -69,20 +69,22 @@ export default function UploadCECData() {
             });
             toast.success(`${file.name}: ${response.data.records_inserted} records imported`);
           } else {
+            const errorMsg = response.data.error || response.data.details || 'Processing failed';
             processResults.push({ 
               filename: file.name, 
               success: false, 
-              error: response.data.error || 'Processing failed' 
+              error: errorMsg
             });
-            toast.error(`${file.name}: Processing failed`);
+            toast.error(`${file.name}: ${errorMsg.substring(0, 100)}`);
           }
         } catch (err) {
+          const errorMsg = err.response?.data?.error || err.response?.data?.details || err.message;
           processResults.push({ 
             filename: file.name, 
             success: false, 
-            error: err.message 
+            error: errorMsg
           });
-          toast.error(`${file.name}: ${err.message}`);
+          toast.error(`${file.name}: ${errorMsg.substring(0, 100)}`);
         }
       }
 
