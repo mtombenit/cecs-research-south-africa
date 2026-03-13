@@ -21,11 +21,9 @@ import {
 const navItems = [
   { name: "Home", icon: Home, page: "Home" },
   { name: "Database", icon: Database, page: "Database" },
-  { name: "Upload CEC Data", icon: Upload, page: "UploadCECData" },
   { name: "Visualizations", icon: TrendingUp, page: "Visualizations" },
   { name: "AI Insights", icon: Sparkles, page: "AIInsights" },
   { name: "Predictive Analytics", icon: TrendingUp, page: "PredictiveAnalytics" },
-
   { name: "Ask AI", icon: Sparkles, page: "AskAI" },
   { name: "All Articles", icon: BookOpen, page: "ArticleList" },
 ];
@@ -62,15 +60,28 @@ export default function Layout({ children, currentPageName }) {
           </Link>
         );
       })}
-      <Link 
-        to={createPageUrl("AddPaper")} 
-        onClick={() => mobile && setMobileOpen(false)}
-      >
-        <Button className={`bg-teal-600 hover:bg-teal-700 ${mobile ? 'w-full mt-4' : 'ml-2'}`}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Paper
-        </Button>
-      </Link>
+      {mobile && (
+        <>
+          <Link 
+            to={createPageUrl("AddPaper")} 
+            onClick={() => setMobileOpen(false)}
+          >
+            <Button variant="ghost" className="w-full justify-start mt-4 text-slate-600">
+              <BookOpen className="w-4 h-4 mr-2" />
+              Manually Add Paper
+            </Button>
+          </Link>
+          <Link 
+            to={createPageUrl("UploadCECData")} 
+            onClick={() => setMobileOpen(false)}
+          >
+            <Button variant="ghost" className="w-full justify-start text-slate-600">
+              <Upload className="w-4 h-4 mr-2" />
+              Upload CEC Data
+            </Button>
+          </Link>
+        </>
+      )}
     </div>
   );
 
@@ -95,6 +106,29 @@ export default function Layout({ children, currentPageName }) {
             <nav className="hidden lg:flex items-center gap-6">
               <NavLinks />
               
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="bg-teal-600 hover:bg-teal-700">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Paper
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("AddPaper")}>
+                      <BookOpen className="w-4 h-4 mr-2" />
+                      Manually Add Paper
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("UploadCECData")}>
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload CEC Data
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               {user && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
