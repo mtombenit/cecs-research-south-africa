@@ -66,6 +66,12 @@ Deno.serve(async (req) => {
     }
 
     const rawRecords = extractionResult.output.records || [];
+    
+    if (rawRecords.length === 0) {
+      return Response.json({ 
+        error: 'No data found in spreadsheet. Please ensure the file has data in the expected format with headers.' 
+      }, { status: 400 });
+    }
 
     // Step 2: Clean and standardize the data
     const cleanedRecords = rawRecords.map(record => {
@@ -138,10 +144,17 @@ Deno.serve(async (req) => {
       };
     });
 
-    // Step 3: Insert into database
-    const inserted = await base44.asServiceRole.entities.CECRecord.bulkCreate(
-      cleanedRecords.filter(r => r.contaminant_name)
-    );
+    // Step 3: Filter valid records
+    const validRecords = cleanedRecords.filter(r => r.contaminant_name);
+    
+    if (validRecords.length === 0) {
+      return Response.json({ 
+        error: 'No valid records found. All records are missing contaminant names.' 
+      }, { status: 400 });
+    }
+
+    // Step 4: Insert into database
+    const inserted = await base44.asServiceRole.entities.CECRecord.bulkCreate(validRecords);
 
     return Response.json({
       success: true,
