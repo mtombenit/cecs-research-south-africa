@@ -21,43 +21,15 @@ Deno.serve(async (req) => {
       json_schema: {
         type: "object",
         properties: {
-          records: {
+          rows: {
             type: "array",
-            description: "Extract all data rows from the spreadsheet. Skip the header row. The first column contains compound names in format 'Category ~ Compound'. Map each row to the properties below.",
+            description: "All rows from the spreadsheet including headers. Each row is an array of cell values.",
             items: {
-              type: "object",
-              properties: {
-                col_0: { type: "string", description: "Contaminant Name (first column or 'KNOWLEDGE HUB CEC DATA EXPORT')" },
-                col_1: { type: "string", description: "Commonly Known As" },
-                col_2: { type: "string", description: "Metabolites" },
-                col_3: { type: "string", description: "IUPAC Name" },
-                col_4: { type: "string", description: "Synonym" },
-                col_5: { type: "string", description: "Formula" },
-                col_6: { type: "string", description: "Molar Mass" },
-                col_7: { type: "string", description: "Density" },
-                col_8: { type: "string", description: "Melting Point" },
-                col_9: { type: "string", description: "Boiling Point" },
-                col_10: { type: "string", description: "Solubility In Water" },
-                col_11: { type: "string", description: "Sampling Site" },
-                col_12: { type: "string", description: "Feature At Sampling Site" },
-                col_13: { type: ["string", "number"], description: "Point Latitude" },
-                col_14: { type: ["string", "number"], description: "Point Longitude" },
-                col_15: { type: "string", description: "Coordinate Notes" },
-                col_16: { type: "string", description: "Sample Collection Notes" },
-                col_17: { type: "string", description: "Instrument Used" },
-                col_18: { type: ["string", "number"], description: "Concentration Detected In Sample" },
-                col_19: { type: "string", description: "Chemical Abundance In Sample" },
-                col_20: { type: "string", description: "Reference For Analysis Method" },
-                col_21: { type: "string", description: "Replicated Collected" },
-                col_22: { type: "string", description: "Unit Of Measure" },
-                col_23: { type: "string", description: "Unit Of Measure Full Name" },
-                col_24: { type: "string", description: "Data Reference" }
-              },
-              required: ["col_0"]
+              type: "array",
+              items: { type: ["string", "number", "null"] }
             }
           }
-        },
-        required: ["records"]
+        }
       }
     });
 
@@ -68,13 +40,42 @@ Deno.serve(async (req) => {
       }, { status: 400 });
     }
 
-    const rawRecords = extractionResult.output.records || [];
+    const rows = extractionResult.output.rows || [];
     
-    if (rawRecords.length === 0) {
+    if (rows.length < 2) {
       return Response.json({ 
-        error: 'No data found in spreadsheet. Please ensure the file has data in the expected format with headers.' 
+        error: 'No data found in spreadsheet. Please ensure the file has data rows.' 
       }, { status: 400 });
     }
+
+    // Skip header row and convert to objects
+    const rawRecords = rows.slice(1).map(row => ({
+      col_0: row[0],
+      col_1: row[1],
+      col_2: row[2],
+      col_3: row[3],
+      col_4: row[4],
+      col_5: row[5],
+      col_6: row[6],
+      col_7: row[7],
+      col_8: row[8],
+      col_9: row[9],
+      col_10: row[10],
+      col_11: row[11],
+      col_12: row[12],
+      col_13: row[13],
+      col_14: row[14],
+      col_15: row[15],
+      col_16: row[16],
+      col_17: row[17],
+      col_18: row[18],
+      col_19: row[19],
+      col_20: row[20],
+      col_21: row[21],
+      col_22: row[22],
+      col_23: row[23],
+      col_24: row[24]
+    }));
 
     // Step 2: Clean and standardize the data
     const cleanedRecords = rawRecords.map(record => {
