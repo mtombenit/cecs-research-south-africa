@@ -16,8 +16,6 @@ Deno.serve(async (req) => {
     }
 
     // Step 1: Extract raw data from the uploaded file
-    // The spreadsheet has a specific format with "KNOWLEDGE HUB CEC DATA EXPORT" as first column header
-    // and col_1, col_2, etc. as subsequent columns. We need to map these correctly.
     const extractionResult = await base44.integrations.Core.ExtractDataFromUploadedFile({
       file_url: file_url,
       json_schema: {
@@ -25,112 +23,37 @@ Deno.serve(async (req) => {
         properties: {
           records: {
             type: "array",
-            description: "Extract all data rows, mapping column headers to their actual names",
+            description: "Extract all data rows from the spreadsheet. Skip the header row. The first column contains compound names in format 'Category ~ Compound'. Map each row to the properties below.",
             items: {
               type: "object",
               properties: {
-                contaminant_name: { 
-                  type: "string",
-                  description: "From 'Contaminant Name' column - includes category prefix like 'Category ~ Compound'"
-                },
-                commonly_known_as: { 
-                  type: "string",
-                  description: "From 'Commonly Known As' column"
-                },
-                metabolites: { 
-                  type: "string",
-                  description: "From 'Metabolites' column"
-                },
-                iupac_name: { 
-                  type: "string",
-                  description: "From 'IUPAC Name' column"
-                },
-                synonym: { 
-                  type: "string",
-                  description: "From 'Synonym' column"
-                },
-                formula: { 
-                  type: "string",
-                  description: "From 'Formula' column - chemical formula"
-                },
-                molar_mass: { 
-                  type: "string",
-                  description: "From 'Molar Mass' column - with units"
-                },
-                density: { 
-                  type: "string",
-                  description: "From 'Density' column - with units"
-                },
-                melting_point: { 
-                  type: "string",
-                  description: "From 'Melting Point' column - may include multiple temperature units"
-                },
-                boiling_point: { 
-                  type: "string",
-                  description: "From 'Boiling Point' column - may include multiple temperature units"
-                },
-                solubility_in_water: { 
-                  type: "string",
-                  description: "From 'Solubility In Water' column"
-                },
-                sampling_site: { 
-                  type: "string",
-                  description: "From 'Sampling Site' column - geographic location"
-                },
-                feature_at_site: { 
-                  type: "string",
-                  description: "From 'Feature At Sampling Site' column - sampling context"
-                },
-                point_latitude: { 
-                  type: ["string", "number"],
-                  description: "From 'Point Latitude' column - may be -999 for missing data"
-                },
-                point_longitude: { 
-                  type: ["string", "number"],
-                  description: "From 'Point Longitude' column - may be -999 for missing data"
-                },
-                coordinate_notes: { 
-                  type: "string",
-                  description: "From 'Coordinate Notes' column"
-                },
-                sample_collection_notes: { 
-                  type: "string",
-                  description: "From 'Sample Collection Notes' column"
-                },
-                instrument_used: { 
-                  type: "string",
-                  description: "From 'Instrument Used' column - analytical instrument"
-                },
-                concentration_detected: { 
-                  type: ["string", "number"],
-                  description: "From 'Concentration Detected In Sample' column"
-                },
-                chemical_abundance: { 
-                  type: "string",
-                  description: "From 'Chemical Abundance In Sample' column"
-                },
-                reference_for_analysis: { 
-                  type: "string",
-                  description: "From 'Reference For Analysis Method' column - DOI or reference"
-                },
-                replicated_collected: { 
-                  type: "string",
-                  description: "From 'Replicated Collected' column - e.g. n=6"
-                },
-                unit_of_measure: { 
-                  type: "string",
-                  description: "From 'Unit Of Measure' column - abbreviation"
-                },
-                unit_of_measure_full: { 
-                  type: "string",
-                  description: "From 'Unit Of Measure Full Name' column"
-                },
-                data_reference: { 
-                  type: "string",
-                  description: "From 'Data Reference' column - source URL or DOI"
-                }
+                col_0: { type: "string", description: "Contaminant Name (first column or 'KNOWLEDGE HUB CEC DATA EXPORT')" },
+                col_1: { type: "string", description: "Commonly Known As" },
+                col_2: { type: "string", description: "Metabolites" },
+                col_3: { type: "string", description: "IUPAC Name" },
+                col_4: { type: "string", description: "Synonym" },
+                col_5: { type: "string", description: "Formula" },
+                col_6: { type: "string", description: "Molar Mass" },
+                col_7: { type: "string", description: "Density" },
+                col_8: { type: "string", description: "Melting Point" },
+                col_9: { type: "string", description: "Boiling Point" },
+                col_10: { type: "string", description: "Solubility In Water" },
+                col_11: { type: "string", description: "Sampling Site" },
+                col_12: { type: "string", description: "Feature At Sampling Site" },
+                col_13: { type: ["string", "number"], description: "Point Latitude" },
+                col_14: { type: ["string", "number"], description: "Point Longitude" },
+                col_15: { type: "string", description: "Coordinate Notes" },
+                col_16: { type: "string", description: "Sample Collection Notes" },
+                col_17: { type: "string", description: "Instrument Used" },
+                col_18: { type: ["string", "number"], description: "Concentration Detected In Sample" },
+                col_19: { type: "string", description: "Chemical Abundance In Sample" },
+                col_20: { type: "string", description: "Reference For Analysis Method" },
+                col_21: { type: "string", description: "Replicated Collected" },
+                col_22: { type: "string", description: "Unit Of Measure" },
+                col_23: { type: "string", description: "Unit Of Measure Full Name" },
+                col_24: { type: "string", description: "Data Reference" }
               },
-              required: ["contaminant_name"]
+              required: ["col_0"]
             }
           }
         },
@@ -155,24 +78,24 @@ Deno.serve(async (req) => {
 
     // Step 2: Clean and standardize the data
     const cleanedRecords = rawRecords.map(record => {
-      // Parse category from contaminant_name (e.g., "Alkylphenols and Alkylphenol Ethoxylates ~ Alkylphenol ethoxylates")
-      const categoryMatch = record.contaminant_name?.match(/^([^~]+)~(.+)$/);
+      // Parse category from col_0 (e.g., "Alkylphenols and Alkylphenol Ethoxylates ~ Alkylphenol ethoxylates")
+      const categoryMatch = record.col_0?.match(/^([^~]+)~(.+)$/);
       const cec_category = categoryMatch ? categoryMatch[1].trim() : "Unclassified";
-      const contaminant_name = categoryMatch ? categoryMatch[2].trim() : (record.contaminant_name || "").trim();
+      const contaminant_name = categoryMatch ? categoryMatch[2].trim() : (record.col_0 || "").trim();
 
       // Parse coordinates - handle both string and number types, -999 is missing data
-      const lat = typeof record.point_latitude === 'number' 
-        ? record.point_latitude 
-        : parseFloat(String(record.point_latitude || ''));
-      const lon = typeof record.point_longitude === 'number'
-        ? record.point_longitude
-        : parseFloat(String(record.point_longitude || ''));
+      const lat = typeof record.col_13 === 'number' 
+        ? record.col_13 
+        : parseFloat(String(record.col_13 || ''));
+      const lon = typeof record.col_14 === 'number'
+        ? record.col_14
+        : parseFloat(String(record.col_14 || ''));
       const latitude = (!isNaN(lat) && lat !== -999 && lat !== 0) ? lat : null;
       const longitude = (!isNaN(lon) && lon !== -999 && lon !== 0) ? lon : null;
 
       // Parse concentration - handle both string and number types
       let concentration_numeric = null;
-      const concValue = record.concentration_detected;
+      const concValue = record.col_18;
       if (concValue !== null && concValue !== undefined && concValue !== '-') {
         if (typeof concValue === 'number') {
           concentration_numeric = concValue;
@@ -185,16 +108,16 @@ Deno.serve(async (req) => {
       }
 
       // Infer province from sampling site or coordinates
-      const province = inferProvince(record.sampling_site, latitude, longitude);
+      const province = inferProvince(record.col_11, latitude, longitude);
 
       // Infer water body type from sampling site description
       const water_body_type = inferWaterBodyType(
-        record.sampling_site, 
-        record.feature_at_site
+        record.col_11, 
+        record.col_12
       );
 
       // Extract study year from data reference
-      const study_year = extractYearFromReference(record.data_reference);
+      const study_year = extractYearFromReference(record.col_24);
 
       // Clean up null-like values (-, --, None, etc.)
       const cleanValue = (val) => {
@@ -207,34 +130,34 @@ Deno.serve(async (req) => {
       return {
         cec_category,
         contaminant_name: contaminant_name || null,
-        commonly_known_as: cleanValue(record.commonly_known_as),
-        metabolites: cleanValue(record.metabolites),
-        iupac_name: cleanValue(record.iupac_name),
-        synonym: cleanValue(record.synonym),
-        formula: cleanValue(record.formula),
-        molar_mass: cleanValue(record.molar_mass),
-        density: cleanValue(record.density),
-        melting_point: cleanValue(record.melting_point),
-        boiling_point: cleanValue(record.boiling_point),
-        solubility_in_water: cleanValue(record.solubility_in_water),
+        commonly_known_as: cleanValue(record.col_1),
+        metabolites: cleanValue(record.col_2),
+        iupac_name: cleanValue(record.col_3),
+        synonym: cleanValue(record.col_4),
+        formula: cleanValue(record.col_5),
+        molar_mass: cleanValue(record.col_6),
+        density: cleanValue(record.col_7),
+        melting_point: cleanValue(record.col_8),
+        boiling_point: cleanValue(record.col_9),
+        solubility_in_water: cleanValue(record.col_10),
         province,
         municipality: null,
-        sampling_site: cleanValue(record.sampling_site),
-        feature_at_site: cleanValue(record.feature_at_site),
+        sampling_site: cleanValue(record.col_11),
+        feature_at_site: cleanValue(record.col_12),
         water_body_type,
         latitude,
         longitude,
-        coordinate_notes: cleanValue(record.coordinate_notes),
-        sample_collection_notes: cleanValue(record.sample_collection_notes),
-        concentration_detected: cleanValue(record.concentration_detected),
+        coordinate_notes: cleanValue(record.col_15),
+        sample_collection_notes: cleanValue(record.col_16),
+        concentration_detected: cleanValue(record.col_18),
         concentration_numeric,
-        chemical_abundance: cleanValue(record.chemical_abundance),
-        unit_of_measure: cleanValue(record.unit_of_measure),
-        unit_of_measure_full: cleanValue(record.unit_of_measure_full),
-        instrument_used: cleanValue(record.instrument_used),
-        reference_for_analysis: cleanValue(record.reference_for_analysis),
-        replicated_collected: cleanValue(record.replicated_collected),
-        data_reference: cleanValue(record.data_reference),
+        chemical_abundance: cleanValue(record.col_19),
+        unit_of_measure: cleanValue(record.col_22),
+        unit_of_measure_full: cleanValue(record.col_23),
+        instrument_used: cleanValue(record.col_17),
+        reference_for_analysis: cleanValue(record.col_20),
+        replicated_collected: cleanValue(record.col_21),
+        data_reference: cleanValue(record.col_24),
         study_year,
         source_file: filename || 'unknown',
         upload_date: new Date().toISOString()
