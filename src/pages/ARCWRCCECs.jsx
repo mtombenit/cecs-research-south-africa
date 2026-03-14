@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer } from "recharts";
+import { base44 } from "@/api/base44Client";
 
 // ── LR Model — runs entirely in-browser, no API (only 5KB) ───────────────────
 const LR_MODELS = {"Pharmaceuticals & PPCPs":{"scaler":{"mean":[29.284,28.055,2.907,9.091,63.093,0.179,0.086,0.314],"scale":[3.253,3.396,1.590,3.678,20.822,0.383,0.280,0.464]},"coef":[0.8904,0.3703,-0.3862,1.4076,-0.6957,0.1572,-1.0001,0.1745],"intercept":-0.3814},"Microplastics":{"scaler":{"mean":[29.284,28.055,2.907,9.091,63.093,0.179,0.086,0.314],"scale":[3.253,3.396,1.590,3.678,20.822,0.383,0.280,0.464]},"coef":[0.9308,1.9010,-1.0134,0.9026,-0.2056,-0.4339,1.0011,-0.4671],"intercept":-2.9544},"Polycyclic Aromatic Hydrocarbons":{"scaler":{"mean":[29.284,28.055,2.907,9.091,63.093,0.179,0.086,0.314],"scale":[3.253,3.396,1.590,3.678,20.822,0.383,0.280,0.464]},"coef":[0.1822,-0.9097,-0.6505,0.8436,-1.1765,-0.6101,-0.5544,0.5999],"intercept":-1.0515},"Antiretrovirals (ARVs)":{"scaler":{"mean":[29.284,28.055,2.907,9.091,63.093,0.179,0.086,0.314],"scale":[3.253,3.396,1.590,3.678,20.822,0.383,0.280,0.464]},"coef":[0.7216,1.6201,0.7616,0.7376,-0.0197,1.3241,-0.2946,-0.3273],"intercept":-4.0151},"Pesticides":{"scaler":{"mean":[29.284,28.055,2.907,9.091,63.093,0.179,0.086,0.314],"scale":[3.253,3.396,1.590,3.678,20.822,0.383,0.280,0.464]},"coef":[-0.3206,-0.7574,0.3793,-0.3608,0.3993,-0.2374,0.3730,0.0769],"intercept":-0.2264},"Heavy Metals":{"scaler":{"mean":[29.284,28.055,2.907,9.091,63.093,0.179,0.086,0.314],"scale":[3.253,3.396,1.590,3.678,20.822,0.383,0.280,0.464]},"coef":[-0.8983,-0.0776,0.1117,-0.7489,-0.0935,-0.4285,-0.7939,-0.8717],"intercept":-0.7951},"Alkylphenols & APEOs":{"scaler":{"mean":[29.284,28.055,2.907,9.091,63.093,0.179,0.086,0.314],"scale":[3.253,3.396,1.590,3.678,20.822,0.383,0.280,0.464]},"coef":[-1.7774,-0.6962,1.1629,-0.0383,0.1766,0.4588,-0.1557,1.0300],"intercept":-2.4012},"Microbial CECs":{"scaler":{"mean":[29.284,28.055,2.907,9.091,63.093,0.179,0.086,0.314],"scale":[3.253,3.396,1.590,3.678,20.822,0.383,0.280,0.464]},"coef":[-0.2316,0.1129,0.2732,-0.0397,0.5790,0.4177,-0.5552,0.6837],"intercept":-0.4801},"Nanomaterials":{"scaler":{"mean":[29.284,28.055,2.907,9.091,63.093,0.179,0.086,0.314],"scale":[3.253,3.396,1.590,3.678,20.822,0.383,0.280,0.464]},"coef":[-0.7797,-1.1420,0.7258,-1.6136,0.7533,-0.3551,-0.0416,1.2986],"intercept":-4.0725}};
@@ -45,32 +46,11 @@ function lrPredict(cat, features) {
 }
 
 async function apiPredict(modelKey, features) {
-  const FEAT_NAMES = ["lat_abs","lon_val","wb_score","pop_million","urban_pct","is_wwtp","is_coastal","is_surface"];
-  const featObj = Object.fromEntries(FEAT_NAMES.map((f,i) => [f, features[i]]));
-  const sysPrompt = `You are an ML inference engine for South African CEC contamination detection.
-MODEL: ${modelKey === "GBM" ? "Gradient Boosting (60 trees, depth-3, lr=0.08, subsample=0.8)" : "MLP Neural Network (hidden=32,16 ReLU, alpha=0.01)"}
-FEATURE IMPORTANCES: ${JSON.stringify(GBM_FI)}
-CV AUC SCORES: ${JSON.stringify(MODEL_AUCS)}
-FEATURES: lat_abs=absolute latitude, lon_val=longitude, wb_score=water body score (WWTP=5,SurfaceWater=4,Sediment/Marine=3,Ground/Agric=2,Unclass=1), pop_million=province population, urban_pct=urbanisation%, is_wwtp/is_coastal/is_surface=binary flags.
-Use the feature importances to weight each category's probability. Eastern SA (lon>28) and high population provinces have higher contamination. WWTPs elevate ARV/PPCP risk. Coastal elevates Microplastics.
-Respond ONLY with JSON, no explanation: {"Pharmaceuticals & PPCPs":N,"Microplastics":N,"Polycyclic Aromatic Hydrocarbons":N,"Antiretrovirals (ARVs)":N,"Pesticides":N,"Heavy Metals":N,"Alkylphenols & APEOs":N,"Microbial CECs":N,"Nanomaterials":N} where N is integer 0-100.`;
-
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 200,
-      system: sysPrompt,
-      messages: [{ role: "user", content: `Features: ${JSON.stringify(featObj)}` }]
-    })
+  const response = await base44.functions.invoke('predictCEC', {
+    model_key: modelKey,
+    features: features
   });
-  const data = await res.json();
-  const text = (data.content?.[0]?.text || "{}").replace(/```json|```/g,"").trim();
-  const parsed = JSON.parse(text);
-  const result = {};
-  CATS.forEach(cat => { result[cat] = Math.max(0, Math.min(100, Math.round(Number(parsed[cat]) || 0))); });
-  return result;
+  return response.data.predictions;
 }
 
 // ── Styles — Light theme ──────────────────────────────────────────────────────
