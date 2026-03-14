@@ -56,10 +56,10 @@ async function apiPredict(modelKey, features) {
 // ── Styles — Light theme ──────────────────────────────────────────────────────
 const S = {
   app:   {fontFamily:"Arial,sans-serif",background:"#F1F5F9",minHeight:"100vh",color:"#334155"},
-  hdr:   {background:"linear-gradient(135deg,#1E3A5F,#2563EB)",borderBottom:"2px solid #BFDBFE",padding:"20px 28px"},
+  hdr:   {background:"linear-gradient(135deg,#0d9488,#14b8a6)",borderBottom:"2px solid #5eead4",padding:"20px 28px"},
   body:  {padding:"24px 28px",display:"grid",gridTemplateColumns:"310px 1fr",gap:"24px",alignItems:"start"},
   panel: {background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:"10px",padding:"18px",boxShadow:"0 1px 4px rgba(0,0,0,0.07)"},
-  ptitle:{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#2563EB",marginBottom:"12px",borderBottom:"1px solid #E2E8F0",paddingBottom:"7px"},
+  ptitle:{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#0d9488",marginBottom:"12px",borderBottom:"1px solid #E2E8F0",paddingBottom:"7px"},
   field: {marginBottom:"13px"},
   label: {fontSize:"0.62rem",color:"#64748B",letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"4px",display:"block"},
   sel:   {width:"100%",background:"#F8FAFC",border:"1px solid #CBD5E1",color:"#334155",padding:"7px 9px",borderRadius:"6px",fontSize:"0.78rem",fontFamily:"Arial,sans-serif",outline:"none"},
@@ -136,8 +136,8 @@ export default function ARCWRCCECs() {
   return (
     <div style={S.app}>
       <div style={S.hdr}>
-        <div style={{fontSize:"1.4rem",fontWeight:"700",color:"#60A5FA"}}>SA CEC — Interactive Site Predictor</div>
-        <div style={{fontSize:"0.62rem",color:"#BFDBFE",letterSpacing:"0.15em",textTransform:"uppercase",marginTop:"3px"}}>Configure site · Select ML model · Run 3 analytical predictions</div>
+      <div style={{fontSize:"1.4rem",fontWeight:"700",color:"#ffffff"}}>SA CEC — Interactive Site Predictor</div>
+      <div style={{fontSize:"0.62rem",color:"#d1fae5",letterSpacing:"0.15em",textTransform:"uppercase",marginTop:"3px"}}>Configure site · Select ML model · Run 3 analytical predictions</div>
       </div>
 
       <div style={S.body}>
@@ -255,7 +255,7 @@ export default function ARCWRCCECs() {
             <button
               disabled={loading}
               onClick={run}
-              style={{width:"100%",padding:"10px",background:loading?"#334155":"linear-gradient(135deg,#1D4ED8,#2563EB)",color:loading?"#64748B":"white",border:"none",borderRadius:"6px",fontSize:"0.78rem",fontWeight:"700",cursor:loading?"not-allowed":"pointer",fontFamily:"Arial,sans-serif",marginTop:"4px"}}>
+              style={{width:"100%",padding:"10px",background:loading?"#334155":"linear-gradient(135deg,#0d9488,#14b8a6)",color:loading?"#64748B":"white",border:"none",borderRadius:"6px",fontSize:"0.78rem",fontWeight:"700",cursor:loading?"not-allowed":"pointer",fontFamily:"Arial,sans-serif",marginTop:"4px"}}>
               {loading?"⏳  Running…":`▶  Run with ${MODEL_META[modelKey].label}`}
             </button>
             {error&&<div style={{marginTop:"8px",fontSize:"0.63rem",color:RISK_C.CRITICAL,background:"#FEF2F2",border:"1px solid #FECACA",padding:"7px 10px",borderRadius:"5px"}}>{error}</div>}
@@ -266,9 +266,9 @@ export default function ARCWRCCECs() {
             <div style={S.ptitle}>⚡ Quick-fill</div>
             {[["Durban (KZN)",{province:"KwaZulu-Natal",lat:-29.85,lon:30.98,wbt:"Surface Water",is_wwtp:false,is_coastal:false,is_surface:true}],["Johannesburg (GP)",{province:"Gauteng",lat:-26.2,lon:28.04,wbt:"WWTP",is_wwtp:true,is_coastal:false,is_surface:false}],["Cape Town (WC)",{province:"Western Cape",lat:-33.93,lon:18.42,wbt:"Marine/Coastal",is_wwtp:false,is_coastal:true,is_surface:false}],["Grahamstown (EC)",{province:"Eastern Cape",lat:-33.3,lon:26.52,wbt:"Surface Water",is_wwtp:false,is_coastal:false,is_surface:true}],["Kimberley (NC)",{province:"Northern Cape",lat:-28.74,lon:24.77,wbt:"Surface Water",is_wwtp:false,is_coastal:false,is_surface:true}],["Nelspruit (MP)",{province:"Mpumalanga",lat:-25.47,lon:30.97,wbt:"Surface Water",is_wwtp:false,is_coastal:false,is_surface:true}]].map(([lbl,v])=>(
               <button key={lbl} onClick={()=>setForm(f=>({...f,...v}))}
-                style={{display:"block",width:"100%",textAlign:"left",background:"transparent",border:"1px solid #E2E8F0",color:"#64748B",padding:"6px 9px",borderRadius:"5px",fontSize:"0.68rem",cursor:"pointer",marginBottom:"5px",fontFamily:"Arial,sans-serif"}}
-                onMouseOver={e=>{e.currentTarget.style.borderColor="#2563EB";e.currentTarget.style.color="#2563EB"}}
-                onMouseOut={e=>{e.currentTarget.style.borderColor="#334155";e.currentTarget.style.color="#64748B"}}
+                style={{display:"block",width:"100%",textAlign:"left",background:"transparent",border:"1px solid #cbd5e1",color:"#64748B",padding:"6px 9px",borderRadius:"5px",fontSize:"0.68rem",cursor:"pointer",marginBottom:"5px",fontFamily:"Arial,sans-serif"}}
+                onMouseOver={e=>{e.currentTarget.style.borderColor="#14b8a6";e.currentTarget.style.color="#14b8a6"}}
+                onMouseOut={e=>{e.currentTarget.style.borderColor="#cbd5e1";e.currentTarget.style.color="#64748B"}}
               >↗ {lbl}</button>
             ))}
           </div>
@@ -277,25 +277,25 @@ export default function ARCWRCCECs() {
         {/* RIGHT: Results */}
         <div>
           {!results&&!loading&&(
-            <div style={{...S.card,textAlign:"center",padding:"60px 20px",border:"1px dashed #CBD5E1"}}>
-              <div style={{fontSize:"2.5rem",marginBottom:"12px"}}>🔬</div>
-              <div style={{fontSize:"0.95rem",color:"#1D4ED8",fontWeight:"700",marginBottom:"6px"}}>Configure your site and run predictions</div>
-              <div style={{fontSize:"0.7rem",color:"#64748B",lineHeight:1.7}}>Set province, water body type and coordinates,<br/>select a classifier, then click ▶ Run.</div>
-            </div>
+          <div style={{...S.card,textAlign:"center",padding:"60px 20px",border:"1px dashed #CBD5E1"}}>
+            <div style={{fontSize:"2.5rem",marginBottom:"12px"}}>🔬</div>
+            <div style={{fontSize:"0.95rem",color:"#0d9488",fontWeight:"700",marginBottom:"6px"}}>Configure your site and run predictions</div>
+            <div style={{fontSize:"0.7rem",color:"#64748B",lineHeight:1.7}}>Set province, water body type and coordinates,<br/>select a classifier, then click ▶ Run.</div>
+          </div>
           )}
           {loading&&(
-            <div style={{...S.card,textAlign:"center",padding:"60px 20px"}}>
-              <div style={{fontSize:"2rem",marginBottom:"12px",animation:"spin 1s linear infinite"}}>⚙️</div>
-              <div style={{fontSize:"0.9rem",color:"#1D4ED8",fontWeight:"700"}}>{modelKey==="LR"?"Computing in-browser…":"Calling Anthropic API…"}</div>
-              <div style={{fontSize:"0.65rem",color:"#64748B",marginTop:"5px"}}>{MODEL_META[modelKey].label} · Please wait</div>
-            </div>
+          <div style={{...S.card,textAlign:"center",padding:"60px 20px"}}>
+            <div style={{fontSize:"2rem",marginBottom:"12px",animation:"spin 1s linear infinite"}}>⚙️</div>
+            <div style={{fontSize:"0.9rem",color:"#0d9488",fontWeight:"700"}}>{modelKey==="LR"?"Computing in-browser…":"Calling Anthropic API…"}</div>
+            <div style={{fontSize:"0.65rem",color:"#64748B",marginTop:"5px"}}>{MODEL_META[modelKey].label} · Please wait</div>
+          </div>
           )}
 
           {results&&!loading&&<>
             {/* Model 1: HI */}
             <div style={S.card}>
-              <div style={{fontSize:"0.6rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#3B82F6",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px"}}>
-                <span style={S.ctag("#1D4ED8")}>MODEL 1</span> Mixture Hazard Index Estimate
+              <div style={{fontSize:"0.6rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#0d9488",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px"}}>
+                <span style={S.ctag("#0d9488")}>MODEL 1</span> Mixture Hazard Index Estimate
               </div>
               {results.hiEst===null?(
                 <div style={{fontSize:"0.7rem",color:"#F59E0B"}}>⚠ No HI reference data for {results.province} — zero monitoring records (critical monitoring gap).</div>
@@ -328,8 +328,8 @@ export default function ARCWRCCECs() {
 
             {/* Model 2: Classifier */}
             <div style={S.card}>
-              <div style={{fontSize:"0.6rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#3B82F6",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px"}}>
-                <span style={S.ctag("#7C3AED")}>MODEL 2</span>
+              <div style={{fontSize:"0.6rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#0d9488",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px"}}>
+                <span style={S.ctag("#14b8a6")}>MODEL 2</span>
                 CEC Detection Probability — {MODEL_META[results.modelKey].label}
                 <span style={{marginLeft:"auto",fontSize:"0.58rem",color:"#64748B"}}>AUC <strong style={{color:"#10B981"}}>{MODEL_META[results.modelKey].auc.toFixed(3)}</strong></span>
               </div>
@@ -341,7 +341,7 @@ export default function ARCWRCCECs() {
                 const sorted=CATS.map(c=>({c,p:results.clf[c]||0})).sort((a,b)=>b.p-a.p);
                 const top=sorted.slice(0,3); const high=sorted.filter(x=>x.p>60);
                 return <div style={{background:"#F8FAFC",borderRadius:"5px",padding:"9px 11px",fontSize:"0.67rem",color:"#64748B",lineHeight:1.8}}>
-                  <strong style={{color:"#60A5FA"}}>Top detections:</strong>{" "}
+                  <strong style={{color:"#14b8a6"}}>Top detections:</strong>{" "}
                   {top.map(x=><span key={x.c} style={{color:CAT_COL[x.c],fontWeight:"700"}}>{CAT_SHORT[x.c]} ({x.p}%) </span>)}
                   {high.length>0&&<><br/><strong style={{color:"#EF4444"}}>⚠ High probability (&gt;60%):</strong>{" "}{high.map(x=><span key={x.c} style={{color:CAT_COL[x.c]}}>{CAT_SHORT[x.c]} </span>)}</>}
                   {results.clf["Antiretrovirals (ARVs)"]>30&&results.province==="KwaZulu-Natal"&&<><br/><span style={{color:"#10B981"}}>↑ ARV signal elevated — consistent with KZN treatment catchment.</span></>}
@@ -351,8 +351,8 @@ export default function ARCWRCCECs() {
 
             {/* Model 3: ARV Forecast */}
             <div style={S.card}>
-              <div style={{fontSize:"0.6rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#3B82F6",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px"}}>
-                <span style={S.ctag("#059669")}>MODEL 3</span> ARV Environmental Loading Forecast 2004–2040
+              <div style={{fontSize:"0.6rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#0d9488",marginBottom:"10px",display:"flex",alignItems:"center",gap:"8px"}}>
+                <span style={S.ctag("#10b981")}>MODEL 3</span> ARV Environmental Loading Forecast 2004–2040
               </div>
               <div style={{fontSize:"0.62rem",color:"#64748B",marginBottom:"10px",lineHeight:1.5}}>
                 Receiving water concentrations (ng/L) scaled to {results.province} ({Math.round(results.arvScale*100)}% of KZN baseline). Solid = historical · Dashed = projected.
@@ -368,7 +368,7 @@ export default function ARCWRCCECs() {
                 const Tip=({active,payload,label})=>{
                   if(!active||!payload?.length)return null;
                   return <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:"5px",padding:"8px 11px",fontSize:"0.63rem"}}>
-                    <div style={{color:"#1D4ED8",fontWeight:"700",marginBottom:"4px"}}>{label}{payload[0]?.payload?.proj?" (projected)":""}</div>
+                    <div style={{color:"#0d9488",fontWeight:"700",marginBottom:"4px"}}>{label}{payload[0]?.payload?.proj?" (projected)":""}</div>
                     {payload.map(p=><div key={p.dataKey} style={{color:DRUG_COL[p.dataKey]||"#64748B"}}>{p.dataKey}: <strong>{p.value}</strong> ng/L{DRUG_PNEC[p.dataKey]?<span style={{color:"#64748B",fontSize:"0.58rem"}}> / PNEC {DRUG_PNEC[p.dataKey].toLocaleString()}</span>:null}</div>)}
                   </div>;
                 };
@@ -419,7 +419,7 @@ export default function ARCWRCCECs() {
                 </table>
               </div>
               <div style={{marginTop:"10px",background:"#F8FAFC",borderRadius:"5px",padding:"9px 11px",fontSize:"0.63rem",color:"#64748B",lineHeight:1.7}}>
-                <strong style={{color:"#60A5FA"}}>2040 outlook — {results.province}:</strong>{" "}
+                <strong style={{color:"#14b8a6"}}>2040 outlook — {results.province}:</strong>{" "}
                 {results.arvScale>=0.9?"Efavirenz reaches ~164 ng/L (33% of PNEC). Without WWTP upgrades, breach projected before 2045. Lopinavir's negative removal is a unique risk requiring urgent investigation."
                   :results.arvScale>=0.6?"Moderate ARV load projected. Efavirenz and Nevirapine are priority compounds given poor WWTP removal. Province-level monitoring critically needed."
                   :"Lower ARV concentrations than KZN. However, Efavirenz and Lopinavir resist treatment and will remain detectable at any WWTP discharge point through 2040."}
