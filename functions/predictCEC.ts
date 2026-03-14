@@ -33,28 +33,40 @@ Use the feature importances to weight each category's probability. Eastern SA (l
 Respond ONLY with JSON, no explanation: {"Pharmaceuticals & PPCPs":N,"Microplastics":N,"Polycyclic Aromatic Hydrocarbons":N,"Antiretrovirals (ARVs)":N,"Pesticides":N,"Heavy Metals":N,"Alkylphenols & APEOs":N,"Microbial CECs":N,"Nanomaterials":N} where N is integer 0-100.`;
 
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `Features: ${JSON.stringify(featObj)}`,
+      prompt: sysPrompt + `\n\nFeatures: ${JSON.stringify(featObj)}`,
       response_json_schema: {
         type: "object",
         properties: {
-          "Pharmaceuticals & PPCPs": { type: "number" },
-          "Microplastics": { type: "number" },
-          "Polycyclic Aromatic Hydrocarbons": { type: "number" },
-          "Antiretrovirals (ARVs)": { type: "number" },
-          "Pesticides": { type: "number" },
-          "Heavy Metals": { type: "number" },
-          "Alkylphenols & APEOs": { type: "number" },
-          "Microbial CECs": { type: "number" },
-          "Nanomaterials": { type: "number" }
+          "ppcp": { type: "number", description: "Pharmaceuticals & PPCPs" },
+          "microplastics": { type: "number" },
+          "pah": { type: "number", description: "Polycyclic Aromatic Hydrocarbons" },
+          "arv": { type: "number", description: "Antiretrovirals (ARVs)" },
+          "pesticides": { type: "number" },
+          "heavy_metals": { type: "number" },
+          "apeo": { type: "number", description: "Alkylphenols & APEOs" },
+          "microbial": { type: "number", description: "Microbial CECs" },
+          "nanomaterials": { type: "number" }
         },
-        required: CATS
+        required: ["ppcp", "microplastics", "pah", "arv", "pesticides", "heavy_metals", "apeo", "microbial", "nanomaterials"]
       },
       model: "claude_sonnet_4_6"
     });
 
+    const keyMap = {
+      "ppcp": "Pharmaceuticals & PPCPs",
+      "microplastics": "Microplastics",
+      "pah": "Polycyclic Aromatic Hydrocarbons",
+      "arv": "Antiretrovirals (ARVs)",
+      "pesticides": "Pesticides",
+      "heavy_metals": "Heavy Metals",
+      "apeo": "Alkylphenols & APEOs",
+      "microbial": "Microbial CECs",
+      "nanomaterials": "Nanomaterials"
+    };
+
     const predictions = {};
-    CATS.forEach(cat => {
-      predictions[cat] = Math.max(0, Math.min(100, Math.round(Number(result[cat]) || 0)));
+    Object.entries(keyMap).forEach(([shortKey, fullName]) => {
+      predictions[fullName] = Math.max(0, Math.min(100, Math.round(Number(result[shortKey]) || 0)));
     });
 
     return Response.json({ predictions });
