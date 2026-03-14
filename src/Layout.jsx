@@ -22,7 +22,6 @@ const navItems = [
   { name: "Home", icon: Home, page: "Home" },
   { name: "Database", icon: Database, page: "Database" },
   { name: "Visualizations", icon: TrendingUp, page: "Visualizations" },
-  { name: "Concentration Trends", icon: TrendingUp, page: "ConcentrationTrends" },
   { name: "AI Insights", icon: Sparkles, page: "AIInsights" },
   { name: "Predictive Analytics", icon: TrendingUp, page: "PredictiveAnalytics" },
   { name: "Ask AI", icon: Sparkles, page: "AskAI" },

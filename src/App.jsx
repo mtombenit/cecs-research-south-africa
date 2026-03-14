@@ -9,7 +9,6 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import UploadCECData from '@/pages/UploadCECData';
-import ConcentrationTrends from '@/pages/ConcentrationTrends';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -64,11 +63,6 @@ const AuthenticatedApp = () => {
       <Route path="/UploadCECData" element={
         <LayoutWrapper currentPageName="UploadCECData">
           <UploadCECData />
-        </LayoutWrapper>
-      } />
-      <Route path="/ConcentrationTrends" element={
-        <LayoutWrapper currentPageName="ConcentrationTrends">
-          <ConcentrationTrends />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />
