@@ -205,11 +205,14 @@ export default function FloatingAIAssistant() {
                 
                 {isLoading && (
                   <div className="flex justify-start">
-                    <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3">
-                      <div className="flex items-center gap-2 text-slate-600">
+                    <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3 max-w-[90%]">
+                      <div className="flex items-center gap-2 text-teal-600 mb-2">
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="text-sm">Analyzing database...</span>
+                        <span className="text-sm font-medium">Hybrid search running...</span>
                       </div>
+                      {agentSteps.length > 0 && (
+                        <AgentStepsDisplay steps={agentSteps} isLive />
+                      )}
                     </div>
                   </div>
                 )}
