@@ -1,13 +1,132 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
-// ── Agentic RAG Orchestrator ───────────────────────────────────────────────────
-// The LLM acts as an agent that:
-//  1. Analyses the user query to decide the best search strategy
-//  2. Rewrites the query for better retrieval
-//  3. Dynamically sets keyword vs semantic weighting
-//  4. Iteratively refines search if initial results are insufficient
-//  5. Synthesises a final answer from retrieved chunks
+// ── BM25 ──────────────────────────────────────────────────────────────────────
+function tokenize(text) {
+  if (!text) return [];
+  return text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(t => t.length > 2);
+}
 
+function buildBM25Index(corpus) {
+  const k1 = 1.5, b = 0.75, N = corpus.length;
+  const avgDocLen = corpus.reduce((s, d) => s + d.tokens.length, 0) / (N || 1);
+  const df = {};
+  for (const doc of corpus) {
+    for (const t of new Set(doc.tokens)) df[t] = (df[t] || 0) + 1;
+  }
+  return { k1, b, N, avgDocLen, df };
+}
+
+function bm25Score(queryTokens, docTokens, idx) {
+  const { k1, b, N, avgDocLen, df } = idx;
+  const tf = {};
+  for (const t of docTokens) tf[t] = (tf[t] || 0) + 1;
+  let score = 0;
+  for (const qt of queryTokens) {
+    if (!tf[qt]) continue;
+    const idf = Math.log((N - (df[qt] || 0) + 0.5) / ((df[qt] || 0) + 0.5) + 1);
+    const tfN = (tf[qt] * (k1 + 1)) / (tf[qt] + k1 * (1 - b + b * (docTokens.length / avgDocLen)));
+    score += idf * tfN;
+  }
+  return score;
+}
+
+// ── TF-IDF Cosine ─────────────────────────────────────────────────────────────
+function buildTFIDFVectors(tokensList) {
+  const N = tokensList.length;
+  const df = {};
+  for (const tokens of tokensList) {
+    for (const t of new Set(tokens)) df[t] = (df[t] || 0) + 1;
+  }
+  return tokensList.map(tokens => {
+    const tf = {};
+    for (const t of tokens) tf[t] = (tf[t] || 0) + 1;
+    const vec = {};
+    for (const [t, count] of Object.entries(tf)) {
+      vec[t] = (count / (tokens.length || 1)) * Math.log(N / (df[t] || 1));
+    }
+    return vec;
+  });
+}
+
+function cosine(a, b) {
+  let dot = 0, ma = 0, mb = 0;
+  for (const k of Object.keys(a)) {
+    dot += (a[k] || 0) * (b[k] || 0);
+    ma += a[k] * a[k];
+  }
+  for (const v of Object.values(b)) mb += v * v;
+  const d = Math.sqrt(ma) * Math.sqrt(mb);
+  return d === 0 ? 0 : dot / d;
+}
+
+// ── Hybrid Search Core ────────────────────────────────────────────────────────
+async function hybridSearch(base44, { query, top_k = 10, keyword_weight = 0.4, filters = {}, include_cec_records = false }) {
+  const semanticWeight = 1 - keyword_weight;
+
+  const [papers, cecRecords] = await Promise.all([
+    base44.asServiceRole.entities.ResearchPaper.list('-publication_year', 500),
+    include_cec_records
+      ? base44.asServiceRole.entities.CECRecord.list('-upload_date', 300)
+      : Promise.resolve([])
+  ]);
+
+  const corpus = [];
+
+  for (const p of papers) {
+    if (filters.province && p.province !== filters.province) continue;
+    if (filters.research_type && p.research_type !== filters.research_type) continue;
+    if (filters.year_from && p.publication_year < filters.year_from) continue;
+    if (filters.year_to && p.publication_year > filters.year_to) continue;
+
+    const fullText = [p.title, p.abstract, p.key_findings, p.authors?.join(' '),
+      p.pfas_compounds?.join(' '), p.province, p.research_type, p.sample_matrix?.join(' '),
+      p.concentrations_reported, p.journal, p.keywords?.join(' ')].filter(Boolean).join(' ');
+
+    corpus.push({
+      id: p.id, type: 'paper', fullText, tokens: tokenize(fullText),
+      snippet: `**${p.title}** (${p.publication_year})\nAuthors: ${p.authors?.join(', ') || 'N/A'}\nProvince: ${p.province || 'N/A'}\nCompounds: ${p.pfas_compounds?.join(', ') || 'N/A'}\nKey Findings: ${p.key_findings?.substring(0, 400) || 'N/A'}\nAbstract: ${p.abstract?.substring(0, 300) || 'N/A'}`
+    });
+  }
+
+  for (const r of cecRecords) {
+    if (filters.province && r.province !== filters.province) continue;
+    const fullText = [r.contaminant_name, r.cec_category, r.commonly_known_as,
+      r.sampling_site, r.province, r.water_body_type, r.iupac_name, r.formula, r.data_reference].filter(Boolean).join(' ');
+    corpus.push({
+      id: r.id, type: 'cec_record', fullText, tokens: tokenize(fullText),
+      snippet: `**CEC: ${r.contaminant_name}** (${r.cec_category})\nSite: ${r.sampling_site || 'N/A'}\nProvince: ${r.province || 'N/A'}\nConcentration: ${r.concentration_detected || 'N/A'} ${r.unit_of_measure || ''}\nWater Body: ${r.water_body_type || 'N/A'}`
+    });
+  }
+
+  if (corpus.length === 0) return { results: [], total_corpus: 0 };
+
+  const queryTokens = tokenize(query);
+  const bm25Idx = buildBM25Index(corpus);
+  const rawBM25 = corpus.map(d => bm25Score(queryTokens, d.tokens, bm25Idx));
+  const maxBM25 = Math.max(...rawBM25, 0.0001);
+  const normBM25 = rawBM25.map(s => s / maxBM25);
+
+  const allTokensList = [...corpus.map(d => d.tokens), queryTokens];
+  const tfidfVecs = buildTFIDFVectors(allTokensList);
+  const queryVec = tfidfVecs[tfidfVecs.length - 1];
+  const rawSemantic = corpus.map((_, i) => cosine(queryVec, tfidfVecs[i]));
+  const maxSemantic = Math.max(...rawSemantic, 0.0001);
+  const normSemantic = rawSemantic.map(s => s / maxSemantic);
+
+  const hybridScores = corpus.map((_, i) => keyword_weight * normBM25[i] + semanticWeight * normSemantic[i]);
+
+  const ranked = corpus
+    .map((d, i) => ({ ...d, score: hybridScores[i], bm25_score: normBM25[i], semantic_score: normSemantic[i] }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, top_k);
+
+  return {
+    results: ranked,
+    total_corpus: corpus.length
+  };
+}
+
+// ── Agentic RAG Orchestrator ──────────────────────────────────────────────────
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -21,39 +140,27 @@ Deno.serve(async (req) => {
       max_iterations = 3
     } = await req.json();
 
-    if (!user_query || user_query.trim().length === 0) {
+    if (!user_query?.trim()) {
       return Response.json({ error: 'user_query is required' }, { status: 400 });
     }
 
-    // ── Step 1: Agent plans the search strategy ───────────────────────────────
-    const strategyPrompt = `You are an expert research agent for a South African Contaminants of Emerging Concern (CEC) and PFAS research database.
-
-Analyse the following user question and decide the best search strategy. Return ONLY valid JSON with no markdown or code fences.
-
-User question: "${user_query}"
-
-Decide:
-1. "rewritten_query": A refined, expanded search query that will find the most relevant documents. Remove filler words, expand abbreviations (e.g. PFAS → "per- and polyfluoroalkyl substances PFAS"), add synonyms.
-2. "keyword_weight": A float from 0.0 to 1.0 indicating how much to weight keyword search vs semantic search. Use HIGH (0.7-0.9) when the query contains specific compound names, IDs, acronyms, site names, or exact terms. Use LOW (0.1-0.3) when the query is conceptual/general. Use MEDIUM (0.4-0.6) for mixed queries.
-3. "filters": An object with optional keys: province (string), research_type (string), year_from (integer), year_to (integer). Only add filters if clearly specified in the query.
-4. "include_cec_records": boolean — true if the question is about concentration data, specific sites, or monitoring measurements.
-5. "top_k": integer between 5 and 20 — how many documents to retrieve. Use higher for broad questions, lower for specific ones.
-6. "search_intent": one of "factual_lookup", "synthesis", "comparison", "trend_analysis", "compound_specific"
-7. "reasoning": Brief explanation of your strategy decision.
-
-Return JSON only, example:
-{
-  "rewritten_query": "PFAS per- and polyfluoroalkyl substances surface water KwaZulu-Natal concentration",
-  "keyword_weight": 0.65,
-  "filters": { "province": "KwaZulu-Natal" },
-  "include_cec_records": true,
-  "top_k": 12,
-  "search_intent": "factual_lookup",
-  "reasoning": "Query contains specific province and compound type, favouring keyword search."
-}`;
-
+    // ── Step 1: Agent plans search strategy ───────────────────────────────────
     const strategyResult = await base44.integrations.Core.InvokeLLM({
-      prompt: strategyPrompt,
+      prompt: `You are an expert research agent for a South African CEC and PFAS research database.
+
+Analyse this user question and return ONLY valid JSON (no markdown):
+"${user_query}"
+
+Return:
+{
+  "rewritten_query": "expanded query with synonyms and full terms",
+  "keyword_weight": 0.0-1.0 (HIGH 0.7+ for specific names/IDs/acronyms, LOW 0.2 for conceptual),
+  "filters": { "province": "...", "research_type": "...", "year_from": N, "year_to": N },
+  "include_cec_records": boolean,
+  "top_k": 5-20,
+  "search_intent": "factual_lookup|synthesis|comparison|trend_analysis|compound_specific",
+  "reasoning": "brief explanation"
+}`,
       response_json_schema: {
         type: "object",
         properties: {
@@ -70,54 +177,45 @@ Return JSON only, example:
     });
 
     const strategy = strategyResult;
-    const steps = [`🔍 **Search strategy**: ${strategy.search_intent} | keyword weight: ${Math.round(strategy.keyword_weight * 100)}% | semantic weight: ${Math.round((1 - strategy.keyword_weight) * 100)}%`];
-    steps.push(`✏️ **Query rewrite**: "${strategy.rewritten_query}"`);
-    if (strategy.reasoning) steps.push(`💡 **Reasoning**: ${strategy.reasoning}`);
+    const steps = [
+      `🔍 **Strategy**: ${strategy.search_intent} | keyword: ${Math.round((strategy.keyword_weight || 0.4) * 100)}% | semantic: ${Math.round((1 - (strategy.keyword_weight || 0.4)) * 100)}%`,
+      `✏️ **Query rewrite**: "${strategy.rewritten_query || user_query}"`,
+      `💡 ${strategy.reasoning || 'Hybrid search initiated'}`
+    ];
 
-    // ── Step 2: First hybrid search pass ─────────────────────────────────────
-    const searchPayload = {
+    // ── Step 2: First hybrid search ───────────────────────────────────────────
+    const searchParams = {
       query: strategy.rewritten_query || user_query,
       top_k: Math.min(Math.max(strategy.top_k || 10, 5), 20),
       keyword_weight: Math.min(Math.max(strategy.keyword_weight || 0.4, 0), 1),
-      filters: strategy.filters || {},
+      filters: selected_paper_ids.length > 0 ? {} : (strategy.filters || {}),
       include_cec_records: strategy.include_cec_records || false
     };
 
-    // If specific papers are pre-selected, ignore filters
-    if (selected_paper_ids.length > 0) {
-      searchPayload.filters = {};
-    }
+    let { results: searchResults, total_corpus } = await hybridSearch(base44, searchParams);
+    steps.push(`📚 **Retrieved**: ${searchResults.length} documents from ${total_corpus} total`);
 
-    const firstSearchResponse = await base44.asServiceRole.functions.invoke('hybridSearch', searchPayload);
-    let searchResults = firstSearchResponse.results || [];
-    let totalCorpus = firstSearchResponse.total_corpus || 0;
-    steps.push(`📚 **Retrieved**: ${searchResults.length} documents from corpus of ${totalCorpus}`);
-
-    // ── Step 3: Agent evaluates if results are sufficient or needs refinement ──
-    let allRetrievedChunks = [...searchResults];
+    let allChunks = [...searchResults];
     let iteration = 1;
 
+    // ── Step 3: Iterative refinement ──────────────────────────────────────────
     while (iteration < max_iterations && searchResults.length > 0) {
       const topSnippets = searchResults.slice(0, 5).map(r => r.snippet).join('\n\n---\n\n');
-      const sufficiencyPrompt = `You are evaluating whether retrieved research documents are sufficient to answer a user question.
 
-User question: "${user_query}"
-Search intent: ${strategy.search_intent}
+      const sufficiency = await base44.integrations.Core.InvokeLLM({
+        prompt: `Evaluate if these documents are sufficient to answer: "${user_query}"
 
-Top retrieved documents:
+Top documents:
 ${topSnippets}
 
-Assess:
-1. "is_sufficient": boolean — Are these documents enough to give a comprehensive, accurate answer?
-2. "refinement_needed": boolean — Should you search again with a different query/weighting?
-3. "refined_query": string — If refinement needed, provide a different query focusing on missing aspects.
-4. "refined_keyword_weight": number (0-1) — Adjusted weighting for the refinement search.
-5. "missing_aspects": string — What aspects of the question are not covered by current results.
-
-Return JSON only.`;
-
-      const sufficiencyResult = await base44.integrations.Core.InvokeLLM({
-        prompt: sufficiencyPrompt,
+Return JSON only:
+{
+  "is_sufficient": boolean,
+  "refinement_needed": boolean,
+  "refined_query": "alternative search query for missing aspects",
+  "refined_keyword_weight": 0.0-1.0,
+  "missing_aspects": "what's missing"
+}`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -131,102 +229,86 @@ Return JSON only.`;
         }
       });
 
-      if (!sufficiencyResult.refinement_needed || sufficiencyResult.is_sufficient) {
-        if (sufficiencyResult.missing_aspects) {
-          steps.push(`✅ **Results sufficient** — Coverage: good`);
-        }
+      if (!sufficiency.refinement_needed || sufficiency.is_sufficient) {
+        steps.push(`✅ **Coverage good** — proceeding to synthesis`);
         break;
       }
 
-      // Perform a refinement search
-      steps.push(`🔄 **Refining search** (iteration ${iteration + 1}): "${sufficiencyResult.refined_query}"`);
-      
-      const refinedResponse = await base44.asServiceRole.functions.invoke('hybridSearch', {
-        query: sufficiencyResult.refined_query,
+      steps.push(`🔄 **Refining** (iteration ${iteration + 1}): "${sufficiency.refined_query}"`);
+
+      const refined = await hybridSearch(base44, {
+        query: sufficiency.refined_query,
         top_k: 8,
-        keyword_weight: Math.min(Math.max(sufficiencyResult.refined_keyword_weight || 0.5, 0), 1),
+        keyword_weight: Math.min(Math.max(sufficiency.refined_keyword_weight || 0.5, 0), 1),
         filters: {},
         include_cec_records: strategy.include_cec_records || false
       });
 
-      const refinedResults = refinedResponse.results || [];
-      
-      // Merge and deduplicate by id
-      const existingIds = new Set(allRetrievedChunks.map(r => r.id));
-      const newResults = refinedResults.filter(r => !existingIds.has(r.id));
-      allRetrievedChunks = [...allRetrievedChunks, ...newResults];
-      searchResults = refinedResults;
-      
-      steps.push(`📄 **Additional documents found**: ${newResults.length} new unique documents`);
+      const existingIds = new Set(allChunks.map(r => r.id));
+      const newDocs = (refined.results || []).filter(r => !existingIds.has(r.id));
+      allChunks = [...allChunks, ...newDocs];
+      searchResults = refined.results || [];
+      steps.push(`📄 **Found ${newDocs.length} new documents**`);
       iteration++;
     }
 
-    // ── Step 4: Filter by selected papers if provided ─────────────────────────
-    let finalChunks = allRetrievedChunks;
+    // ── Step 4: Filter to selected papers if applicable ────────────────────────
+    let finalChunks = allChunks;
     if (selected_paper_ids.length > 0) {
-      const selectedSet = new Set(selected_paper_ids);
-      const filtered = finalChunks.filter(r => selectedSet.has(r.id));
-      // If filtered is empty, fall back to all retrieved
-      if (filtered.length > 0) finalChunks = filtered;
-      steps.push(`🎯 **Filtered to ${finalChunks.length} selected papers** out of ${allRetrievedChunks.length} retrieved`);
+      const sel = new Set(selected_paper_ids);
+      const filtered = finalChunks.filter(r => sel.has(r.id));
+      if (filtered.length > 0) {
+        finalChunks = filtered;
+        steps.push(`🎯 **Filtered to ${finalChunks.length} selected papers**`);
+      }
     }
 
-    // ── Step 5: Build context and synthesise answer ────────────────────────────
-    const topChunks = finalChunks
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 15);
-
+    // ── Step 5: Synthesise answer ──────────────────────────────────────────────
+    const topChunks = finalChunks.sort((a, b) => b.score - a.score).slice(0, 15);
     const contextDocs = topChunks.map((r, i) =>
-      `[Document ${i + 1}] (score: ${r.score}, type: ${r.type})\n${r.snippet}`
-    ).join('\n\n────────────────────────────\n\n');
+      `[Doc ${i + 1}] (relevance: ${Math.round(r.score * 100)}%, type: ${r.type})\n${r.snippet}`
+    ).join('\n\n────────────\n\n');
 
-    const convHistory = conversation_history
-      .slice(-6)
-      .map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
-      .join('\n');
+    const convHistory = conversation_history.slice(-6)
+      .map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n');
 
-    const synthesisPrompt = `You are an expert research analyst specialising in South African Contaminants of Emerging Concern (CECs), PFAS, and environmental science.
+    const finalAnswer = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are an expert research analyst specialising in South African Contaminants of Emerging Concern (CECs), PFAS, and environmental science.
 
-${convHistory ? `CONVERSATION HISTORY:\n${convHistory}\n\n` : ''}RETRIEVED DOCUMENTS (${topChunks.length} most relevant, ranked by hybrid search score):
+${convHistory ? `CONVERSATION HISTORY:\n${convHistory}\n\n` : ''}RETRIEVED DOCUMENTS (${topChunks.length} most relevant by hybrid search):
 
 ${contextDocs}
 
 USER QUESTION: ${user_query}
 
 INSTRUCTIONS:
-- Answer based primarily on the retrieved documents above
-- Cite specific papers by title or "[Document N]" when making factual claims
-- For compound-specific questions, provide concentrations, units, and site information where available
+- Answer based primarily on the retrieved documents
+- Cite papers by title or [Doc N] when making factual claims
+- Provide concentrations, units, and site details where available
 - Highlight geographical patterns, temporal trends, and research gaps
-- If documents don't fully answer the question, clearly state what data is missing
+- If documents don't fully answer the question, clearly state what's missing
 - Be scholarly, precise, and comprehensive
-- Structure your answer with headings if the response will be long
-- Always conclude with key takeaways or a brief summary`;
-
-    const finalAnswer = await base44.integrations.Core.InvokeLLM({
-      prompt: synthesisPrompt,
+- Use markdown headings for longer responses
+- Conclude with key takeaways`,
       model: 'claude_sonnet_4_6'
     });
 
-    steps.push(`✨ **Synthesis complete** — Answer generated from ${topChunks.length} documents`);
+    steps.push(`✨ **Synthesis complete** from ${topChunks.length} documents`);
 
-    // ── Return full response ───────────────────────────────────────────────────
     return Response.json({
       answer: finalAnswer,
       agent_steps: steps,
       strategy: {
         search_intent: strategy.search_intent,
         rewritten_query: strategy.rewritten_query,
-        keyword_weight: strategy.keyword_weight,
-        semantic_weight: 1 - strategy.keyword_weight,
+        keyword_weight: strategy.keyword_weight || 0.4,
+        semantic_weight: 1 - (strategy.keyword_weight || 0.4),
         iterations: iteration
       },
       retrieved_count: topChunks.length,
-      total_corpus: totalCorpus,
+      total_corpus,
       sources: topChunks.slice(0, 5).map(r => ({
-        id: r.id,
-        type: r.type,
-        score: r.score,
+        id: r.id, type: r.type, score: r.score,
         snippet_preview: r.snippet?.substring(0, 150) + '...'
       }))
     });
@@ -235,8 +317,8 @@ INSTRUCTIONS:
     console.error('agenticRAG error:', error);
     return Response.json({
       error: error.message,
-      answer: 'I encountered an error while processing your request. Please try again.',
-      agent_steps: ['❌ Error during agentic search: ' + error.message]
+      answer: 'I encountered an error while searching the research database. Please try again.',
+      agent_steps: ['❌ Error: ' + error.message]
     }, { status: 500 });
   }
 });
