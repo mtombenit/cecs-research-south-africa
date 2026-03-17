@@ -14,6 +14,7 @@ export default function FloatingAIAssistant() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [agentSteps, setAgentSteps] = useState([]);
   const messagesEndRef = useRef(null);
 
   const { data: papers = [] } = useQuery({
@@ -34,59 +35,37 @@ export default function FloatingAIAssistant() {
 
     const userMessage = { role: "user", content: input };
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput("");
     setIsLoading(true);
+    setAgentSteps([]);
 
     try {
-      // Prepare database context
-      const dbContext = `
-You are an expert AI research assistant with deep knowledge of Contaminants of Emerging Concern (CECs), PFAS, and environmental chemistry. You have access to ${papers.length} research publications from South Africa.
+      const conversationHistory = messages.slice(-4).map(m => ({
+        role: m.role,
+        content: m.content
+      }));
 
-DATABASE SUMMARY:
-- Total Publications: ${papers.length}
-- Provinces covered: ${[...new Set(papers.map(p => p.province).filter(Boolean))].join(', ')}
-- Research types: ${[...new Set(papers.map(p => p.research_type).filter(Boolean))].join(', ')}
-- Years: ${Math.min(...papers.map(p => p.publication_year).filter(Boolean))} - ${Math.max(...papers.map(p => p.publication_year).filter(Boolean))}
-- Total unique compounds studied: ${[...new Set(papers.flatMap(p => p.pfas_compounds || []))].length}
-
-COMPLETE DATABASE RECORDS:
-${papers.slice(0, 100).map((p, i) => `
-[${i + 1}] ${p.title} (${p.publication_year})
-- Authors: ${p.authors?.join(', ') || 'N/A'}
-- Province: ${p.province || 'N/A'}
-- Research Type: ${p.research_type || 'N/A'}
-- Compounds: ${p.pfas_compounds?.join(', ') || 'N/A'}
-- Sample Matrix: ${p.sample_matrix?.join(', ') || 'N/A'}
-- Key Findings: ${p.key_findings || 'N/A'}
-- Abstract: ${p.abstract?.substring(0, 300) || 'N/A'}...
-`).join('\n')}
-
-${papers.length > 100 ? `\nNote: Showing first 100 papers. Additional ${papers.length - 100} papers available in database covering similar topics and regions.` : ''}
-
-USER QUESTION: ${input}
-
-INSTRUCTIONS:
-- Provide deep, data-driven insights based ONLY on the actual database records above
-- Cite specific papers by title when making claims
-- Provide statistics, trends, and patterns from the data
-- If data is insufficient, clearly state limitations
-- Be precise and scholarly in your analysis
-- Highlight geographical patterns, temporal trends, and compound-specific findings
-- Compare findings across provinces, research types, or time periods when relevant
-`;
-
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: dbContext,
+      const response = await base44.functions.invoke('agenticRAG', {
+        user_query: currentInput,
+        conversation_history: conversationHistory,
+        selected_paper_ids: [],
+        max_iterations: 2
       });
 
-      const aiMessage = { role: "assistant", content: response };
+      const data = response.data;
+      if (data.agent_steps) setAgentSteps(data.agent_steps);
+
+      const aiMessage = { 
+        role: "assistant", 
+        content: data.answer || data.error || 'I was unable to generate a response. Please try again.'
+      };
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
-      const errorMessage = { 
+      setMessages(prev => [...prev, { 
         role: "assistant", 
-        content: "I apologize, but I encountered an error processing your request. Please try again." 
-      };
-      setMessages(prev => [...prev, errorMessage]);
+        content: "I encountered an error processing your request. Please try again." 
+      }]);
     } finally {
       setIsLoading(false);
     }
