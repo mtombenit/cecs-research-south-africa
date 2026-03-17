@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Bot, Lightbulb, Loader2, FileText, X, ChevronDown, Trash2 } from "lucide-react";
+import { Sparkles, Bot, Lightbulb, Loader2, FileText, X, ChevronDown, Trash2, Search, Zap, BarChart2 } from "lucide-react";
 import ChatMessage from "@/components/chat/ChatMessage";
 import ChatInput from "@/components/chat/ChatInput";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
+import AgentStepsDisplay from "@/components/ai/AgentStepsDisplay";
 
 const SUGGESTED_QUESTIONS = [
   "What PFAS compounds have been found in South African water sources?",
@@ -34,6 +35,8 @@ export default function AskAI() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPapers, setSelectedPapers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [agentSteps, setAgentSteps] = useState([]);
+  const [lastStrategy, setLastStrategy] = useState(null);
   const messagesEndRef = useRef(null);
 
   // Persist messages to localStorage
@@ -104,6 +107,8 @@ Guidelines:
 
   const clearChat = () => {
     setMessages([]);
+    setAgentSteps([]);
+    setLastStrategy(null);
     localStorage.removeItem(STORAGE_KEY);
   };
 
@@ -121,16 +126,32 @@ Guidelines:
     const userMessage = { role: 'user', content };
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
+    setAgentSteps([]);
+    setLastStrategy(null);
 
-    const response = await base44.integrations.Core.InvokeLLM({
-      prompt: `${buildContext()}
+    const conversationHistory = messages.slice(-6).map(m => ({
+      role: m.role,
+      content: m.content
+    }));
 
-User Question: ${content}
-
-Please provide a helpful, accurate response based on the South African CECs research database.`,
+    const response = await base44.functions.invoke('agenticRAG', {
+      user_query: content,
+      conversation_history: conversationHistory,
+      selected_paper_ids: selectedPapers,
+      max_iterations: 3
     });
 
-    setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+    const data = response.data;
+    if (data.agent_steps) setAgentSteps(data.agent_steps);
+    if (data.strategy) setLastStrategy(data.strategy);
+
+    const answerContent = data.answer || data.error || 'I was unable to generate a response. Please try again.';
+    setMessages(prev => [...prev, { 
+      role: 'assistant', 
+      content: answerContent,
+      strategy: data.strategy,
+      retrieved_count: data.retrieved_count
+    }]);
     setIsLoading(false);
   };
 
@@ -303,11 +324,14 @@ Please provide a helpful, accurate response based on the South African CECs rese
                       <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-lg shadow-teal-500/20">
                         <Bot className="w-5 h-5 text-white" />
                       </div>
-                      <div className="bg-white border border-slate-200 rounded-2xl px-5 py-3 shadow-sm">
-                        <div className="flex items-center gap-2 text-slate-500">
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span className="text-sm">Analyzing research data...</span>
+                      <div className="bg-white border border-slate-200 rounded-2xl px-5 py-3 shadow-sm max-w-[80%]">
+                        <div className="flex items-center gap-2 text-slate-500 mb-2">
+                          <Loader2 className="w-4 h-4 animate-spin text-teal-600" />
+                          <span className="text-sm font-medium text-teal-700">Agentic hybrid search running...</span>
                         </div>
+                        {agentSteps.length > 0 && (
+                          <AgentStepsDisplay steps={agentSteps} isLive />
+                        )}
                       </div>
                     </div>
                   )}
@@ -316,17 +340,26 @@ Please provide a helpful, accurate response based on the South African CECs rese
               )}
             </div>
 
+            {/* Strategy Badge */}
+            {lastStrategy && !isLoading && (
+              <div className="px-4 py-2 bg-teal-50 border-t border-teal-100 flex items-center gap-3 text-xs text-teal-700 flex-wrap">
+                <span className="flex items-center gap-1"><Zap className="w-3 h-3" /> {lastStrategy.search_intent}</span>
+                <span className="flex items-center gap-1"><Search className="w-3 h-3" /> {Math.round(lastStrategy.keyword_weight * 100)}% keyword / {Math.round(lastStrategy.semantic_weight * 100)}% semantic</span>
+                <span className="flex items-center gap-1"><BarChart2 className="w-3 h-3" /> {lastStrategy.iterations} iteration(s)</span>
+              </div>
+            )}
+
             {/* Input Area */}
             <div className="p-4 bg-white border-t border-slate-200">
               <ChatInput 
                 onSend={handleSendMessage} 
                 isLoading={isLoading}
-                placeholder="Ask about PFAS research in South Africa..."
+                placeholder="Ask about PFAS / CEC research in South Africa..."
               />
               <p className="text-xs text-slate-400 text-center mt-3">
                 {selectedPapers.length > 0 
-                  ? `Analyzing ${selectedPapers.length} selected paper(s)`
-                  : `Responses are based on ${papers.length} research papers in our database`}
+                  ? `Agentic hybrid search across ${selectedPapers.length} selected paper(s)`
+                  : `Agentic hybrid search across ${papers.length} research papers`}
               </p>
             </div>
           </CardContent>
