@@ -310,9 +310,9 @@ Extract all available information accurately. If a field is not found, leave it 
 
           // Convert LLM response to extraction result format
           const extractionResult = {
-            status: result ? "success" : "error",
-            output: result,
-            details: result ? null : "Failed to extract data"
+            status: result_OLD ? "success" : "error",
+            output: result_OLD,
+            details: result_OLD ? null : "Failed to extract data"
           };
           const result2 = extractionResult;
 

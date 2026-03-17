@@ -267,7 +267,7 @@ export default function PaperDetail() {
             </div>
 
             {/* AI Chat About This Paper */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-3 space-y-8">
               <PaperAIChat paper={paper} />
             </div>
 

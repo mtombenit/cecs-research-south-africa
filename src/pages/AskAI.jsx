@@ -99,25 +99,33 @@ export default function AskAI() {
       content: m.content
     }));
 
-    const response = await base44.functions.invoke('agenticRAG', {
-      user_query: content,
-      conversation_history: conversationHistory,
-      selected_paper_ids: selectedPapers,
-      max_iterations: 3
-    });
+    try {
+      const response = await base44.functions.invoke('agenticRAG', {
+        user_query: content,
+        conversation_history: conversationHistory,
+        selected_paper_ids: selectedPapers,
+        max_iterations: 3
+      });
 
-    const data = response.data;
-    if (data.agent_steps) setAgentSteps(data.agent_steps);
-    if (data.strategy) setLastStrategy(data.strategy);
+      const data = response.data;
+      if (data.agent_steps) setAgentSteps(data.agent_steps);
+      if (data.strategy) setLastStrategy(data.strategy);
 
-    const answerContent = data.answer || data.error || 'I was unable to generate a response. Please try again.';
-    setMessages(prev => [...prev, { 
-      role: 'assistant', 
-      content: answerContent,
-      strategy: data.strategy,
-      retrieved_count: data.retrieved_count
-    }]);
-    setIsLoading(false);
+      const answerContent = data.answer || data.error || 'I was unable to generate a response. Please try again.';
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: answerContent,
+        strategy: data.strategy,
+        retrieved_count: data.retrieved_count
+      }]);
+    } catch (error) {
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'I encountered an error while searching the research database. Please try again.' 
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSuggestedQuestion = (question) => {
