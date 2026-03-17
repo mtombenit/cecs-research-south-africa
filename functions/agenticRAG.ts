@@ -88,7 +88,7 @@ Return JSON only, example:
       searchPayload.filters = {};
     }
 
-    const firstSearchResponse = await base44.functions.invoke('hybridSearch', searchPayload);
+    const firstSearchResponse = await base44.asServiceRole.functions.invoke('hybridSearch', searchPayload);
     let searchResults = firstSearchResponse.results || [];
     let totalCorpus = firstSearchResponse.total_corpus || 0;
     steps.push(`📚 **Retrieved**: ${searchResults.length} documents from corpus of ${totalCorpus}`);
@@ -141,7 +141,7 @@ Return JSON only.`;
       // Perform a refinement search
       steps.push(`🔄 **Refining search** (iteration ${iteration + 1}): "${sufficiencyResult.refined_query}"`);
       
-      const refinedResponse = await base44.functions.invoke('hybridSearch', {
+      const refinedResponse = await base44.asServiceRole.functions.invoke('hybridSearch', {
         query: sufficiencyResult.refined_query,
         top_k: 8,
         keyword_weight: Math.min(Math.max(sufficiencyResult.refined_keyword_weight || 0.5, 0), 1),
