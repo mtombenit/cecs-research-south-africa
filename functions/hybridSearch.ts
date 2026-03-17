@@ -87,8 +87,9 @@ function cosineSimilarity(vecA, vecB) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    // Allow both user-authenticated and service-role calls (e.g. from agenticRAG)
+    const isAuthenticated = await base44.auth.isAuthenticated();
+    if (!isAuthenticated) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const {
       query,
