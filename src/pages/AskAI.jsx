@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
-import AgentStepsDisplay from "@/components/ai/AgentStepsDisplay";
+import AgentStepsDisplay from "@/components/ai/AgentStepsDisplay.jsx";
 
 const SUGGESTED_QUESTIONS = [
   "What PFAS compounds have been found in South African water sources?",

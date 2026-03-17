@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Sparkles, X, Send, Loader2, Database } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
-import AgentStepsDisplay from "@/components/ai/AgentStepsDisplay";
+import AgentStepsDisplay from "@/components/ai/AgentStepsDisplay.jsx";
 
 export default function FloatingAIAssistant() {
   const [isOpen, setIsOpen] = useState(false);
