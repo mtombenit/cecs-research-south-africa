@@ -4,9 +4,10 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Sparkles, X, Send, Loader2, ChevronDown, Database } from "lucide-react";
+import { Sparkles, X, Send, Loader2, Database } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import AgentStepsDisplay from "@/components/ai/AgentStepsDisplay";
 
 export default function FloatingAIAssistant() {
   const [isOpen, setIsOpen] = useState(false);

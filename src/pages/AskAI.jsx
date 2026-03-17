@@ -57,41 +57,6 @@ export default function AskAI() {
     scrollToBottom();
   }, [messages]);
 
-  const buildContext = () => {
-    // If specific papers are selected, use only those
-    const papersToUse = selectedPapers.length > 0 
-      ? papers.filter(p => selectedPapers.includes(p.id))
-      : papers.slice(0, 30);
-
-    const summaries = papersToUse.map(p => 
-      `Title: ${p.title}
-Authors: ${p.authors?.join(", ")}
-Year: ${p.publication_year}
-Province: ${p.province || "Not specified"}
-Compounds: ${p.pfas_compounds?.join(", ") || "Not specified"}
-Research Type: ${p.research_type || "Not specified"}
-Abstract: ${p.abstract || "Not available"}
-Key Findings: ${p.key_findings || "Not available"}
----`
-    ).join("\n");
-
-    const contextPrefix = selectedPapers.length > 0
-      ? `You are a research assistant. The user has selected ${selectedPapers.length} specific research paper(s) to analyze.`
-      : `You are a research assistant specialized in PFAS (Per- and Polyfluoroalkyl Substances) research in South Africa. You have access to a database of ${papers.length} research papers.`;
-
-    return `${contextPrefix}
-
-Here ${selectedPapers.length > 0 ? 'are the selected papers' : 'is a summary of the research database'}:
-${summaries}
-
-Guidelines:
-- Answer questions based on the research data provided
-- Cite specific papers when relevant
-- If the information is not in the database, clearly state that
-- Provide balanced, scientific responses
-- Focus on South African context
-- Be helpful and informative`;
-  };
 
   const togglePaperSelection = (paperId) => {
     setSelectedPapers(prev => 
