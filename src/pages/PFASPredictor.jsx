@@ -46,13 +46,13 @@ const TARGET_LABELS = {
 };
 const TARGET_COL = {
   "PFOA_detect": "#3B82F6", "PFOS_detect": "#EF4444",
-  "PFHxS_detect": "#F59E0B", "High_Contam": "#8B5CF6"
+  "PFHxS_detect": "#F59E0B", "High_Contam": "#0d9488"
 };
 
 const MODEL_META = {
   LR:  { label: "Logistic Regression", auc: 0.836, color: "#06B6D4", desc: "Instant in-browser. L2-regularised, trained on 80 SA PFAS samples (2014–2025). Best for PFOS (AUC 0.856)." },
   GBM: { label: "Gradient Boosting",   auc: 0.893, color: "#F59E0B", desc: "60 boosted trees, depth-3. Best overall AUC (0.893). Top driver: Distance to WWTP. Runs via API." },
-  MLP: { label: "Neural Network (MLP)", auc: 0.876, color: "#A78BFA", desc: "32→16 ReLU, L2=0.01. Strong on High_Contam class (AUC 0.918). Runs via API." }
+  MLP: { label: "Neural Network (MLP)", auc: 0.876, color: "#14b8a6", desc: "32→16 ReLU, L2=0.01. Strong on High_Contam class (AUC 0.918). Runs via API." }
 };
 
 // ── Province-level median Sum_PFAS (ng/L) from 80-sample dataset ─────────────
@@ -114,17 +114,17 @@ const PFOA_GUIDELINE = 100; // WHO 2022 ng/L
 const PFOS_GUIDELINE = 400;
 const PFHxS_GUIDELINE = 300;
 
-const COMPOUND_COL = { Sum_PFAS: "#8B5CF6", PFOA: "#3B82F6", PFOS: "#EF4444", PFHxS: "#F59E0B" };
+const COMPOUND_COL = { Sum_PFAS: "#0d9488", PFOA: "#3B82F6", PFOS: "#EF4444", PFHxS: "#F59E0B" };
 
 const RISK_C = { CRITICAL: "#EF4444", HIGH: "#F59E0B", MODERATE: "#3B82F6", LOW: "#10B981" };
 
 // ── Styles ───────────────────────────────────────────────────────────────────
 const S = {
   app:   { fontFamily: "Arial,sans-serif", background: "#F1F5F9", minHeight: "100vh", color: "#334155" },
-  hdr:   { background: "linear-gradient(135deg,#7c3aed,#8b5cf6)", borderBottom: "2px solid #c4b5fd", padding: "20px 28px" },
+  hdr:   { background: "linear-gradient(135deg,#0d9488,#14b8a6)", borderBottom: "2px solid #5eead4", padding: "20px 28px" },
   body:  { padding: "24px 28px", display: "grid", gridTemplateColumns: "310px 1fr", gap: "24px", alignItems: "start" },
   panel: { background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "18px", boxShadow: "0 1px 4px rgba(0,0,0,0.07)" },
-  ptitle:{ fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#7c3aed", marginBottom: "12px", borderBottom: "1px solid #E2E8F0", paddingBottom: "7px" },
+  ptitle:{ fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#0d9488", marginBottom: "12px", borderBottom: "1px solid #E2E8F0", paddingBottom: "7px" },
   field: { marginBottom: "13px" },
   label: { fontSize: "0.62rem", color: "#64748B", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px", display: "block" },
   sel:   { width: "100%", background: "#F8FAFC", border: "1px solid #CBD5E1", color: "#334155", padding: "7px 9px", borderRadius: "6px", fontSize: "0.78rem", fontFamily: "Arial,sans-serif", outline: "none" },
@@ -231,7 +231,7 @@ export default function PFASPredictor() {
     <div style={S.app}>
       <div style={S.hdr}>
         <div style={{ fontSize: "1.4rem", fontWeight: "700", color: "#ffffff" }}>SA PFAS — Interactive Site Predictor</div>
-        <div style={{ fontSize: "0.62rem", color: "#ede9fe", letterSpacing: "0.15em", textTransform: "uppercase", marginTop: "3px" }}>80 SA samples · 18 peer-reviewed studies (2014–2025) · 3 ML models · WHO 2022 guidelines</div>
+        <div style={{ fontSize: "0.62rem", color: "#d1fae5", letterSpacing: "0.15em", textTransform: "uppercase", marginTop: "3px" }}>80 SA samples · 18 peer-reviewed studies (2014–2025) · 3 ML models · WHO 2022 guidelines</div>
       </div>
 
       <div style={S.body}>
@@ -306,7 +306,7 @@ export default function PFASPredictor() {
                 ["is_sediment", form.is_sediment ? 1 : 0]
               ].map(([k, v], i, arr) => (
                 <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "3px 0", borderBottom: i < arr.length - 1 ? "1px solid #EEF2F7" : "none" }}>
-                  <span style={{ fontSize: "0.72rem", color: "#7c3aed", fontFamily: "monospace" }}>{k}</span>
+                  <span style={{ fontSize: "0.72rem", color: "#0d9488", fontFamily: "monospace" }}>{k}</span>
                   <span style={{ fontSize: "0.72rem", color: "#1E293B", fontWeight: "600", fontFamily: "monospace" }}>{v}</span>
                 </div>
               ))}
@@ -322,7 +322,7 @@ export default function PFASPredictor() {
               const aC = m.auc >= 0.88 ? "#10B981" : m.auc >= 0.83 ? "#F59E0B" : "#EF4444";
               return (
                 <div key={key} onClick={() => setModelKey(key)}
-                  style={{ border: `1px solid ${sel ? m.color : "#334155"}`, borderRadius: "7px", padding: "10px", marginBottom: "7px", cursor: "pointer", background: sel ? "#F5F3FF" : "#F8FAFC" }}>
+                  style={{ border: `1px solid ${sel ? m.color : "#334155"}`, borderRadius: "7px", padding: "10px", marginBottom: "7px", cursor: "pointer", background: sel ? "#F0FDFA" : "#F8FAFC" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "3px" }}>
                     <span style={{ fontSize: "0.75rem", fontWeight: "700", color: sel ? m.color : "#64748B" }}>{m.label}</span>
                     <div style={{ display: "flex", gap: "6px" }}>
@@ -351,7 +351,7 @@ export default function PFASPredictor() {
             })}
 
             <button disabled={loading} onClick={run}
-              style={{ width: "100%", padding: "10px", background: loading ? "#334155" : "linear-gradient(135deg,#7c3aed,#8b5cf6)", color: loading ? "#64748B" : "white", border: "none", borderRadius: "6px", fontSize: "0.78rem", fontWeight: "700", cursor: loading ? "not-allowed" : "pointer", fontFamily: "Arial,sans-serif", marginTop: "4px" }}>
+              style={{ width: "100%", padding: "10px", background: loading ? "#334155" : "linear-gradient(135deg,#0d9488,#14b8a6)", color: loading ? "#64748B" : "white", border: "none", borderRadius: "6px", fontSize: "0.78rem", fontWeight: "700", cursor: loading ? "not-allowed" : "pointer", fontFamily: "Arial,sans-serif", marginTop: "4px" }}>
               {loading ? "⏳  Running…" : `▶  Run with ${MODEL_META[modelKey].label}`}
             </button>
             {error && <div style={{ marginTop: "8px", fontSize: "0.63rem", color: RISK_C.CRITICAL, background: "#FEF2F2", border: "1px solid #FECACA", padding: "7px 10px", borderRadius: "5px" }}>{error}</div>}
@@ -370,7 +370,7 @@ export default function PFASPredictor() {
             ].map(([lbl, v]) => (
               <button key={lbl} onClick={() => setForm(f => ({ ...f, ...v }))}
                 style={{ display: "block", width: "100%", textAlign: "left", background: "transparent", border: "1px solid #cbd5e1", color: "#64748B", padding: "6px 9px", borderRadius: "5px", fontSize: "0.68rem", cursor: "pointer", marginBottom: "5px", fontFamily: "Arial,sans-serif" }}
-                onMouseOver={e => { e.currentTarget.style.borderColor = "#8b5cf6"; e.currentTarget.style.color = "#8b5cf6"; }}
+                onMouseOver={e => { e.currentTarget.style.borderColor = "#14b8a6"; e.currentTarget.style.color = "#14b8a6"; }}
                 onMouseOut={e => { e.currentTarget.style.borderColor = "#cbd5e1"; e.currentTarget.style.color = "#64748B"; }}
               >↗ {lbl}</button>
             ))}
@@ -382,14 +382,14 @@ export default function PFASPredictor() {
           {!results && !loading && (
             <div style={{ ...S.card, textAlign: "center", padding: "60px 20px", border: "1px dashed #CBD5E1" }}>
               <div style={{ fontSize: "2.5rem", marginBottom: "12px" }}>🧪</div>
-              <div style={{ fontSize: "0.95rem", color: "#7c3aed", fontWeight: "700", marginBottom: "6px" }}>Configure your site and run predictions</div>
+              <div style={{ fontSize: "0.95rem", color: "#0d9488", fontWeight: "700", marginBottom: "6px" }}>Configure your site and run predictions</div>
               <div style={{ fontSize: "0.7rem", color: "#64748B", lineHeight: 1.7 }}>Set province, matrix type, WWTP distance and water quality parameters,<br />select a classifier, then click ▶ Run.</div>
             </div>
           )}
           {loading && (
             <div style={{ ...S.card, textAlign: "center", padding: "60px 20px" }}>
               <div style={{ fontSize: "2rem", marginBottom: "12px" }}>⚙️</div>
-              <div style={{ fontSize: "0.9rem", color: "#7c3aed", fontWeight: "700" }}>{modelKey === "LR" ? "Computing in-browser…" : "Calling API…"}</div>
+              <div style={{ fontSize: "0.9rem", color: "#0d9488", fontWeight: "700" }}>{modelKey === "LR" ? "Computing in-browser…" : "Calling API…"}</div>
               <div style={{ fontSize: "0.65rem", color: "#64748B", marginTop: "5px" }}>{MODEL_META[modelKey].label} · Please wait</div>
             </div>
           )}
@@ -397,8 +397,8 @@ export default function PFASPredictor() {
           {results && !loading && <>
             {/* MODEL 1: Sum PFAS estimate */}
             <div style={S.card}>
-              <div style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#7c3aed", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={S.ctag("#7c3aed")}>MODEL 1</span> Estimated Σ PFAS Concentration (ng/L)
+              <div style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#0d9488", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={S.ctag("#0d9488")}>MODEL 1</span> Estimated Σ PFAS Concentration (ng/L)
               </div>
               {results.sumEst === null ? (
                 <div style={{ fontSize: "0.7rem", color: "#F59E0B" }}>⚠ No reference data for this configuration.</div>
@@ -436,8 +436,8 @@ export default function PFASPredictor() {
 
             {/* MODEL 2: Detection probability */}
             <div style={S.card}>
-              <div style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#7c3aed", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={S.ctag("#8b5cf6")}>MODEL 2</span>
+              <div style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#0d9488", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={S.ctag("#14b8a6")}>MODEL 2</span>
                 PFAS Detection Probability — {MODEL_META[results.modelKey].label}
                 <span style={{ marginLeft: "auto", fontSize: "0.58rem", color: "#64748B" }}>Avg AUC <strong style={{ color: "#10B981" }}>{MODEL_META[results.modelKey].auc.toFixed(3)}</strong></span>
               </div>
@@ -449,7 +449,7 @@ export default function PFASPredictor() {
                 const sorted = TARGETS.map(t => ({ t, p: results.clf[t] || 0 })).sort((a, b) => b.p - a.p);
                 const high = sorted.filter(x => x.p > 60);
                 return <div style={{ background: "#F8FAFC", borderRadius: "5px", padding: "9px 11px", fontSize: "0.67rem", color: "#64748B", lineHeight: 1.8 }}>
-                  <strong style={{ color: "#8b5cf6" }}>Top predictions:</strong>{" "}
+                  <strong style={{ color: "#0d9488" }}>Top predictions:</strong>{" "}
                   {sorted.slice(0, 3).map(x => <span key={x.t} style={{ color: TARGET_COL[x.t], fontWeight: "700" }}>{TARGET_LABELS[x.t]} ({x.p}%) </span>)}
                   {high.length > 0 && <><br /><strong style={{ color: "#EF4444" }}>⚠ High probability (&gt;60%):</strong>{" "}{high.map(x => <span key={x.t} style={{ color: TARGET_COL[x.t] }}>{TARGET_LABELS[x.t]} </span>)}</>}
                   {results.clf["PFOS_detect"] > 50 && results.matrix === "WWTP Effluent" && <><br /><span style={{ color: "#EF4444" }}>↑ PFOS elevated — consistent with WWTP effluent signature.</span></>}
@@ -464,9 +464,9 @@ export default function PFASPredictor() {
                   <div key={feat} style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
                     <span style={{ fontSize: "0.6rem", color: "#64748B", minWidth: "85px", fontFamily: "monospace" }}>{feat}</span>
                     <div style={{ flex: 1, background: "#E2E8F0", borderRadius: "2px", height: "4px" }}>
-                      <div style={{ width: `${imp * 100}%`, height: "100%", background: "#8b5cf6", borderRadius: "2px" }} />
+                      <div style={{ width: `${imp * 100}%`, height: "100%", background: "#14b8a6", borderRadius: "2px" }} />
                     </div>
-                    <span style={{ fontSize: "0.6rem", color: "#7c3aed", minWidth: "28px", textAlign: "right" }}>{(imp * 100).toFixed(1)}%</span>
+                    <span style={{ fontSize: "0.6rem", color: "#0d9488", minWidth: "28px", textAlign: "right" }}>{(imp * 100).toFixed(1)}%</span>
                   </div>
                 ))}
               </div>
@@ -474,7 +474,7 @@ export default function PFASPredictor() {
 
             {/* MODEL 3: PFAS temporal trend */}
             <div style={S.card}>
-              <div style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#7c3aed", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <div style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#0d9488", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={S.ctag("#10b981")}>MODEL 3</span> SA PFAS Concentration Trend 2014–2040
               </div>
               <div style={{ fontSize: "0.62rem", color: "#64748B", marginBottom: "10px", lineHeight: 1.5 }}>
@@ -489,7 +489,7 @@ export default function PFASPredictor() {
                 const Tip = ({ active, payload, label }) => {
                   if (!active || !payload?.length) return null;
                   return <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "5px", padding: "8px 11px", fontSize: "0.63rem" }}>
-                    <div style={{ color: "#7c3aed", fontWeight: "700", marginBottom: "4px" }}>{label}{payload[0]?.payload?.proj ? " (projected)" : ""}</div>
+                    <div style={{ color: "#0d9488", fontWeight: "700", marginBottom: "4px" }}>{label}{payload[0]?.payload?.proj ? " (projected)" : ""}</div>
                     {payload.map(p => <div key={p.dataKey} style={{ color: COMPOUND_COL[p.dataKey] || "#64748B" }}>{p.dataKey}: <strong>{p.value}</strong> ng/L</div>)}
                   </div>;
                 };
@@ -522,7 +522,7 @@ export default function PFASPredictor() {
                   </thead>
                   <tbody>
                     {[
-                      ["Σ PFAS", "Sum_PFAS", WHO_GUIDELINE, "#8B5CF6"],
+                      ["Σ PFAS", "Sum_PFAS", WHO_GUIDELINE, "#0d9488"],
                       ["PFOA", "PFOA", PFOA_GUIDELINE, "#3B82F6"],
                       ["PFOS", "PFOS", PFOS_GUIDELINE, "#EF4444"],
                       ["PFHxS", "PFHxS", PFHxS_GUIDELINE, "#F59E0B"]
@@ -548,7 +548,7 @@ export default function PFASPredictor() {
                 </table>
               </div>
               <div style={{ marginTop: "10px", background: "#F8FAFC", borderRadius: "5px", padding: "9px 11px", fontSize: "0.63rem", color: "#64748B", lineHeight: 1.7 }}>
-                <strong style={{ color: "#8b5cf6" }}>2040 Outlook:</strong>{" "}
+                <strong style={{ color: "#0d9488" }}>2040 Outlook:</strong>{" "}
                 Σ PFAS projected to reach ~80 ng/L nationally — approaching the WHO 2022 drinking water guideline of 100 ng/L. PFOS is the dominant contributor (HQ=0.163 at 400 ng/L guideline). Without enhanced WWTP treatment and legacy source control, guideline breach at WWTP-proximal sites is projected before 2035. South Africa currently lacks binding PFAS drinking water standards; adoption of WHO or EU thresholds is strongly recommended.
               </div>
             </div>
