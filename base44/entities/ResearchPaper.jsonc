@@ -1,0 +1,149 @@
+{
+  "name": "ResearchPaper",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Title of the research paper"
+    },
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of authors"
+    },
+    "abstract": {
+      "type": "string",
+      "description": "Paper abstract"
+    },
+    "publication_year": {
+      "type": "number",
+      "description": "Year of publication"
+    },
+    "journal": {
+      "type": "string",
+      "description": "Journal name (source)"
+    },
+    "doi": {
+      "type": "string",
+      "description": "Digital Object Identifier"
+    },
+    "pfas_compounds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "PFAS compounds studied (e.g., PFOA, PFOS, PFHxS)"
+    },
+    "study_location": {
+      "type": "string",
+      "description": "Location where study was conducted"
+    },
+    "country": {
+      "type": "string",
+      "enum": [
+        "South Africa",
+        "Angola",
+        "Botswana",
+        "Comoros",
+        "Democratic Republic of Congo",
+        "Eswatini",
+        "Lesotho",
+        "Madagascar",
+        "Malawi",
+        "Mauritius",
+        "Mozambique",
+        "Namibia",
+        "Seychelles",
+        "Tanzania",
+        "Zambia",
+        "Zimbabwe"
+      ],
+      "default": "South Africa",
+      "description": "SADC country where study was conducted"
+    },
+    "province": {
+      "type": "string",
+      "enum": [
+        "Eastern Cape",
+        "Free State",
+        "Gauteng",
+        "KwaZulu-Natal",
+        "Limpopo",
+        "Mpumalanga",
+        "Northern Cape",
+        "North West",
+        "Western Cape"
+      ],
+      "description": "South African province (only applicable if country is South Africa)"
+    },
+    "research_type": {
+      "type": "string",
+      "enum": [
+        "Environmental Monitoring",
+        "Human Health",
+        "Water Quality",
+        "Soil Contamination",
+        "Wildlife",
+        "Treatment Technology",
+        "Risk Assessment",
+        "Review"
+      ],
+      "description": "Type of research"
+    },
+    "sample_matrix": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Sample types (e.g., water, soil, blood, sediment)"
+    },
+    "key_findings": {
+      "type": "string",
+      "description": "Summary of key findings"
+    },
+    "concentrations_reported": {
+      "type": "string",
+      "description": "PFAS concentration ranges found"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keywords for searchability"
+    },
+    "pdf_url": {
+      "type": "string",
+      "description": "URL to PDF if available"
+    },
+    "institution": {
+      "type": "string",
+      "description": "Research institution"
+    },
+    "date_added": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the paper was added to the database"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open_access",
+        "restricted",
+        "pending"
+      ],
+      "description": "Access status of the paper"
+    },
+    "markdown_content": {
+      "type": "string",
+      "description": "Full paper content converted to Markdown for AI processing"
+    }
+  },
+  "required": [
+    "title",
+    "authors",
+    "publication_year"
+  ]
+}

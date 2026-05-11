@@ -14,6 +14,13 @@ import { ArrowLeft, Plus, X, Save, Loader2, Upload, FileText } from "lucide-reac
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
+const sadcCountries = [
+  "South Africa",
+  "Angola", "Botswana", "Comoros", "Democratic Republic of Congo",
+  "Eswatini", "Lesotho", "Madagascar", "Malawi", "Mauritius",
+  "Mozambique", "Namibia", "Seychelles", "Tanzania", "Zambia", "Zimbabwe"
+];
+
 const provinces = [
   "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal",
   "Limpopo", "Mpumalanga", "Northern Cape", "North West", "Western Cape"
@@ -47,6 +54,7 @@ export default function AddPaper() {
     doi: "",
     pfas_compounds: [],
     study_location: "",
+    country: "South Africa",
     province: "",
     research_type: "",
     sample_matrix: [],
@@ -657,17 +665,17 @@ Return your analysis.`,
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <Label>Province</Label>
+                  <Label>Country (SADC)</Label>
                   <Select
-                    value={formData.province}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, province: value }))}
+                    value={formData.country}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, country: value, province: "" }))}
                   >
                     <SelectTrigger className="mt-1.5">
-                      <SelectValue placeholder="Select province" />
+                      <SelectValue placeholder="Select country" />
                     </SelectTrigger>
                     <SelectContent>
-                      {provinces.map(p => (
-                        <SelectItem key={p} value={p}>{p}</SelectItem>
+                      {sadcCountries.map(c => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -689,6 +697,25 @@ Return your analysis.`,
                   </Select>
                 </div>
               </div>
+
+              {formData.country === "South Africa" && (
+                <div>
+                  <Label>Province</Label>
+                  <Select
+                    value={formData.province}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, province: value }))}
+                  >
+                    <SelectTrigger className="mt-1.5">
+                      <SelectValue placeholder="Select province" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {provinces.map(p => (
+                        <SelectItem key={p} value={p}>{p}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div>
                 <Label htmlFor="location">Study Location</Label>

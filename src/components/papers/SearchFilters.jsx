@@ -8,6 +8,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import YearRangePicker from "./YearRangePicker";
 
 
+const sadcCountries = [
+  "South Africa",
+  "Angola", "Botswana", "Comoros", "Democratic Republic of Congo",
+  "Eswatini", "Lesotho", "Madagascar", "Malawi", "Mauritius",
+  "Mozambique", "Namibia", "Seychelles", "Tanzania", "Zambia", "Zimbabwe"
+];
+
 const provinces = [
   "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", "Limpopo",
   "Mpumalanga", "Northern Cape", "North West", "Western Cape", "National"
@@ -37,6 +44,7 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
   
   const activeFilterCount = [
     filters.search,
+    filters.country,
     filters.province,
     filters.waterType,
     filters.cecCategory,
@@ -47,7 +55,25 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
   const FilterContent = () => (
     <div className="space-y-6">
       <div>
-        <label className="text-sm font-medium text-slate-700 mb-2 block">Province</label>
+        <label className="text-sm font-medium text-slate-700 mb-2 block">Country (SADC)</label>
+        <Select 
+          value={filters.country || ""} 
+          onValueChange={(value) => onFilterChange('country', value)}
+        >
+          <SelectTrigger className="w-full bg-white">
+            <SelectValue placeholder="All countries" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={null}>All countries</SelectItem>
+            {sadcCountries.map(c => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium text-slate-700 mb-2 block">Province (South Africa)</label>
         <Select 
           value={filters.province || ""} 
           onValueChange={(value) => onFilterChange('province', value)}
@@ -169,13 +195,28 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
             <Badge className="bg-teal-600 text-white">{activeFilterCount} active</Badge>
           )}
         </div>
-        <div className="grid lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <Select 
+          value={filters.country || ""} 
+          onValueChange={(value) => onFilterChange('country', value)}
+        >
+          <SelectTrigger className="bg-white h-10">
+            <SelectValue placeholder="Country (SADC)" />
+          </SelectTrigger>
+          <SelectContent className="z-[9999]">
+            <SelectItem value={null}>All countries</SelectItem>
+            {sadcCountries.map(c => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
         <Select 
           value={filters.province || ""} 
           onValueChange={(value) => onFilterChange('province', value)}
         >
           <SelectTrigger className="bg-white h-10">
-            <SelectValue placeholder="Province" />
+            <SelectValue placeholder="Province (SA)" />
           </SelectTrigger>
           <SelectContent className="z-[9999]">
             <SelectItem value={null}>All provinces</SelectItem>
@@ -244,6 +285,14 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
             <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100 text-xs sm:text-sm whitespace-nowrap">
               Search: "{filters.search.length > 20 ? filters.search.substring(0, 20) + '...' : filters.search}"
               <button onClick={() => onFilterChange('search', '')} className="ml-1.5 shrink-0">
+                <X className="w-3 h-3" />
+              </button>
+            </Badge>
+          )}
+          {filters.country && (
+            <Badge variant="secondary" className="bg-teal-50 text-teal-700 hover:bg-teal-100 text-xs sm:text-sm whitespace-nowrap">
+              {filters.country}
+              <button onClick={() => onFilterChange('country', '')} className="ml-1.5 shrink-0">
                 <X className="w-3 h-3" />
               </button>
             </Badge>

@@ -15,6 +15,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 export default function Database() {
   const [filters, setFilters] = useState({
     search: '',
+    country: '',
     province: '',
     waterType: '',
     cecCategory: '',
@@ -56,6 +57,7 @@ export default function Database() {
   const clearFilters = () => {
     setFilters({
       search: '',
+      country: '',
       province: '',
       waterType: '',
       cecCategory: '',
@@ -97,7 +99,12 @@ export default function Database() {
         if (!matchesSearch) return false;
       }
 
-      // Province filter - "National" shows all provinces
+      // Country filter
+      if (filters.country && paper.country !== filters.country) {
+        return false;
+      }
+
+      // Province filter - "National" shows all provinces (only relevant for South Africa)
       if (filters.province && filters.province !== 'National' && paper.province !== filters.province) {
         return false;
       }
