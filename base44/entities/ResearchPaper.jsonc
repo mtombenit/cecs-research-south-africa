@@ -36,6 +36,24 @@
       },
       "description": "PFAS compounds studied (e.g., PFOA, PFOS, PFHxS)"
     },
+    "analyte": {
+      "type": "string",
+      "description": "Specific analyte measured (e.g., PFOA, PFOS, \u2211PFAS)"
+    },
+    "season": {
+      "type": "string",
+      "enum": [
+        "Dry",
+        "Wet",
+        "Summer",
+        "Winter",
+        "Spring",
+        "Autumn",
+        "Year-round",
+        "Not specified"
+      ],
+      "description": "Season during which sampling was conducted"
+    },
     "study_location": {
       "type": "string",
       "description": "Location where study was conducted"
@@ -46,22 +64,38 @@
         "South Africa",
         "Angola",
         "Botswana",
+        "Burundi",
+        "Cameroon",
+        "Chad",
         "Comoros",
         "Democratic Republic of Congo",
+        "Egypt",
+        "Ethiopia",
         "Eswatini",
+        "Ghana",
+        "Kenya",
         "Lesotho",
+        "Libya",
         "Madagascar",
         "Malawi",
         "Mauritius",
+        "Morocco",
         "Mozambique",
         "Namibia",
+        "Nigeria",
+        "Rwanda",
         "Seychelles",
+        "Sudan",
         "Tanzania",
+        "Tunisia",
+        "Uganda",
         "Zambia",
-        "Zimbabwe"
+        "Zimbabwe",
+        "Global (Review)",
+        "Multiple Countries"
       ],
       "default": "South Africa",
-      "description": "SADC country where study was conducted"
+      "description": "Country where study was conducted"
     },
     "province": {
       "type": "string",
@@ -74,9 +108,16 @@
         "Mpumalanga",
         "Northern Cape",
         "North West",
-        "Western Cape"
+        "Western Cape",
+        "Nairobi County",
+        "Central Region",
+        "Northern Region",
+        "Southern Region",
+        "Eastern Region",
+        "Western Region",
+        "National"
       ],
-      "description": "South African province (only applicable if country is South Africa)"
+      "description": "Province or region where study was conducted"
     },
     "research_type": {
       "type": "string",
@@ -98,6 +139,21 @@
         "type": "string"
       },
       "description": "Sample types (e.g., water, soil, blood, sediment)"
+    },
+    "water_source_type": {
+      "type": "string",
+      "enum": [
+        "River surface water",
+        "Dam Water",
+        "Drinking Water",
+        "Groundwater",
+        "Marine-Coastal",
+        "Wastewater",
+        "Lake",
+        "Sediment",
+        "Not specified"
+      ],
+      "description": "Type of water source sampled"
     },
     "key_findings": {
       "type": "string",
