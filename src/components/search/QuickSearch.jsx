@@ -3,121 +3,208 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, MapPin, Droplet, FlaskConical } from "lucide-react";
+import { Search, MapPin, Droplet, FlaskConical, Atom, Sun, RotateCcw } from "lucide-react";
 import { createPageUrl } from "@/utils";
 
-const PROVINCES = [
-  "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", "Limpopo",
-  "Mpumalanga", "Northern Cape", "North West", "Western Cape", "National"
+const COUNTRIES = [
+  "South Africa", "Angola", "Botswana", "Burundi", "Cameroon", "Chad", "Comoros",
+  "Democratic Republic of Congo", "Egypt", "Ethiopia", "Eswatini",
+  "Ghana", "Kenya", "Lesotho", "Libya", "Madagascar", "Malawi",
+  "Mauritius", "Morocco", "Mozambique", "Namibia", "Nigeria",
+  "Rwanda", "Seychelles", "Sudan", "Tanzania", "Tunisia",
+  "Uganda", "Zambia", "Zimbabwe", "Global (Review)", "Multiple Countries"
 ];
 
+const PROVINCES_BY_COUNTRY = {
+  "South Africa": [
+    "Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal",
+    "Limpopo", "Mpumalanga", "Northern Cape", "North West", "Western Cape", "National"
+  ],
+  "Kenya": ["Nairobi County", "Central Region", "Eastern Region", "Western Region", "Northern Region", "Southern Region"],
+  "default": ["Northern Region", "Southern Region", "Eastern Region", "Western Region", "Central Region", "National"]
+};
+
 const WATER_SOURCES = [
-  "Dam Water", "Drinking Water", "Groundwater", "Marine-Coastal", "River Water", "Wastewater"
+  "River surface water", "Dam Water", "Drinking Water", "Groundwater",
+  "Marine-Coastal", "Wastewater", "Lake", "Sediment", "Not specified"
 ];
 
 const CEC_CLASSES = [
-  "Endocrine Disruptors", "Microplastics", "Nanomaterials", "Personal Care Products", 
-  "Pesticides & Herbicides", "PFAS", "Pharmaceuticals"
+  "PFAS", "Endocrine Disruptors", "Microplastics", "Nanomaterials",
+  "Personal Care Products", "Pesticides & Herbicides", "Pharmaceuticals"
 ];
 
+const ANALYTES = [
+  "∑PFAS", "PFOA", "PFOS", "PFNA", "PFHxS", "PFDA", "PFUnDA",
+  "PFBS", "PFHxA", "PFHpA", "PFBA", "PFOSA", "6:2 FTS"
+];
+
+const SEASONS = ["Dry", "Wet", "Summer", "Winter", "Spring", "Autumn", "Year-round", "Not specified"];
+
 export default function QuickSearch() {
+  const [country, setCountry] = useState("");
   const [province, setProvince] = useState("");
   const [waterSource, setWaterSource] = useState("");
   const [cecClass, setCecClass] = useState("");
+  const [analyte, setAnalyte] = useState("");
+  const [season, setSeason] = useState("");
   const navigate = useNavigate();
+
+  const provinces = country
+    ? (PROVINCES_BY_COUNTRY[country] || PROVINCES_BY_COUNTRY["default"])
+    : [];
+
+  const handleCountryChange = (val) => {
+    setCountry(val);
+    setProvince(""); // reset province when country changes
+  };
 
   const handleSearch = () => {
     const params = new URLSearchParams();
+    if (country) params.set('country', country);
     if (province) params.set('province', province);
-    if (waterSource) params.set('waterSource', waterSource);
+    if (waterSource) params.set('waterType', waterSource);
     if (cecClass) params.set('cecClass', cecClass);
-    
+    if (analyte) params.set('analyte', analyte);
+    if (season) params.set('season', season);
     navigate(`${createPageUrl('Database')}?${params.toString()}`);
   };
 
-  const hasAnySelection = province || waterSource || cecClass;
+  const handleReset = () => {
+    setCountry("");
+    setProvince("");
+    setWaterSource("");
+    setCecClass("");
+    setAnalyte("");
+    setSeason("");
+  };
+
+  const hasAnySelection = country || province || waterSource || cecClass || analyte || season;
 
   return (
-    <Card className="p-4 sm:p-6 lg:p-8 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-      <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-        <div className="p-1.5 sm:p-2 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg">
-          <Search className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+    <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl overflow-hidden">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-teal-700 to-teal-600 px-6 py-4 flex items-center gap-3">
+        <div className="p-2 bg-white/20 rounded-lg">
+          <Search className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">Guided Database Search</h3>
-          <p className="text-xs sm:text-sm text-slate-500">Select criteria to find relevant research</p>
+          <h3 className="text-lg font-bold text-white">Guided database search</h3>
+          <p className="text-sm text-teal-100">Select criteria to find relevant research across African provinces</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
-        {/* Level 1: Province */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-teal-600" />
-            Level 1: Province
-          </label>
-          <Select value={province} onValueChange={setProvince}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select province" />
-            </SelectTrigger>
-            <SelectContent>
-              {PROVINCES.map(prov => (
-                <SelectItem key={prov} value={prov}>{prov}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      <div className="p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+
+          {/* Level 1: Country */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-teal-700 uppercase tracking-wider flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5" /> Level 1: Country
+            </label>
+            <Select value={country} onValueChange={handleCountryChange}>
+              <SelectTrigger className="bg-white border-slate-200">
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Level 2: Province / Region */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-teal-700 uppercase tracking-wider flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5" /> Level 2: Province / Region
+            </label>
+            <Select value={province} onValueChange={setProvince} disabled={!country}>
+              <SelectTrigger className="bg-white border-slate-200 disabled:opacity-50">
+                <SelectValue placeholder="Select province" />
+              </SelectTrigger>
+              <SelectContent>
+                {provinces.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Level 3: Water Source */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-teal-700 uppercase tracking-wider flex items-center gap-1.5">
+              <Droplet className="w-3.5 h-3.5" /> Level 3: Water Source
+            </label>
+            <Select value={waterSource} onValueChange={setWaterSource}>
+              <SelectTrigger className="bg-white border-slate-200">
+                <SelectValue placeholder="Select water source" />
+              </SelectTrigger>
+              <SelectContent>
+                {WATER_SOURCES.map(w => <SelectItem key={w} value={w}>{w}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Level 4: CEC Class */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-teal-700 uppercase tracking-wider flex items-center gap-1.5">
+              <FlaskConical className="w-3.5 h-3.5" /> Level 4: CEC Class
+            </label>
+            <Select value={cecClass} onValueChange={setCecClass}>
+              <SelectTrigger className="bg-white border-slate-200">
+                <SelectValue placeholder="Select CEC class" />
+              </SelectTrigger>
+              <SelectContent>
+                {CEC_CLASSES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Level 5: Analyte */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-teal-700 uppercase tracking-wider flex items-center gap-1.5">
+              <Atom className="w-3.5 h-3.5" /> Level 5: Analyte
+            </label>
+            <Select value={analyte} onValueChange={setAnalyte}>
+              <SelectTrigger className="bg-white border-slate-200">
+                <SelectValue placeholder="Select analyte" />
+              </SelectTrigger>
+              <SelectContent>
+                {ANALYTES.map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Level 6: Season */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-teal-700 uppercase tracking-wider flex items-center gap-1.5">
+              <Sun className="w-3.5 h-3.5" /> Level 6: Season
+            </label>
+            <Select value={season} onValueChange={setSeason}>
+              <SelectTrigger className="bg-white border-slate-200">
+                <SelectValue placeholder="Select season" />
+              </SelectTrigger>
+              <SelectContent>
+                {SEASONS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
         </div>
 
-        {/* Level 2: Water Source */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
-            <Droplet className="w-4 h-4 text-teal-600" />
-            Level 2: Water Source
-          </label>
-          <Select value={waterSource} onValueChange={setWaterSource}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select water source" />
-            </SelectTrigger>
-            <SelectContent>
-              {WATER_SOURCES.map(source => (
-                <SelectItem key={source} value={source}>{source}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex gap-3">
+          <Button
+            onClick={handleSearch}
+            disabled={!hasAnySelection}
+            className="bg-teal-600 hover:bg-teal-700 h-10 px-6"
+          >
+            <Search className="w-4 h-4 mr-2" />
+            Search research
+          </Button>
+          {hasAnySelection && (
+            <Button variant="outline" onClick={handleReset} className="h-10 px-4 text-slate-600">
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Reset
+            </Button>
+          )}
         </div>
-
-        {/* Level 3: CEC Class */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
-            <FlaskConical className="w-4 h-4 text-teal-600" />
-            Level 3: CEC Class
-          </label>
-          <Select value={cecClass} onValueChange={setCecClass}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select CEC class" />
-            </SelectTrigger>
-            <SelectContent>
-              {CEC_CLASSES.map(cec => (
-                <SelectItem key={cec} value={cec}>{cec}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <p className="text-xs text-slate-500">
-          {hasAnySelection ? 'Click search to view filtered results' : 'Select at least one criteria to search'}
-        </p>
-        <Button 
-          onClick={handleSearch} 
-          disabled={!hasAnySelection}
-          size="lg"
-          className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 h-11 sm:h-10"
-        >
-          <Search className="w-4 h-4 mr-2" />
-          Search Database
-        </Button>
       </div>
     </Card>
   );

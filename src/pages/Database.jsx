@@ -19,6 +19,8 @@ export default function Database() {
     province: '',
     waterType: '',
     cecCategory: '',
+    analyte: '',
+    season: '',
     yearFrom: '',
     yearTo: ''
   });
@@ -30,16 +32,22 @@ export default function Database() {
   // Read URL parameters and apply them to filters
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    const country = urlParams.get('country');
     const province = urlParams.get('province');
     const waterType = urlParams.get('waterType');
-    const cecCategory = urlParams.get('cecCategory');
+    const cecCategory = urlParams.get('cecClass') || urlParams.get('cecCategory');
+    const analyte = urlParams.get('analyte');
+    const season = urlParams.get('season');
 
-    if (province || waterType || cecCategory) {
+    if (country || province || waterType || cecCategory || analyte || season) {
       setFilters(prev => ({
         ...prev,
+        ...(country && { country }),
         ...(province && { province }),
         ...(waterType && { waterType }),
-        ...(cecCategory && { cecCategory })
+        ...(cecCategory && { cecCategory }),
+        ...(analyte && { analyte }),
+        ...(season && { season })
       }));
     }
   }, []);
@@ -61,6 +69,8 @@ export default function Database() {
       province: '',
       waterType: '',
       cecCategory: '',
+      analyte: '',
+      season: '',
       yearFrom: '',
       yearTo: ''
     });
@@ -173,6 +183,22 @@ export default function Database() {
         }
 
         if (!matchesCategory) return false;
+      }
+
+      // Analyte filter
+      if (filters.analyte) {
+        const analyteLower = filters.analyte.toLowerCase();
+        const matchesAnalyte =
+          paper.analyte?.toLowerCase().includes(analyteLower) ||
+          paper.pfas_compounds?.some(c => c.toLowerCase().includes(analyteLower)) ||
+          paper.title?.toLowerCase().includes(analyteLower) ||
+          paper.abstract?.toLowerCase().includes(analyteLower);
+        if (!matchesAnalyte) return false;
+      }
+
+      // Season filter
+      if (filters.season && paper.season && paper.season !== filters.season) {
+        return false;
       }
 
       // Year filters - only apply if values are set
