@@ -149,14 +149,14 @@ Return your analysis.`,
           response_json_schema: {
             type: "object",
             properties: {
-              is_south_african: { type: "boolean" },
+              is_african: { type: "boolean" },
               confidence: { type: "number" },
               reason: { type: "string" }
             }
           }
         });
 
-        if (!validationResult.is_south_african) {
+        if (!validationResult.is_african) {
           await base44.entities.PendingPaper.update(paper.id, {
             status: "rejected",
             error_message: `Not African research: ${validationResult.reason}`,
