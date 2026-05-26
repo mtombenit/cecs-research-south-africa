@@ -127,9 +127,9 @@ IMPORTANT: Extract data exactly as it appears in the document. If a field is not
         // Add delay to avoid rate limits
         await new Promise(resolve => setTimeout(resolve, 3000));
         
-        // Validate South African origin
+        // Validate African origin
         const validationResult = await base44.integrations.Core.InvokeLLM({
-          prompt: `Analyze this research paper and determine if it is specifically about South African research, locations, or studies conducted in South Africa.
+          prompt: `Analyze this research paper and determine if it is about research conducted in Africa or related to African countries, locations, or environments.
 
 Research Paper:
 Title: ${extractedPaper.title || 'N/A'}
@@ -139,11 +139,11 @@ Study Location: ${extractedPaper.study_location || 'N/A'}
 Province: ${extractedPaper.province || 'N/A'}
 Institution: ${extractedPaper.institution || 'N/A'}
 
-Determine if this paper is about South African research. Look for:
-1. Study conducted in South Africa
-2. South African locations, provinces, cities
-3. South African institutions or authors
-4. Research specifically about South African water resources, environment, or populations
+Determine if this paper is about African research. Look for:
+1. Study conducted in any African country (South Africa, Kenya, Nigeria, Ghana, Egypt, Ethiopia, Uganda, Tanzania, Burundi, Mozambique, Zimbabwe, Zambia, Malawi, Madagascar, Morocco, Tunisia, Libya, Sudan, Chad, Cameroon, Angola, Botswana, Namibia, Lesotho, Eswatini, Rwanda, DRC, Seychelles, Mauritius, Comoros, etc.)
+2. African locations, cities, rivers, lakes, or regions
+3. African institutions or research organizations
+4. Research specifically about African water resources, environment, or populations
 
 Return your analysis.`,
           response_json_schema: {
@@ -159,7 +159,7 @@ Return your analysis.`,
         if (!validationResult.is_south_african) {
           await base44.entities.PendingPaper.update(paper.id, {
             status: "rejected",
-            error_message: `Not South African research: ${validationResult.reason}`,
+            error_message: `Not African research: ${validationResult.reason}`,
             progress: 100
           });
           window[processingKey] = false;
