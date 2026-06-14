@@ -1,0 +1,46 @@
+{
+  "name": "AgentActivity",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the action occurred"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "upload",
+        "scan_start",
+        "scan_end",
+        "duplicate_skipped",
+        "error",
+        "retry"
+      ],
+      "description": "Type of action performed"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failed",
+        "in_progress"
+      ],
+      "description": "Status of the action"
+    },
+    "details": {
+      "type": "string",
+      "description": "Additional information about the action (JSON string or text)"
+    },
+    "user": {
+      "type": "string",
+      "default": "agent",
+      "description": "User who performed the action"
+    }
+  },
+  "required": [
+    "timestamp",
+    "action",
+    "status"
+  ]
+}

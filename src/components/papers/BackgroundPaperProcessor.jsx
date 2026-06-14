@@ -1,7 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
+
+// Module-level set so it persists across re-renders
+const processingSet = new Set();
+const STALE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 
 export default function BackgroundPaperProcessor() {
   const queryClient = useQueryClient();
@@ -13,9 +17,23 @@ export default function BackgroundPaperProcessor() {
   });
 
   useEffect(() => {
+    const now = Date.now();
+
+    // Reset papers stuck for more than 5 minutes
+    const stuckPapers = pendingPapers.filter(p => 
+      ['extracting', 'validating'].includes(p.status) &&
+      p.updated_date &&
+      (now - new Date(p.updated_date).getTime()) > STALE_TIMEOUT_MS &&
+      !processingSet.has(p.id)
+    );
+    stuckPapers.forEach(p => {
+      base44.entities.PendingPaper.update(p.id, { status: 'uploading', progress: 10 });
+    });
+
     // Process papers that need processing
     const papersToProcess = pendingPapers.filter(p => 
-      ['uploading', 'extracting', 'validating'].includes(p.status)
+      ['uploading', 'extracting', 'validating'].includes(p.status) &&
+      !processingSet.has(p.id)
     );
 
     // Process only one paper at a time to avoid rate limits
@@ -29,9 +47,8 @@ export default function BackgroundPaperProcessor() {
   const processPaper = async (paper) => {
     try {
       // Skip if already processing (prevent concurrent processing)
-      const processingKey = `processing_${paper.id}`;
-      if (window[processingKey]) return;
-      window[processingKey] = true;
+      if (processingSet.has(paper.id)) return;
+      processingSet.add(paper.id);
 
       if (paper.status === 'uploading') {
         // Move to extraction
@@ -39,7 +56,7 @@ export default function BackgroundPaperProcessor() {
           status: "extracting",
           progress: 30
         });
-        window[processingKey] = false;
+        processingSet.delete(paper.id);
         return;
       }
 
@@ -98,7 +115,7 @@ IMPORTANT: Extract data exactly as it appears in the document. If a field is not
             error_message: "Failed to extract metadata - could not read title",
             progress: 100
           });
-          window[processingKey] = false;
+          processingSet.delete(paper.id);
           return;
         }
 
@@ -117,7 +134,7 @@ IMPORTANT: Extract data exactly as it appears in the document. If a field is not
           progress: 50,
           extracted_data: extractedPaper
         });
-        window[processingKey] = false;
+        processingSet.delete(paper.id);
         return;
       }
 
@@ -162,7 +179,7 @@ Return your analysis.`,
             error_message: `Not African research: ${validationResult.reason}`,
             progress: 100
           });
-          window[processingKey] = false;
+          processingSet.delete(paper.id);
           return;
         }
 
@@ -186,11 +203,11 @@ Return your analysis.`,
 
         queryClient.invalidateQueries({ queryKey: ['papers'] });
         toast.success(`"${extractedPaper2.title}" added to database!`);
-        window[processingKey] = false;
+        processingSet.delete(paper.id);
         return;
       }
 
-      window[processingKey] = false;
+      processingSet.delete(paper.id);
 
     } catch (error) {
       let errorMessage = error.message;
@@ -227,7 +244,7 @@ Return your analysis.`,
         });
       }
       
-      window[`processing_${paper.id}`] = false;
+      processingSet.delete(paper.id);
       console.error('Background processing error:', error);
     }
   };

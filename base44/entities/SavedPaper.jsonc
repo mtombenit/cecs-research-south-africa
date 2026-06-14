@@ -1,0 +1,22 @@
+{
+  "name": "SavedPaper",
+  "type": "object",
+  "properties": {
+    "paper_id": {
+      "type": "string",
+      "description": "Reference to ResearchPaper"
+    },
+    "collection_id": {
+      "type": "string",
+      "description": "Reference to Collection"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Personal notes about this paper"
+    }
+  },
+  "required": [
+    "paper_id",
+    "collection_id"
+  ]
+}

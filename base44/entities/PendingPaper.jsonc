@@ -1,0 +1,50 @@
+{
+  "name": "PendingPaper",
+  "type": "object",
+  "properties": {
+    "filename": {
+      "type": "string",
+      "description": "Original file name"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL of uploaded file"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "uploading",
+        "extracting",
+        "validating",
+        "checking_duplicates",
+        "complete",
+        "error",
+        "duplicate",
+        "rejected"
+      ],
+      "default": "uploading",
+      "description": "Current processing status"
+    },
+    "progress": {
+      "type": "number",
+      "default": 0,
+      "description": "Processing progress percentage"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Error details if status is error"
+    },
+    "extracted_data": {
+      "type": "object",
+      "description": "Extracted paper metadata (JSON)"
+    },
+    "duplicate_of": {
+      "type": "string",
+      "description": "Title of duplicate paper if found"
+    }
+  },
+  "required": [
+    "filename",
+    "file_url"
+  ]
+}

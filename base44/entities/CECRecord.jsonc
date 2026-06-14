@@ -1,0 +1,143 @@
+{
+  "name": "CECRecord",
+  "type": "object",
+  "properties": {
+    "cec_category": {
+      "type": "string",
+      "description": "Chemical class grouping (e.g. Pharmaceuticals & PPCPs, Heavy Metals, Microplastics)"
+    },
+    "contaminant_name": {
+      "type": "string",
+      "description": "Common scientific name of contaminant"
+    },
+    "commonly_known_as": {
+      "type": "string",
+      "description": "Trade name or common alias"
+    },
+    "metabolites": {
+      "type": "string",
+      "description": "Metabolite compounds"
+    },
+    "iupac_name": {
+      "type": "string",
+      "description": "IUPAC chemical name"
+    },
+    "synonym": {
+      "type": "string",
+      "description": "Chemical synonyms"
+    },
+    "formula": {
+      "type": "string",
+      "description": "Chemical formula"
+    },
+    "molar_mass": {
+      "type": "string",
+      "description": "Molar mass with units"
+    },
+    "density": {
+      "type": "string",
+      "description": "Density with units"
+    },
+    "melting_point": {
+      "type": "string",
+      "description": "Melting point with units"
+    },
+    "boiling_point": {
+      "type": "string",
+      "description": "Boiling point with units"
+    },
+    "solubility_in_water": {
+      "type": "string",
+      "description": "Water solubility"
+    },
+    "province": {
+      "type": "string",
+      "description": "South African province"
+    },
+    "municipality": {
+      "type": "string",
+      "description": "Municipality"
+    },
+    "sampling_site": {
+      "type": "string",
+      "description": "Name of sampling site"
+    },
+    "feature_at_site": {
+      "type": "string",
+      "description": "Feature or description at sampling site"
+    },
+    "water_body_type": {
+      "type": "string",
+      "description": "Type of water body (e.g. Surface Water, WWTP, Groundwater)"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Latitude coordinate"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Longitude coordinate"
+    },
+    "coordinate_notes": {
+      "type": "string",
+      "description": "Notes about coordinates (Point or Area)"
+    },
+    "sample_collection_notes": {
+      "type": "string",
+      "description": "Notes on sample collection"
+    },
+    "concentration_detected": {
+      "type": "string",
+      "description": "Concentration value as text"
+    },
+    "concentration_numeric": {
+      "type": "number",
+      "description": "Numeric concentration value"
+    },
+    "chemical_abundance": {
+      "type": "string",
+      "description": "Chemical abundance in sample"
+    },
+    "unit_of_measure": {
+      "type": "string",
+      "description": "Unit of measure abbreviation"
+    },
+    "unit_of_measure_full": {
+      "type": "string",
+      "description": "Full unit of measure name"
+    },
+    "instrument_used": {
+      "type": "string",
+      "description": "Analytical instrument used"
+    },
+    "reference_for_analysis": {
+      "type": "string",
+      "description": "Reference for analysis method"
+    },
+    "replicated_collected": {
+      "type": "string",
+      "description": "Replication info (e.g. n=6)"
+    },
+    "data_reference": {
+      "type": "string",
+      "description": "DOI or URL reference"
+    },
+    "study_year": {
+      "type": "number",
+      "description": "Year of study"
+    },
+    "source_file": {
+      "type": "string",
+      "description": "Original filename of uploaded spreadsheet"
+    },
+    "upload_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this record was uploaded"
+    }
+  },
+  "required": [
+    "cec_category",
+    "contaminant_name"
+  ]
+}
