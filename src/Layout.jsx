@@ -25,6 +25,7 @@ const navItems = [
   { name: "AI Insights", icon: Sparkles, page: "AIInsights" },
   { name: "Predictive Analytics", icon: TrendingUp, page: "PredictiveAnalytics" },
   { name: "Ask AI", icon: Sparkles, page: "AskAI" },
+  { name: "Analytics", icon: TrendingUp, page: "AdvancedAnalytics" },
   { name: "All Articles", icon: BookOpen, page: "ArticleList" },
 ];
 
