@@ -7,12 +7,17 @@ import { Search, MapPin, Droplet, FlaskConical, Atom, Sun, RotateCcw } from "luc
 import { createPageUrl } from "@/utils";
 
 const COUNTRIES = [
-  "South Africa", "Angola", "Botswana", "Burundi", "Cameroon", "Chad", "Comoros",
-  "Democratic Republic of Congo", "Egypt", "Ethiopia", "Eswatini",
-  "Ghana", "Kenya", "Lesotho", "Libya", "Madagascar", "Malawi",
-  "Mauritius", "Morocco", "Mozambique", "Namibia", "Nigeria",
-  "Rwanda", "Seychelles", "Sudan", "Tanzania", "Tunisia",
-  "Uganda", "Zambia", "Zimbabwe", "Global (Review)", "Multiple Countries"
+  "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi",
+  "Cabo Verde", "Cameroon", "Central African Republic", "Chad", "Comoros",
+  "Democratic Republic of Congo", "Republic of Congo", "Djibouti", "Egypt",
+  "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon", "Gambia",
+  "Ghana", "Guinea", "Guinea-Bissau", "Ivory Coast", "Kenya", "Lesotho",
+  "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius",
+  "Morocco", "Mozambique", "Namibia", "Niger", "Nigeria", "Rwanda",
+  "São Tomé and Príncipe", "Senegal", "Seychelles", "Sierra Leone", "Somalia",
+  "South Africa", "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia",
+  "Uganda", "Zambia", "Zimbabwe",
+  "Global (Review)", "Multiple Countries"
 ];
 
 const PROVINCES_BY_COUNTRY = {
