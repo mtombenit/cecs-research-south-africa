@@ -100,6 +100,7 @@ IMPORTANT: Extract data exactly as it appears in the document. Identify the corr
               pfas_compounds: { type: "array", items: { type: "string" } },
               study_location: { type: "string" },
               country: { type: "string" },
+              countries: { type: "array", items: { type: "string" } },
               province: { type: "string" },
               research_type: { type: "string" },
               sample_matrix: { type: "array", items: { type: "string" } },
@@ -121,10 +122,12 @@ IMPORTANT: Extract data exactly as it appears in the document. Identify the corr
           return;
         }
 
+        const detectedCountry = result.country || "South Africa";
         const extractedPaper = {
           ...result,
           pdf_url: paper.file_url,
-          country: result.country || "South Africa",
+          country: detectedCountry,
+          countries: result.countries || [detectedCountry],
           authors: result.authors || [],
           pfas_compounds: result.pfas_compounds || [],
           sample_matrix: result.sample_matrix || [],

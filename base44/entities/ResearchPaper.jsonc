@@ -38,7 +38,7 @@
     },
     "analyte": {
       "type": "string",
-      "description": "Specific analyte measured (e.g., PFOA, PFOS, \u2211PFAS)"
+      "description": "Specific analyte measured (e.g., PFOA, PFOS, \u03a3PFAS)"
     },
     "season": {
       "type": "string",
@@ -119,7 +119,14 @@
         "Multiple Countries"
       ],
       "default": "South Africa",
-      "description": "Country where study was conducted"
+      "description": "Primary country where study was conducted"
+    },
+    "countries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "All countries where study was conducted (supports multi-country research)"
     },
     "province": {
       "type": "string",

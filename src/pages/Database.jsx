@@ -108,9 +108,12 @@ export default function Database() {
         if (!matchesSearch) return false;
       }
 
-      // Country filter - case-insensitive
-      if (filters.country && paper.country?.toLowerCase() !== filters.country.toLowerCase()) {
-        return false;
+      // Country filter — check both the countries array and the legacy country string
+      if (filters.country) {
+        const filterLower = filters.country.toLowerCase();
+        const inArray = paper.countries?.some(c => c.toLowerCase() === filterLower);
+        const inLegacy = paper.country?.toLowerCase() === filterLower;
+        if (!inArray && !inLegacy) return false;
       }
 
       // Province filter - only filter if a specific province is selected (not "National" which means all)
