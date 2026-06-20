@@ -9,10 +9,17 @@ import YearRangePicker from "./YearRangePicker";
 
 
 const sadcCountries = [
-  "South Africa",
-  "Angola", "Botswana", "Comoros", "Democratic Republic of Congo",
-  "Eswatini", "Lesotho", "Madagascar", "Malawi", "Mauritius",
-  "Mozambique", "Namibia", "Seychelles", "Tanzania", "Zambia", "Zimbabwe"
+  "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi",
+  "Cabo Verde", "Cameroon", "Central African Republic", "Chad", "Comoros",
+  "Democratic Republic of Congo", "Republic of Congo", "Djibouti", "Egypt",
+  "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon", "Gambia",
+  "Ghana", "Guinea", "Guinea-Bissau", "Ivory Coast", "Kenya", "Lesotho",
+  "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius",
+  "Morocco", "Mozambique", "Namibia", "Niger", "Nigeria", "Rwanda",
+  "São Tomé and Príncipe", "Senegal", "Seychelles", "Sierra Leone", "Somalia",
+  "South Africa", "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia",
+  "Uganda", "Zambia", "Zimbabwe",
+  "Global (Review)", "Multiple Countries"
 ];
 
 const provinces = [
