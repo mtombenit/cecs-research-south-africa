@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { useToast } from "@/components/ui/use-toast";
 import { FileText, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import SearchFilters from "@/components/papers/SearchFilters";
 import PendingPapersMonitor from "@/components/papers/PendingPapersMonitor";
@@ -9,7 +10,7 @@ import ExportButton from "@/components/export/ExportButton";
 import FilteredTimeline from "@/components/database-viz/FilteredTimeline";
 import AuthorNetwork from "@/components/database-viz/AuthorNetwork";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 
 export default function Database() {
   const [filters, setFilters] = useState({
@@ -26,6 +27,25 @@ export default function Database() {
   
   const [showVisualizations, setShowVisualizations] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [migrating, setMigrating] = useState(false);
+  const [user, setUser] = useState(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => {});
+  }, []);
+
+  const runMigration = async () => {
+    setMigrating(true);
+    try {
+      const res = await base44.functions.invoke('migrateCountries', {});
+      const { updated, failed, total } = res.data;
+      toast({ title: "Migration complete", description: `Updated ${updated} of ${total} papers. ${failed} failed.` });
+    } catch (err) {
+      toast({ title: "Migration failed", description: err.message, variant: "destructive" });
+    }
+    setMigrating(false);
+  };
   const itemsPerPage = 20;
 
   // Read URL parameters and apply them to filters
@@ -235,7 +255,7 @@ export default function Database() {
             <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1 sm:mb-2">Research Database</h1>
               <p className="text-sm sm:text-base text-slate-600">
-                Browse and search CECs research publications from South Africa
+                Browse and search CECs research publications from across Africa
               </p>
             </div>
             <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -259,6 +279,19 @@ export default function Database() {
                   </>
                 )}
               </Button>
+              {user?.role === 'admin' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={runMigration}
+                  disabled={migrating}
+                  className="gap-2 text-sm"
+                  title="Backfill country data for papers with no country set"
+                >
+                  <RefreshCw className={`w-4 h-4 ${migrating ? 'animate-spin' : ''}`} />
+                  <span className="hidden sm:inline">{migrating ? 'Migrating...' : 'Fix Countries'}</span>
+                </Button>
+              )}
               <ExportButton 
                 data={filteredPapers} 
                 filename="pfas-research-papers"
