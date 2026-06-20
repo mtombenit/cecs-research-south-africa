@@ -75,17 +75,18 @@ CRITICAL INSTRUCTIONS:
 4. PUBLICATION YEAR: Find the 4-digit year (check header, footer, citations, copyright notices)
 5. JOURNAL: Identify the journal/publication source name
 6. DOI: Look for "DOI:", "doi:", "doi.org/", "dx.doi.org/" - extract the complete identifier
-7. STUDY LOCATION: Find specific cities, regions, or areas in South Africa where the study was conducted
-8. PROVINCE: Identify which South African province(s): Eastern Cape, Free State, Gauteng, KwaZulu-Natal, Limpopo, Mpumalanga, Northern Cape, North West, Western Cape
-9. RESEARCH TYPE: Classify as: Environmental Monitoring, Human Health, Water Quality, Soil Contamination, Wildlife, Treatment Technology, Risk Assessment, or Review
-10. PFAS COMPOUNDS: List all PFAS chemicals studied (e.g., PFOA, PFOS, PFHxS, PFNA, etc.)
-11. SAMPLE MATRIX: List sample types analyzed (e.g., water, soil, sediment, blood, fish)
-12. KEY FINDINGS: Summarize the main results and conclusions
-13. CONCENTRATIONS: Report any PFAS concentration ranges or values found
-14. KEYWORDS: Extract research keywords
-15. INSTITUTION: Identify the affiliated university or research organization
+7. STUDY LOCATION: Find specific cities, regions, or areas where the study was conducted
+8. COUNTRY: Identify the African country where the study was conducted. Must be one of: Algeria, Angola, Benin, Botswana, Burkina Faso, Burundi, Cabo Verde, Cameroon, Central African Republic, Chad, Comoros, Democratic Republic of Congo, Republic of Congo, Djibouti, Egypt, Equatorial Guinea, Eritrea, Eswatini, Ethiopia, Gabon, Gambia, Ghana, Guinea, Guinea-Bissau, Ivory Coast, Kenya, Lesotho, Liberia, Libya, Madagascar, Malawi, Mali, Mauritania, Mauritius, Morocco, Mozambique, Namibia, Niger, Nigeria, Rwanda, São Tomé and Príncipe, Senegal, Seychelles, Sierra Leone, Somalia, South Africa, South Sudan, Sudan, Tanzania, Togo, Tunisia, Uganda, Zambia, Zimbabwe, Global (Review), Multiple Countries. Default to "South Africa" only if the study is clearly South African.
+9. PROVINCE: Only for South African studies — identify the province: Eastern Cape, Free State, Gauteng, KwaZulu-Natal, Limpopo, Mpumalanga, Northern Cape, North West, Western Cape, or National. Leave null for non-South African studies.
+10. RESEARCH TYPE: Classify as: Environmental Monitoring, Human Health, Water Quality, Soil Contamination, Wildlife, Treatment Technology, Risk Assessment, or Review
+11. PFAS COMPOUNDS: List all PFAS chemicals studied (e.g., PFOA, PFOS, PFHxS, PFNA, etc.)
+12. SAMPLE MATRIX: List sample types analyzed (e.g., water, soil, sediment, blood, fish)
+13. KEY FINDINGS: Summarize the main results and conclusions
+14. CONCENTRATIONS: Report any PFAS concentration ranges or values found
+15. KEYWORDS: Extract research keywords
+16. INSTITUTION: Identify the affiliated university or research organization
 
-IMPORTANT: Extract data exactly as it appears in the document. If a field is not found, return null or empty array.`,
+IMPORTANT: Extract data exactly as it appears in the document. Identify the correct African country — do NOT default everything to South Africa. If a field is not found, return null or empty array.`,
           file_urls: [paper.file_url],
           response_json_schema: {
             type: "object",
@@ -98,6 +99,7 @@ IMPORTANT: Extract data exactly as it appears in the document. If a field is not
               doi: { type: "string" },
               pfas_compounds: { type: "array", items: { type: "string" } },
               study_location: { type: "string" },
+              country: { type: "string" },
               province: { type: "string" },
               research_type: { type: "string" },
               sample_matrix: { type: "array", items: { type: "string" } },
@@ -122,6 +124,7 @@ IMPORTANT: Extract data exactly as it appears in the document. If a field is not
         const extractedPaper = {
           ...result,
           pdf_url: paper.file_url,
+          country: result.country || "South Africa",
           authors: result.authors || [],
           pfas_compounds: result.pfas_compounds || [],
           sample_matrix: result.sample_matrix || [],

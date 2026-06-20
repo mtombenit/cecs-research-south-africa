@@ -108,14 +108,14 @@ export default function Database() {
         if (!matchesSearch) return false;
       }
 
-      // Country filter
-      if (filters.country && paper.country !== filters.country) {
+      // Country filter - case-insensitive
+      if (filters.country && paper.country?.toLowerCase() !== filters.country.toLowerCase()) {
         return false;
       }
 
-      // Province filter - "National" shows all provinces (only relevant for South Africa)
-      if (filters.province && filters.province !== 'National' && paper.province !== filters.province) {
-        return false;
+      // Province filter - only filter if a specific province is selected (not "National" which means all)
+      if (filters.province && filters.province !== 'National' && filters.province !== 'All' ) {
+        if (paper.province !== filters.province) return false;
       }
 
       // Water Type filter - strict matching against sample_matrix
