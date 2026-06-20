@@ -212,6 +212,12 @@ Return your analysis.`,
     } catch (error) {
       let errorMessage = error.message;
 
+      // If the entity no longer exists, just clean up and move on
+      if (errorMessage.includes('not found') || errorMessage.includes('Not found')) {
+        processingSet.delete(paper.id);
+        return;
+      }
+
       // Handle specific error types
       if (errorMessage.includes('rate limit') || errorMessage.includes('Rate limit')) {
         errorMessage = 'Rate limit exceeded - will retry in 10 seconds';
