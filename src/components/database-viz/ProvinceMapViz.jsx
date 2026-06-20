@@ -27,10 +27,10 @@ const COUNTRY_COORDS = {
   "South Africa": [-28.5, 25.0],
   "Angola": [-11.2, 17.9],
   "Botswana": [-22.3, 24.7],
-  "Burundi": [-3.4, 30.0],
+  "Burundi": [-3.4, 29.9],
   "Cameroon": [3.8, 11.5],
   "Chad": [15.5, 18.7],
-  "Comoros": [-11.6, 43.3],
+  "Comoros": [-11.7, 43.3],
   "Democratic Republic of Congo": [-4.0, 21.8],
   "Egypt": [26.8, 30.8],
   "Ethiopia": [9.1, 40.5],
@@ -41,7 +41,7 @@ const COUNTRY_COORDS = {
   "Libya": [26.3, 17.2],
   "Madagascar": [-18.8, 46.9],
   "Malawi": [-13.3, 34.3],
-  "Mauritius": [-20.3, 57.6],
+  "Mauritius": [-20.2, 57.6],
   "Morocco": [31.8, -7.1],
   "Mozambique": [-18.7, 35.5],
   "Namibia": [-22.0, 17.1],
@@ -54,17 +54,17 @@ const COUNTRY_COORDS = {
   "Uganda": [1.4, 32.3],
   "Zambia": [-13.1, 27.8],
   "Zimbabwe": [-20.0, 30.0],
-  "Global (Review)": [2.0, 20.0],
-  "Multiple Countries": [5.0, 15.0],
+  "Global (Review)": [0.0, 20.0],
+  "Multiple Countries": [0.0, 25.0],
 };
 
-function MapUpdater({ center }) {
+function MapUpdater({ center, zoom }) {
   const map = useMap();
   useEffect(() => {
     if (center) {
-      map.setView(center, 6);
+      map.setView(center, zoom);
     }
-  }, [center, map]);
+  }, [center[0], center[1], zoom]);
   return null;
 }
 
@@ -115,11 +115,12 @@ export default function ProvinceMapViz({ papers, onProvinceClick }) {
       <CardContent>
         <div className="h-[400px] rounded-lg overflow-hidden relative z-0">
           <MapContainer
-            center={mapCenter}
-            zoom={mapZoom}
+            center={[-5, 25]}
+            zoom={3}
             style={{ height: "100%", width: "100%", zIndex: 0 }}
             scrollWheelZoom={true}
           >
+            <MapUpdater center={mapCenter} zoom={mapZoom} />
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
