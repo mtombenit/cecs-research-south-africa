@@ -3,8 +3,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 
-// Module-level set so it persists across re-renders
-const processingSet = new Set();
+// Module-level set so it persists across re-renders — exported for external cancel
+export const processingSet = new Set();
 const STALE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 
 export default function BackgroundPaperProcessor() {

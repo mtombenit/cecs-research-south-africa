@@ -3,9 +3,10 @@ import { base44 } from "@/api/base44Client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, CheckCircle2, XCircle, AlertTriangle, FileText, X, Trash2 } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, AlertTriangle, FileText, X, Trash2, StopCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
+import { processingSet } from "@/components/papers/BackgroundPaperProcessor";
 
 export default function PendingPapersMonitor() {
   const queryClient = useQueryClient();
@@ -39,6 +40,23 @@ export default function PendingPapersMonitor() {
     !['complete', 'duplicate', 'rejected', 'error'].includes(p.status)
   );
 
+  const endAllProcessingMutation = useMutation({
+    mutationFn: async () => {
+      processingSet.clear();
+      for (const p of activePapers) {
+        await base44.entities.PendingPaper.update(p.id, {
+          status: 'error',
+          error_message: 'Cancelled by user',
+          progress: 100
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pending-papers'] });
+      toast.success("All processing stopped");
+    },
+  });
+
   const duplicatePapers = pendingPapers.filter(p => p.status === 'duplicate');
   const rejectedPapers = pendingPapers.filter(p => p.status === 'rejected');
   const errorPapers = pendingPapers.filter(p => p.status === 'error');
@@ -57,11 +75,23 @@ export default function PendingPapersMonitor() {
       {activePapers.length > 0 && (
         <Card className="border-teal-200 bg-teal-50/50">
           <div className="p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Loader2 className="w-5 h-5 animate-spin text-teal-600" />
-              <h3 className="font-semibold text-slate-900">
-                Processing {activePapers.length} paper{activePapers.length !== 1 ? 's' : ''}...
-              </h3>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin text-teal-600" />
+                <h3 className="font-semibold text-slate-900">
+                  Processing {activePapers.length} paper{activePapers.length !== 1 ? 's' : ''}...
+                </h3>
+              </div>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => endAllProcessingMutation.mutate()}
+                disabled={endAllProcessingMutation.isPending}
+                className="gap-1.5"
+              >
+                <StopCircle className="w-3.5 h-3.5" />
+                End Processing
+              </Button>
             </div>
             
             <div className="space-y-3">
