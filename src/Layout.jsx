@@ -260,11 +260,11 @@ export default function Layout({ children, currentPageName }) {
                 <FlaskConical className="w-4 h-4 text-white" />
               </div>
               <span className="text-sm text-slate-600">
-                South African CECs Research Database
+                Africa CECs Research Database
               </span>
             </div>
             <p className="text-sm text-slate-500">
-              © {new Date().getFullYear()} Zambezi Analytics • Focused on South African CECs Research
+              © {new Date().getFullYear()} Zambezi Analytics • Focused on African CECs Research
             </p>
           </div>
         </div>
