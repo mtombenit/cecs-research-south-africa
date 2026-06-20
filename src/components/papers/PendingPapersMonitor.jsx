@@ -43,17 +43,17 @@ export default function PendingPapersMonitor() {
   const endAllProcessingMutation = useMutation({
     mutationFn: async () => {
       processingSet.clear();
-      for (const p of activePapers) {
-        await base44.entities.PendingPaper.update(p.id, {
-          status: 'error',
-          error_message: 'Cancelled by user',
-          progress: 100
-        });
+      for (const p of pendingPapers) {
+        try {
+          await base44.entities.PendingPaper.delete(p.id);
+        } catch (_) {
+          // already gone, skip
+        }
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pending-papers'] });
-      toast.success("All processing stopped");
+      toast.success("All processing cleared");
     },
   });
 
