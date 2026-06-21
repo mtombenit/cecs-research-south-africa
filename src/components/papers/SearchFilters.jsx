@@ -62,7 +62,7 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
   const FilterContent = () => (
     <div className="space-y-6">
       <div>
-        <label className="text-sm font-medium text-slate-700 mb-2 block">Country (SADC)</label>
+        <label className="text-sm font-medium text-slate-700 mb-2 block">Country</label>
         <Select 
           value={filters.country || ""} 
           onValueChange={(value) => onFilterChange('country', value)}
@@ -223,7 +223,7 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
           onValueChange={(value) => onFilterChange('province', value)}
         >
           <SelectTrigger className="bg-white h-10">
-            <SelectValue placeholder="Province (SA)" />
+            <SelectValue placeholder="Province" />
           </SelectTrigger>
           <SelectContent className="z-[9999]">
             <SelectItem value={null}>All provinces</SelectItem>
