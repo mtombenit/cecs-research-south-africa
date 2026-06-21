@@ -208,7 +208,7 @@ export default function SearchFilters({ filters, onFilterChange, onClear, papers
           onValueChange={(value) => onFilterChange('country', value)}
         >
           <SelectTrigger className="bg-white h-10">
-            <SelectValue placeholder="Country (SADC)" />
+            <SelectValue placeholder="Country" />
           </SelectTrigger>
           <SelectContent className="z-[9999]">
             <SelectItem value={null}>All countries</SelectItem>
