@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import ExportArticleListPDF from "@/components/export/ExportArticleListPDF";
+import ExportButton from "@/components/export/ExportButton";
 
 const PAGE_SIZE = 50;
 
@@ -132,6 +133,7 @@ export default function ArticleList() {
                 Delete All Duplicates ({duplicateCount})
               </Button>
             )}
+            <ExportButton data={papers} filename="all_research_articles" />
             <ExportArticleListPDF papers={papers} />
           </div>
         </div>
