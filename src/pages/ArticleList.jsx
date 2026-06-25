@@ -2,8 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { FileText, Loader2, BookOpen, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { FileText, Loader2, BookOpen, Trash2, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import ExportArticleListPDF from "@/components/export/ExportArticleListPDF";
@@ -15,6 +16,51 @@ export default function ArticleList() {
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState(new Set());
+
+  const papersWithPdf = papers.filter(p => p.pdf_url);
+  const allOnPageSelected = paginatedPapers.length > 0 && paginatedPapers.filter(p => p.pdf_url).every(p => selectedIds.has(p.id));
+  const selectedPapers = papers.filter(p => selectedIds.has(p.id) && p.pdf_url);
+
+  const toggleSelection = (id) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (allOnPageSelected) {
+        paginatedPapers.forEach(p => next.delete(p.id));
+      } else {
+        paginatedPapers.forEach(p => { if (p.pdf_url) next.add(p.id); });
+      }
+      return next;
+    });
+  };
+
+  const downloadSelectedPdfs = () => {
+    if (selectedPapers.length === 0) {
+      toast.error("No papers with PDFs selected");
+      return;
+    }
+    selectedPapers.forEach((paper, i) => {
+      setTimeout(() => {
+        const link = document.createElement("a");
+        link.href = paper.pdf_url;
+        link.download = "";
+        link.target = "_blank";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }, i * 300);
+    });
+    toast.success(`Downloading ${selectedPapers.length} PDF${selectedPapers.length !== 1 ? 's' : ''}...`);
+  };
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -133,6 +179,14 @@ export default function ArticleList() {
                 Delete All Duplicates ({duplicateCount})
               </Button>
             )}
+            <Button
+              onClick={downloadSelectedPdfs}
+              disabled={selectedPapers.length === 0}
+              className="gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Download Selected ({selectedPapers.length})
+            </Button>
             <ExportButton data={papers} filename="all_research_articles" />
             <ExportArticleListPDF papers={papers} />
           </div>
@@ -147,12 +201,26 @@ export default function ArticleList() {
           <div className="space-y-6">
             {sortedYears.map(year => (
               <div key={year}>
-                <h2 className="text-2xl font-bold text-teal-700 mb-4 pb-2 border-b-2 border-teal-200">
-                  {year}
-                </h2>
+                <div className="flex items-center gap-3 mb-4 pb-2 border-b-2 border-teal-200">
+                    <Checkbox
+                      checked={allOnPageSelected}
+                      onCheckedChange={toggleSelectAll}
+                    />
+                    <h2 className="text-2xl font-bold text-teal-700">
+                      {year}
+                    </h2>
+                  </div>
                 <div className="bg-white shadow-sm rounded-lg border border-slate-200 divide-y divide-slate-200">
                   {groupedPapers[year].map((paper) => (
                     <div key={paper.id} className="flex items-start p-4 hover:bg-slate-50 transition-colors">
+                      <div className="flex items-center mr-3 flex-shrink-0">
+                        {paper.pdf_url && (
+                          <Checkbox
+                            checked={selectedIds.has(paper.id)}
+                            onCheckedChange={() => toggleSelection(paper.id)}
+                          />
+                        )}
+                      </div>
                       <span className="text-slate-500 font-medium mr-4 flex-shrink-0 w-12 text-right">
                         {paper.globalIndex + 1}.
                       </span>
