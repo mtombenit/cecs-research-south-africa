@@ -126,14 +126,12 @@ export default function ArticleList() {
     }
     selectedPapers.forEach((paper, i) => {
       setTimeout(() => {
-        const link = document.createElement("a");
-        link.href = paper.pdf_url;
-        link.download = "";
-        link.target = "_blank";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }, i * 300);
+        const iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = paper.pdf_url;
+        document.body.appendChild(iframe);
+        setTimeout(() => document.body.removeChild(iframe), 10000);
+      }, i * 500);
     });
     toast.success(`Downloading ${selectedPapers.length} PDF${selectedPapers.length !== 1 ? 's' : ''}...`);
   };
