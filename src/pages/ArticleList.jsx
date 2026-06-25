@@ -18,50 +18,6 @@ export default function ArticleList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState(new Set());
 
-  const papersWithPdf = papers.filter(p => p.pdf_url);
-  const allOnPageSelected = paginatedPapers.length > 0 && paginatedPapers.filter(p => p.pdf_url).every(p => selectedIds.has(p.id));
-  const selectedPapers = papers.filter(p => selectedIds.has(p.id) && p.pdf_url);
-
-  const toggleSelection = (id) => {
-    setSelectedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const toggleSelectAll = () => {
-    setSelectedIds(prev => {
-      const next = new Set(prev);
-      if (allOnPageSelected) {
-        paginatedPapers.forEach(p => next.delete(p.id));
-      } else {
-        paginatedPapers.forEach(p => { if (p.pdf_url) next.add(p.id); });
-      }
-      return next;
-    });
-  };
-
-  const downloadSelectedPdfs = () => {
-    if (selectedPapers.length === 0) {
-      toast.error("No papers with PDFs selected");
-      return;
-    }
-    selectedPapers.forEach((paper, i) => {
-      setTimeout(() => {
-        const link = document.createElement("a");
-        link.href = paper.pdf_url;
-        link.download = "";
-        link.target = "_blank";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }, i * 300);
-    });
-    toast.success(`Downloading ${selectedPapers.length} PDF${selectedPapers.length !== 1 ? 's' : ''}...`);
-  };
-
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
@@ -138,6 +94,49 @@ export default function ArticleList() {
   // Paginate papers
   const totalPages = Math.ceil(papers.length / PAGE_SIZE);
   const paginatedPapers = papers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const allOnPageSelected = paginatedPapers.length > 0 && paginatedPapers.filter(p => p.pdf_url).every(p => selectedIds.has(p.id));
+  const selectedPapers = papers.filter(p => selectedIds.has(p.id) && p.pdf_url);
+
+  const toggleSelection = (id) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (allOnPageSelected) {
+        paginatedPapers.forEach(p => next.delete(p.id));
+      } else {
+        paginatedPapers.forEach(p => { if (p.pdf_url) next.add(p.id); });
+      }
+      return next;
+    });
+  };
+
+  const downloadSelectedPdfs = () => {
+    if (selectedPapers.length === 0) {
+      toast.error("No papers with PDFs selected");
+      return;
+    }
+    selectedPapers.forEach((paper, i) => {
+      setTimeout(() => {
+        const link = document.createElement("a");
+        link.href = paper.pdf_url;
+        link.download = "";
+        link.target = "_blank";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }, i * 300);
+    });
+    toast.success(`Downloading ${selectedPapers.length} PDF${selectedPapers.length !== 1 ? 's' : ''}...`);
+  };
 
   // Group paginated papers by publication year while maintaining global numbering
   const groupedPapers = paginatedPapers.reduce((acc, paper) => {
